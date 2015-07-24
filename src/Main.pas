@@ -1864,7 +1864,7 @@ end {TFormMain.LoadLastSavedState};
 
 procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
   var
-    DelphiProjectPath : string;
+    ProjectPath : string;
     MapFileName: string;
     IsBDS : boolean;
     s1, s2, s3 : string;
@@ -1894,7 +1894,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
 
   begin
     SearchPath_.Clear;
-    SearchPath_.Add(Copy(DelphiProjectPath, 1, pred(Length(DelphiProjectPath))));
+    SearchPath_.Add(Copy(ProjectPath, 1, pred(Length(ProjectPath))));
     while s <> '' do begin
       p := Pos(';',s);
       if p > 0 then begin
@@ -2186,15 +2186,12 @@ begin {LoadProject}
     LogWindowsVersion;
     Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
   end {if};
-  DelphiProjectPath := ExtractFilePath(DelphiProjectFileName);
-  if DelphiProjectPath <> '' then begin
-    ChDir(DelphiProjectPath);
-  end {if};
+  ProjectPath := ExtractFilePath(DelphiProjectFileName);
 
   // Locate the option file
-  s1 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.bdsproj'));
-  s2 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dof'));
-  s3 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dproj'));
+  s1 := ChangeFileExt(DelphiProjectFileName, '.bdsproj');
+  s2 := ChangeFileExt(DelphiProjectFileName, '.dof');
+  s3 := ChangeFileExt(DelphiProjectFileName, '.dproj');
 
   // Discover takes the dproj file, then the bdsproj file and finally the dof file
   if FileExists(s3) then begin
@@ -2265,7 +2262,6 @@ begin {LoadProject}
     InitAfterLoadingDataBase;
 
     inc(ProjectDataBase_.ChangedCount); // force dirty
-
   finally
   end {try};
 end {TFormMain.LoadProject};
