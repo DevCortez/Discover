@@ -195,8 +195,7 @@ type
     ProjectInfo : TProjectInfo;
     StateFileName, InfoFileName, ExeFileName : string;
     Resizing : boolean;
-    procedure LoadProject(const DelphiProjectFileName : string);
-    procedure LoadState(const StateFileName : string);
+
     procedure FillLBRoutines;
     procedure FillLBUnits;
     procedure FillSummary;
@@ -227,14 +226,10 @@ type
     procedure PositionRoutineViewToPoint(C : TCoveragePoint);
     procedure DoCommandLineInitialActions;
     procedure DoCommandLineFinalActions;
-    procedure MergeWithStateFile(const FileName : string);
     procedure LoadInformationFile;
     procedure SaveInformationFile;
     procedure RunApplication;
-    procedure SaveStateFile(const FileName : string);
     procedure MakeReport;
-
-
     function AllowsNewState : boolean;
     procedure SaveDataBase(const FileName : string);
     procedure InitAfterLoadingDatabase;
@@ -244,6 +239,10 @@ type
       write SetStatemachineState;
   public
     { Public declarations }
+    procedure LoadProject(const DelphiProjectFileName : string);
+    procedure LoadState(const StateFileName : string);
+    procedure SaveStateFile(const FileName : string);
+    procedure MergeWithStateFile(const FileName : string);    
     procedure LoadLastSavedState;
     procedure AdjustStayOnTop;
     procedure Sleep(Delay : integer);
@@ -1887,17 +1886,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
       const
         MacroName = '$(DELPHI)';
       var
-        p : integer;
         s : string;
     begin
-      // Do we have a macro in the path
-(*
-      p := Pos(MacroName, Path);
-      if p > 0 then begin
-        Delete(Path, p, Length(MacroName));
-        Insert('', Path, p);
-      end {if};
-*)
       s := ExpandFileName(Path);
       SearchPath_.Add(s);
     end {AddPath};
@@ -2190,94 +2180,94 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
 
   end {LogWindowsVersion};
 
-  begin {LoadProject}
-    if LogFileEnabled_ then begin
-      Writeln(LogFile_,'-');
-      LogWindowsVersion;
-      Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
-    end {if};
-    DelphiProjectPath := ExtractFilePath(DelphiProjectFileName);
-    if DelphiProjectPath <> '' then begin
-      ChDir(DelphiProjectPath);
-    end {if};
+begin {LoadProject}
+  if LogFileEnabled_ then begin
+    Writeln(LogFile_,'-');
+    LogWindowsVersion;
+    Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
+  end {if};
+  DelphiProjectPath := ExtractFilePath(DelphiProjectFileName);
+  if DelphiProjectPath <> '' then begin
+    ChDir(DelphiProjectPath);
+  end {if};
 
-    // Locate the option file
-    s1 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.bdsproj'));
-    s2 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dof'));
-    s3 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dproj'));
+  // Locate the option file
+  s1 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.bdsproj'));
+  s2 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dof'));
+  s3 := ExpandFileName(ChangeFileExt(DelphiProjectFileName, '.dproj'));
 
-    // Discover takes the dproj file, then the bdsproj file and finally the dof file
-    if FileExists(s3) then begin
-      ExtractFromDProj(s3)
-    end else if FileExists(s1) then begin
-      ExtractFromBdsProj(s1);
-    end else if FileExists(s2) then begin
-      ExtractFromdof(s2)
-    end else
-      raise Exception.Create(Format('File "%s" or "%s" or "%s" not found.', [s3, s1, s2]));
+  // Discover takes the dproj file, then the bdsproj file and finally the dof file
+  if FileExists(s3) then begin
+    ExtractFromDProj(s3)
+  end else if FileExists(s1) then begin
+    ExtractFromBdsProj(s1);
+  end else if FileExists(s2) then begin
+    ExtractFromdof(s2)
+  end else
+    raise Exception.Create(Format('File "%s" or "%s" or "%s" not found.', [s3, s1, s2]));
 
-    if LogFileEnabled_ then begin
-      Writeln(LogFile_, Format('  OutputDir=%s', [ProjectInfos.OutputDir]));
-      Writeln(LogFile_, Format('  Conditionals=%s', [ProjectInfos.Conditionals]));
-      Writeln(LogFile_, Format('  SearchPath=%s', [ProjectInfos.SearchPath]));
-      Writeln(LogFile_, Format('  ImageBase=$%s', [IntToHex(ProjectInfos.ImageBase, 8)]));
-    end {if};
+  if LogFileEnabled_ then begin
+    Writeln(LogFile_, Format('  OutputDir=%s', [ProjectInfos.OutputDir]));
+    Writeln(LogFile_, Format('  Conditionals=%s', [ProjectInfos.Conditionals]));
+    Writeln(LogFile_, Format('  SearchPath=%s', [ProjectInfos.SearchPath]));
+    Writeln(LogFile_, Format('  ImageBase=$%s', [IntToHex(ProjectInfos.ImageBase, 8)]));
+  end {if};
 
-    try
-      // Reset the DataBase
-      ProjectDataBase_.Free;
-      ProjectDataBase_ := TProjectDataBase.Create;
-      InitAfterLoadingDatabase;
+  try
+    // Reset the DataBase
+    ProjectDataBase_.Free;
+    ProjectDataBase_ := TProjectDataBase.Create;
+    InitAfterLoadingDatabase;
 
-      ProjectDataBase_.ExecutableFileName := ExpandFileName(ProjectInfos.OutputDir +
-        ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe'));
-      ProjectDataBase_.ExecutableFileCRC := CRC32.FileCRC32(ProjectDataBase_.ExecutableFileName);
+    ProjectDataBase_.ExecutableFileName := ExpandFileName(ProjectInfos.OutputDir +
+      ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe'));
+    ProjectDataBase_.ExecutableFileCRC := CRC32.FileCRC32(ProjectDataBase_.ExecutableFileName);
 
-      MapFileName := ExpandFileName(ProjectInfos.OutputDir +
-        ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map'));
-      if LogFileEnabled_ then
-        Writeln(LogFile_, Format('Map file: %s', [MapFileName]));
+    MapFileName := ExpandFileName(ProjectInfos.OutputDir +
+      ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map'));
+    if LogFileEnabled_ then
+      Writeln(LogFile_, Format('Map file: %s', [MapFileName]));
 
-      GlobalDefinedConditionnals_.Clear;
+    GlobalDefinedConditionnals_.Clear;
 
-      BuildSearchPath(ProjectInfos.SearchPath);
+    BuildSearchPath(ProjectInfos.SearchPath);
 
-      if  FileExists(MapFileName) then begin
-        StatusBar.Panels[pFilePos].Text := 'Processing map-file';
-        NotFoundFiles := TStringList.Create;
-        try
-          HandleMapFile(MapFileName, HandleProgress, NotFoundFiles, IsBDS);
+    if  FileExists(MapFileName) then begin
+      StatusBar.Panels[pFilePos].Text := 'Processing map-file';
+      NotFoundFiles := TStringList.Create;
+      try
+        HandleMapFile(MapFileName, HandleProgress, NotFoundFiles, IsBDS);
 
 (* Don't show these files anymore!
 
-          ShowNotFoundSrcFiles;
+        ShowNotFoundSrcFiles;
 *)
-        finally
-          NotFoundFiles.Free;
-        end {try};
-      end else begin
-        FreeAndNil(ProjectDataBase_);
-        raise Exception.Create(Format('Map file "%s" not found.', [MapFileName]));
-      end {if};
+      finally
+        NotFoundFiles.Free;
+      end {try};
+    end else begin
+      FreeAndNil(ProjectDataBase_);
+      raise Exception.Create(Format('Map file "%s" not found.', [MapFileName]));
+    end {if};
 
 
-      // Extract the predefined conditionnals
-      if ProjectInfos.Conditionals <> '' then
-        BuildConditionnals(ProjectInfos.Conditionals);
+    // Extract the predefined conditionnals
+    if ProjectInfos.Conditionals <> '' then
+      BuildConditionnals(ProjectInfos.Conditionals);
 
-      // Get image base
-      ProjectDataBase_.ImageBase := ProjectInfos.ImageBase;
+    // Get image base
+    ProjectDataBase_.ImageBase := ProjectInfos.ImageBase;
 
-      LogDataBase;
+    LogDataBase;
 
-      // Filter out the coverage points
-      FilterOutCovereagePoints;
-      InitAfterLoadingDataBase;
+    // Filter out the coverage points
+    FilterOutCovereagePoints;
+    InitAfterLoadingDataBase;
 
-      inc(ProjectDataBase_.ChangedCount); // force dirty
+    inc(ProjectDataBase_.ChangedCount); // force dirty
 
-    finally
-    end {try};
+  finally
+  end {try};
 end {TFormMain.LoadProject};
 
 

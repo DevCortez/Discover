@@ -67,10 +67,6 @@ begin
         except
         end {try};
       FormMain.AdjustStayOnTop;
-      if ParamCount = 0 then
-        FormMain.Sleep(2000)
-      else
-        FormMain.Sleep(1000);
       FormSplash_.Close;
     finally
       FormSplash_.Free;
