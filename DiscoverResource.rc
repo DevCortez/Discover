@@ -1,0 +1,5 @@
+B_PT_COVERED Bitmap "..\\Images\\COV.BMP"
+B_PT_UNCOVERED Bitmap "..\\Images\\UNCOV.BMP"
+B_DISABLED Bitmap "..\\Images\\DIS.BMP"
+B_ENABLED Bitmap "..\\Images\\ENA.BMP"
+B_LOCKSHUT Bitmap "..\\Images\\SHUT.BMP"
