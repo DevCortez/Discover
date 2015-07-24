@@ -409,7 +409,7 @@ end {TSortedCollection.Search};
 
 function TStrCollection.Compare(Key1, Key2: Pointer): Integer;
 begin
-  Compare := StrComp(PWideChar(Key1), PWideChar(Key2));
+  Compare := StrComp(pChar(Key1), pChar(Key2));
 end {TStrCollection.Compare};
 
 
@@ -419,7 +419,7 @@ end {TStrCollection.Compare};
 
 procedure TStrCollection.FreeItem(Item: Pointer);
 begin
-  StrDispose(PWideChar(Item));
+  StrDispose(pChar(Item));
 end {TStrCollection.FreeItem};
 
 
