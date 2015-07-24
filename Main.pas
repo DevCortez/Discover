@@ -3080,18 +3080,28 @@ end {TFormMain.RunApplication};
 
 procedure TFormMain.SaveDataBase(const FileName : string);
   var
-    M : TFileStream;
+    lFileBuffer : TMemoryStream;
+    lDpsFile : TFileStream;
 begin
-  M := TFileStream.Create(FileName, fmCreate);
+
   Screen.Cursor := crHourGlass;
   StatusBar.Panels[pFilePos].Text := 'Saving state';
   StatusBar.Refresh;
+  lFileBuffer := TMemoryStream.Create();
   try
     if LogFileEnabled_ then
       WriteLn(LogFile_, 'Saving state: '+FileName);
-    ProjectDataBase_.Save(M);
+      
+    ProjectDataBase_.Save(lFileBuffer);
+
+    lDpsFile := TFileStream.Create(FileName, fmCreate);
+    try
+      lFileBuffer.SaveToStream(lDpsFile);
+    finally
+      lDpsFile.Free;
+    end;
   finally
-    M.Free;
+    lFileBuffer.Free();
     Screen.Cursor := crDefault;
     StatusBar.Panels[pFilePos].Text := '';
   end {try};
@@ -3118,6 +3128,7 @@ begin
   for i := 0 to pred(ProjectDataBase_.Routines.Count) do begin
     R := ProjectDataBase_.Routines.At(i);
     U := ProjectDataBase_.Units.At(R.UnitIndex);
+    
     if (U.IsSourceAvailable) and (not U.Disabled) and R.Disabled then
       ProjectInfo.BackGndRoutines.Add(R.Name);
   end {for};
