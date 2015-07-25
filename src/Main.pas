@@ -718,6 +718,12 @@ begin
   Config.SetIntegerArray(Appearence_Key, AppearanceArray);
   CaptureBitmapStream.Free;
   ProjectInfo.Free;
+
+  Application.OnMessage := nil;
+  Application.OnActivate := nil;
+  Application.OnDeactivate := nil;
+  Application.OnIdle := nil;
+  Application.OnException := nil;
 end {TFormMain.FormDestroy};
 
 
@@ -2181,11 +2187,13 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
   end {LogWindowsVersion};
 
 begin {LoadProject}
-  if LogFileEnabled_ then begin
-    Writeln(LogFile_,'-');
-    LogWindowsVersion;
-    Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
-  end {if};
+  if LogFileEnabled_ then
+    begin
+      Writeln(LogFile_,'-');
+      LogWindowsVersion;
+      Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
+    end {if};
+  
   ProjectPath := ExtractFilePath(DelphiProjectFileName);
 
   // Locate the option file
@@ -2216,12 +2224,11 @@ begin {LoadProject}
     ProjectDataBase_ := TProjectDataBase.Create;
     InitAfterLoadingDatabase;
 
-    ProjectDataBase_.ExecutableFileName := ExpandFileName(ProjectInfos.OutputDir +
-      ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe'));
+    ProjectDataBase_.ExecutableFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe');
     ProjectDataBase_.ExecutableFileCRC := CRC32.FileCRC32(ProjectDataBase_.ExecutableFileName);
 
-    MapFileName := ExpandFileName(ProjectInfos.OutputDir +
-      ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map'));
+    MapFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map');
+
     if LogFileEnabled_ then
       Writeln(LogFile_, Format('Map file: %s', [MapFileName]));
 
@@ -2229,24 +2236,23 @@ begin {LoadProject}
 
     BuildSearchPath(ProjectInfos.SearchPath);
 
-    if  FileExists(MapFileName) then begin
-      StatusBar.Panels[pFilePos].Text := 'Processing map-file';
-      NotFoundFiles := TStringList.Create;
-      try
-        HandleMapFile(MapFileName, HandleProgress, NotFoundFiles, IsBDS);
-
-(* Don't show these files anymore!
-
-        ShowNotFoundSrcFiles;
-*)
-      finally
-        NotFoundFiles.Free;
-      end {try};
-    end else begin
-      FreeAndNil(ProjectDataBase_);
-      raise Exception.Create(Format('Map file "%s" not found.', [MapFileName]));
-    end {if};
-
+    if  FileExists(MapFileName) then
+      begin
+        StatusBar.Panels[pFilePos].Text := 'Processing map-file';
+        NotFoundFiles := TStringList.Create;
+        try
+          HandleMapFile( MapFileName, HandleProgress, NotFoundFiles, IsBDS);
+          // Don't show these files anymore!
+          //ShowNotFoundSrcFiles;
+        finally
+          NotFoundFiles.Free;
+        end {try};
+      end
+    else
+      begin
+        FreeAndNil(ProjectDataBase_);
+        raise Exception.Create(Format('Map file "%s" not found.', [MapFileName]));
+      end {if};
 
     // Extract the predefined conditionnals
     if ProjectInfos.Conditionals <> '' then
