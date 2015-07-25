@@ -34,7 +34,7 @@ begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
   FormMain.SaveStateFile('Teste.dps');
 
-  for i := 1 to 10 do
+  for i := 1 to 25 do
     begin
       FormMain.MMProjectClearStateClick(nil);
       CheckEquals(0, ProjectDataBase_.Units.Count, 'Unit count');
@@ -67,7 +67,7 @@ begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
   FormMain.SaveStateFile('Teste.dps');
 
-  for i := 1 to 10 do
+  for i := 1 to 25 do
     begin
       FormMain.LoadState('Teste.dps');
       CheckEquals(ProjectDataBase_.Units.Count, 59, 'Unit count');
