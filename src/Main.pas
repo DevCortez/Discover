@@ -1833,9 +1833,9 @@ begin
   if not FileExists(InfoFileName) then
     exit;
   ProjectInfo.LoadFromFile(InfoFileName);
-  FormProjectInfo.EDITRunParameters.Text := ProjectInfo.RunParameters;
-  FormProjectInfo.EDITStartupDirectory.Text := ProjectInfo.StartupDirectory;
-  FormProjectInfo.CHKRunMaximized.Checked := ProjectInfo.RunMaximized;
+  FormProjectInfo.EDITRunParameters.Text := ProjectDataBase_.RunParameters;
+  FormProjectInfo.EDITStartupDirectory.Text := ProjectDataBase_.StartupDirectory;
+  FormProjectInfo.CHKRunMaximized.Checked := ProjectDataBase_.RunMaximized;
   for i := 0 to pred(ProjectInfo.BackGndUnits.Count) do begin
     U := ProjectDataBase_.Units.AtName(ProjectInfo.BackGndUnits[i]);
     if U <> nil then
@@ -2726,9 +2726,9 @@ end ;
 procedure TFormMain.MMProjectSettingsClick(Sender: TObject);
 begin
   if FormProjectInfo.ShowModal = mrOk then begin
-    ProjectInfo.RunParameters := FormProjectInfo.EDITRunParameters.Text;
-    ProjectInfo.StartupDirectory := FormProjectInfo.EDITStartupDirectory.Text;
-    ProjectInfo.RunMaximized := FormProjectInfo.CHKRunMaximized.Checked;
+    ProjectDataBase_.RunParameters := FormProjectInfo.EDITRunParameters.Text;
+    ProjectDataBase_.StartupDirectory := FormProjectInfo.EDITStartupDirectory.Text;
+    ProjectDataBase_.RunMaximized := FormProjectInfo.CHKRunMaximized.Checked;
   end ;
 end ;
 
@@ -3072,9 +3072,9 @@ begin
       'The application has probably been recompiled. '+
       'You must load your project again.');
 
-  Process.RunParameters := ProjectInfo.RunParameters;
-  Process.StartupDirectory := ProjectInfo.StartupDirectory;
-  Process.RunMaximized := ProjectInfo.RunMaximized;
+  Process.RunParameters := ProjectDataBase_.RunParameters;
+  Process.StartupDirectory := ProjectDataBase_.StartupDirectory;
+  Process.RunMaximized := ProjectDataBase_.RunMaximized;
   Process.ExeName := ExeFileName;
 
   Process.Run;

@@ -122,6 +122,9 @@ interface
       Coverage : single;
       UnitsWithSource, RoutinesWithSource : integer;
       RelativePath : string;
+      StartupDirectory : string;
+      RunParameters : string;
+      RunMaximized : boolean;
 
       constructor Create;
       destructor Destroy; override;

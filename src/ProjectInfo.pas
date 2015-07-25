@@ -39,9 +39,9 @@ interface
       destructor Destroy; override;
       procedure LoadFromFile(const FileName : string);
       procedure SaveToFile(const FileName : string);
-      property StartupDirectory : string read FStartupDirectory write FStartupDirectory;
-      property RunParameters : string read FFRunParameters write FFRunParameters;
-      property RunMaximized : boolean read FRunMaximized write FRunMaximized;
+//      property StartupDirectory : string read FStartupDirectory write FStartupDirectory;
+//      property RunParameters : string read FFRunParameters write FFRunParameters;
+//      property RunMaximized : boolean read FRunMaximized write FRunMaximized;
       property BackGndUnits : TStringList read FBackGndUnits;
       property BackGndRoutines : TStringList read FBackGndRoutines;
     end;
