@@ -38,7 +38,12 @@ type
     Button2: TButton;
     Button3: TButton;
     EDITStartupDirectory: TEdit;
+    HostAppCfg: TGroupBox;
+    btnHostApplication: TButton;
+    edtHostApplication: TEdit;
+    dlgHostApplication: TOpenDialog;
     procedure BTNBrowseClick(Sender: TObject);
+    procedure btnHostApplicationClick(Sender: TObject);
   private
     
   public
@@ -60,7 +65,12 @@ procedure TFormProjectInfo.BTNBrowseClick(Sender: TObject);
 begin
   if SelectDirectory('Startup Directory', '', Folder) then
     EDITStartupDirectory.Text := Folder;
+end;
 
+procedure TFormProjectInfo.btnHostApplicationClick(Sender: TObject);
+begin
+  if dlgHostApplication.Execute then
+    edtHostApplication.Text := dlgHostApplication.FileName
 end;
 
 end.
