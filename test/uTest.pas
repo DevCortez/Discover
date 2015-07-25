@@ -19,6 +19,7 @@ type
     procedure SaveLoadStress;
     procedure ClearStateStress;
     procedure ModalTest;
+    procedure CoverageTest;
   end;
 
 implementation
@@ -40,9 +41,32 @@ begin
       FormMain.MMProjectClearStateClick(nil);
       CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
       CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
-      CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
+      CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Coverage count');
       FormMain.LoadState(ExpandFileName('Teste.dps'));
     end;
+end;
+
+procedure BasicTests.CoverageTest;
+var
+  i : integer;
+begin
+  FormMain.LoadProject(ExpandFileName('Dummy\Dummy.dpr'));
+  FormMain.MMApplicationRunClick(nil);
+
+  {
+    This is a tricky test since the program depends to be running to process messages
+    and do the actual coverage. The dummy test should also take no longer than 2
+    seconds, so it will be this way by default but may vary a lot in other
+    scenarios.
+  }
+  for i := 1 to 100 do
+    begin
+      Sleep(1);
+      Application.ProcessMessages();
+    end;
+
+  FormMain.MMApplicationTerminateClick(nil);
+  CheckEquals(100, ProjectDataBase_.TotalCoverage, 'Coverage percentage');
 end;
 
 procedure BasicTests.CreateProjectAbsolutePath;
@@ -50,7 +74,7 @@ begin
   FormMain.LoadProject(ExpandFileName('Dummy\Dummy.dpr'));
   CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
   CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
-  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
+  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Coverage count');
 end;
 
 procedure BasicTests.CreateProjectRelativePath;
@@ -58,13 +82,14 @@ begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
   CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
   CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
-  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');  
+  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Coverage count');
 end;
 
 procedure BasicTests.ModalTest;
 begin
   FormMain.MMProjectClearStateClick(nil);
-  while FormMain.Visible do Application.ProcessMessages();
+  // Only when necessary interaction
+  // while FormMain.Visible do Application.ProcessMessages();
 end;
 
 procedure BasicTests.SaveLoadStress;
@@ -79,7 +104,7 @@ begin
       FormMain.LoadState(ExpandFileName('Teste.dps'));
       CheckEquals(ProjectDataBase_.Units.Count, 59, 'Unit count');
       CheckEquals(ProjectDataBase_.Routines.Count, 2873, 'Routine count');
-      CheckEquals(ProjectDataBase_.CoveragePoints.Count, 14, 'Unit count');
+      CheckEquals(ProjectDataBase_.CoveragePoints.Count, 14, 'Coverage count');
     end;
 end;
 

@@ -46,6 +46,7 @@ type
     stWaitForProcessRunning, stWaitForProcessReadyForPlaying);
 
   TFormMain = class(TForm)
+  published
     MainMenu: TMainMenu;
     MMProject: TMenuItem;
     MMProjectNew: TMenuItem;
@@ -108,6 +109,8 @@ type
     MMProjectClearState: TMenuItem;
     PBLegend: TPaintBox;
     TIMERResize: TTimer;
+
+
     procedure MMProjectNewClick(Sender: TObject);
     procedure PBOverViewPaint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -174,7 +177,6 @@ type
     procedure PBLegendPaint(Sender: TObject);
     procedure TIMERResizeTimer(Sender: TObject);
   private
-    
     SquaresPerLine : integer;
     CurrentUnit : TUnit;
     CurrentRoutine : TRoutine;
@@ -193,9 +195,12 @@ type
     CaptureBitmapStream : TMemoryStream;
     InitialScreenDone : boolean;
     ProjectInfo : TProjectInfo;
-    StateFileName, InfoFileName, ExeFileName : string;
+    StateFileName, InfoFileName : string;
     Resizing : boolean;
+    function ReadExeFileName: string;
+    procedure WriteExeFileName(const Value: string);
 
+    property ExeFileName : string read ReadExeFileName write WriteExeFileName;
     procedure FillLBRoutines;
     procedure FillLBUnits;
     procedure FillSummary;
@@ -387,7 +392,6 @@ begin
     // Load the project
     LoadProject(CommandLineParams_.FileName);
 
-    ExeFileName := ProjectDataBase_.ExecutableFileName;
     StateFileName := ChangeFileExt(ProjectDataBase_.ExecutableFileName,ProjectStateExtension);
     InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
@@ -408,13 +412,11 @@ begin
 
     StateFileName := CommandLineParams_.FileName;
     InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
-    ExeFileName := ChangeFileExt(StateFileName, ExecutableExtension);;
 
     // Check if an information file exists and if yes take its infos
     LoadInformationFile;
 
     RunApplication;
-
   end ;
 end ;
 
@@ -743,6 +745,11 @@ end ;
 (***********************************)
 (* TFormMain.GotoNextCoveragePoint *)
 (***********************************)
+
+function TFormMain.ReadExeFileName: string;
+begin
+  result := ProjectDataBase_.ExecutableFileName
+end;
 
 procedure TFormMain.GotoNextCoveragePoint(RedGreen: boolean);
   var
@@ -1858,7 +1865,6 @@ begin
       LoadState(FileName);
       StateFileName := FileName;
       InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);;
-      ExeFileName := ProjectDataBase_.ExecutableFileName;
       LoadInformationFile;
     end ;
   finally
@@ -2490,14 +2496,7 @@ end ;
 
 procedure TFormMain.MMApplicationTerminateClick(Sender: TObject);
 begin
-  if MessageDlg('Terminate is used to unconditionally cause the application' + #$D + #$A +
-                'process to exit. Use it only in extreme circumstances. The' + #$D + #$A +
-                'state of global data maintained by dynamic-link libraries' + #$D + #$A +
-                'may be compromised if Terminate is used rather than closing' + #$D + #$A +
-                'the application.' + #$D + #$A +
-                'Do you want to terminate the application ?'
-                , mtWarning, [mbYes, mbNo], 0) = mrYes then
-    Process.Reset;
+  Process.Reset;
 end ;
 
 
@@ -2664,7 +2663,6 @@ begin
       LoadedStatesStr := '';
       LoadProject(OpenDelphiProjectDialog.FileName);
 
-      ExeFileName := ProjectDataBase_.ExecutableFileName;
       StateFileName := ChangeFileExt(ProjectDataBase_.ExecutableFileName,ProjectStateExtension);
       InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
@@ -2702,7 +2700,6 @@ begin
 
       StateFileName := OpenStateDialog.FileName;
       InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);;
-      ExeFileName := ProjectDataBase_.ExecutableFileName;
       LoadInformationFile;
     end ;
   end ;
@@ -3168,6 +3165,11 @@ end ;
 (**********************************)
 (* TFormMain.SetStateMachineState *)
 (**********************************)
+
+procedure TFormMain.WriteExeFileName(const Value: string);
+begin
+  ProjectDataBase_.ExecutableFileName := Value
+end;
 
 procedure TFormMain.SetStateMachineState;
 begin
