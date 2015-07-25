@@ -32,9 +32,9 @@ type
     Image1: TImage;
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    
   public
-    { Public declarations }
+    
   end;
   
 const
@@ -77,9 +77,9 @@ begin
     Pen.Color := clLime;
     Brush.Style := bsClear;
     RoundRect(0,0,ClientWidth-1, ClientHeight-1,Z,Z)
-  end {with};
+  end ;
 
-end {TFormSplash.FormCreate};
+end ;
 
 
 end.

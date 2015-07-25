@@ -25,7 +25,7 @@ program Discover;
 
 uses
   Forms,
-  Main in 'Main.pas' {FormMain},
+  Main in 'Main.pas' ,
   CodeParser in 'CodeParser.pas',
   ObjectPascalTokenizer in 'ObjectPascalTokenizer.pas',
   DataBase in 'DataBase.pas',
@@ -35,13 +35,13 @@ uses
   Process in 'Process.pas',
   Version in 'Version.pas',
   PersistentForm in 'PersistentForm.pas',
-  F_Options in 'F_Options.pas' {FormOptions},
-  F_Splash in 'F_Splash.pas' {FormSplash},
+  F_Options in 'F_Options.pas' ,
+  F_Splash in 'F_Splash.pas' ,
   Globals in 'Globals.pas',
-  F_Edit in 'F_Edit.pas' {FormEdit},
-  F_Export in 'F_Export.pas' {FormExport},
+  F_Edit in 'F_Edit.pas' ,
+  F_Export in 'F_Export.pas' ,
   ProjectInfo in 'ProjectInfo.pas',
-  F_ProjectInfo in 'F_ProjectInfo.pas' {FormProjectInfo},
+  F_ProjectInfo in 'F_ProjectInfo.pas' ,
   CommandLineHandling in 'CommandLineHandling.pas';
 
 {$R *.RES}
@@ -65,7 +65,7 @@ begin
         try
           FormMain.LoadLastSavedState;
         except
-        end {try};
+        end ;
       FormMain.AdjustStayOnTop;
       FormSplash_.Close;
     finally

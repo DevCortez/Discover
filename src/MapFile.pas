@@ -61,8 +61,8 @@ implementation
         else
           raise Exception.Create('Hex8 : Illegal character');
         inc(Index);
-      end {for};
-    end {Hex8};
+      end ;
+    end ;
 
     function Identifier(const s : string; Index : integer) : string;
       var
@@ -84,7 +84,7 @@ implementation
       while not Eof(MapFile) do begin
         Readln(MapFile, s);
         if Pos('Detailed map of segments',s) > 0 then break;
-      end {while};
+      end ;
       if not Eof(MapFile) then begin
         Readln(MapFile);
         Readln(MapFile, s);
@@ -95,9 +95,9 @@ implementation
           U.Name := Identifier(s, 60);
           ProjectDataBase_.Units.Insert(U);
           Readln(MapFile, s);
-        end {while};
+        end ;
       end ;
-    end {DetailedMapOfSegments};
+    end ;
 
     procedure PublicsByValue;
       var
@@ -111,7 +111,7 @@ implementation
         Readln(MapFile, s);
         if Pos('Publics by Value',s) > 0 then
           break;
-      end {while};
+      end ;
       if not Eof(MapFile) then begin
         Readln(MapFile);
         Readln(MapFile);
@@ -143,7 +143,7 @@ implementation
                 LastU := U;
               end ;
 *)
-            end {while};
+            end ;
             RoutineName := Identifier(s, 22);
 
             // BDS and D2007
@@ -170,9 +170,9 @@ implementation
             end ;
           end ;
           ReadLn(MapFile, s);
-        end {while};
+        end ;
       end ;
-    end {PublicsByValue};
+    end ;
 
     procedure LineNumbers;
       var
@@ -201,7 +201,7 @@ implementation
                 LastRoutineAddress := $7fffffff;
             end else
               CurrentRoutine := nil;
-          end {NextRoutine};
+          end ;
 
         procedure EnterPoint(LineNumber, Address : integer);
           var
@@ -251,7 +251,7 @@ implementation
             LastCPAddress := Address;
             LastCPLineNumber := LineNumber;
           end ;
-        end {EnterPoint};
+        end ;
 
         procedure ProcessLine;
           var
@@ -261,7 +261,7 @@ implementation
           begin
             while s[n] = ' ' do
               inc(n);
-          end {SkipBlanks};
+          end ;
 
           function Int : integer;
           begin
@@ -269,8 +269,8 @@ implementation
             while (s[n] >= '0') and (s[n] <= '9') do begin
               Result := Result * 10 + ord(s[n]) - ord('0');
               inc(n);
-            end {while};
-          end {Int};
+            end ;
+          end ;
 
         begin
           n := 1;
@@ -283,8 +283,8 @@ implementation
             if (Address > LastCPAddress) and
               (LineNumber > LastCPLineNumber) then
               EnterPoint(LineNumber, Address);
-          end {while};
-        end {ProcessLine};
+          end ;
+        end ;
 
       begin
         if LogFileEnabled_ then
@@ -305,10 +305,10 @@ implementation
           while (not Eof(MapFile)) and (Length(s) > 0) do begin
             ProcessLine;
             Readln(MapFile,s);
-          end {while};
+          end ;
         end else
           ReadLn(MapFile, s);
-      end {ProcessBlock};
+      end ;
 
       procedure GotoLineNumbers;
       begin
@@ -316,7 +316,7 @@ implementation
         // the segment ''.itext'' which are new for D2006 and D2007
         while not Eof(MapFile) and ((Pos('Line numbers for',s) = 0) or (Pos('.text',s) = 0)) do
           Readln(MapFile, s);
-      end {GotoLineNumbers};
+      end ;
 
     begin
       GotoLineNumbers;
@@ -326,12 +326,12 @@ implementation
         while not Eof(MapFile) do begin
           ProcessBlock;
           GotoLineNumbers;
-        end {while};
+        end ;
       end else
         raise Exception.Create('A DETAILED map file is required.');
-    end {LineNumbers};
+    end ;
 
-   begin {HandleMapFile}
+   begin 
      Assign(MapFile, FileName);
      Reset(MapFile);
      try
@@ -340,8 +340,8 @@ implementation
        LineNumbers;
      finally
        CloseFile(MapFile);
-     end {try};
-   end {HandleMapFile};
+     end ;
+   end ;
 
 
 {~b}

@@ -96,7 +96,7 @@ begin
   Process := aProcess;
   FreeOnTerminate := true;
   inherited Create(false);
-end {TDebugThread.Create};
+end ;
 
 
 (************************)
@@ -135,14 +135,14 @@ procedure TDebugThread.Execute;
             // EFlags := EFlags or $100;  // do not single step, it takes too long!
             SetThreadContext(CurrentThreadHandle, Context);
             SendMessage(Application.Handle, XM_COVEREDPOINT, 0, integer(CurrentCoveragePoint));
-          end {with};
+          end ;
         end else
           inc(LogInfos_.R.NotAccessibleContexts)
       end else
         inc(LogInfos_.R.NotFoundThreads);
     end else
       inc(LogInfos_.R.NotFoundPoint);
-  end {HandleBreakPoint};
+  end ;
 
   procedure HandleDebugString(DebugInfo:TOutputDebugStringInfo);
     var
@@ -158,7 +158,7 @@ procedure TDebugThread.Execute;
       ReadProcessMemory(ProcessHandle, DebugInfo.lpDebugStringData, @s,
         DebugInfo.nDebugStringLength, Dmy);
     SendMessage(Application.Handle, XM_DEBUGSTRING, 0, integer(@s));
-  end {HandleDebugString};
+  end ;
 
 (*
   procedure HandleSingleStep(Address : pointer; ThreadId : THandle);
@@ -175,13 +175,13 @@ procedure TDebugThread.Execute;
       if GetThreadContext(CurrentThreadHandle, Context) then begin
         with Context do begin
           EFlags := EFlags and not($100);
-        end {with};
+        end ;
         SetThreadContext(CurrentThreadHandle, Context);
       end ;
     end ;
     if not CurrentCoveragePoint.IsBreakPointSet then
      SetOneBreakPoint(ProcessHandle, CurrentCoveragePoint);
-  end {HandleSingleStep};
+  end ;
 *)
 
   function HandleDebugEvent : boolean;
@@ -217,7 +217,7 @@ procedure TDebugThread.Execute;
         else
           // Handle other exceptions.
           ContinueStatus := DBG_EXCEPTION_NOT_HANDLED;
-        end {case};
+        end ;
       end;
 
       CREATE_THREAD_DEBUG_EVENT: begin
@@ -229,7 +229,7 @@ procedure TDebugThread.Execute;
         with ThreadInfo do begin
           Id := DebugEvent.dwThreadId;
           Handle := DebugEvent.CreateThread.hThread;
-        end {with};
+        end ;
         ThreadInfos.Insert(ThreadInfo);
       end;
 
@@ -245,7 +245,7 @@ procedure TDebugThread.Execute;
         with ThreadInfo do begin
           Id := DebugEvent.dwThreadId;
           Handle := DebugEvent.CreateProcessInfo.hThread;
-        end {with};
+        end ;
         ThreadInfos.Insert(ThreadInfo);
         ProcessHandle := DebugEvent.CreateProcessInfo.hProcess;
         Process.Handle := ProcessHandle;
@@ -268,14 +268,14 @@ procedure TDebugThread.Execute;
         HandleDebugString(DebugEvent.DebugString);
       end;
 
-    end {case};
+    end ;
 
   // Resume executing the thread that reported the debugging event.
 
   ContinueDebugEvent(DebugEvent.dwProcessId,
       DebugEvent.dwThreadId, ContinueStatus);
 
-  end {HandleDebugEvent};
+  end ;
 
 
   function CreateProcess : boolean;
@@ -303,9 +303,9 @@ procedure TDebugThread.Execute;
       StartupDir := nil;
 
     Result := Windows.CreateProcess(PChar(Process.ExeName),  RunParams,
-      nil, nil, false, {DEBUG_PROCESS or }DEBUG_ONLY_THIS_PROCESS, nil,
+      nil, nil, false, DEBUG_ONLY_THIS_PROCESS, nil,
       StartupDir, StartupInfo, ProcessInformation);
-  end {CreateProcess};
+  end ;
 
   var
     Done : boolean;
@@ -342,8 +342,8 @@ begin
     Process.FRunning := false;
     Process.FCreated := false;
     SendMessage(Application.Handle, XM_TERMINATED, 0, 0);
-  end {try};
-end {TDebugThread.Execute};
+  end ;
+end ;
 
 
 (*****************************)
@@ -358,7 +358,7 @@ begin
       CoveragePoint := CoveragePoints.At(Index);
     end else
       Index := -1;
-end {TProcess.GetCoveragePoint};
+end ;
 
 
 (******************)
@@ -368,7 +368,7 @@ end {TProcess.GetCoveragePoint};
 procedure TProcess.Reset;
 begin
   TerminateProcess(Handle,0);
-end {TProcess.Reset};
+end ;
 
 
 (****************)
@@ -380,7 +380,7 @@ procedure TProcess.Run;
     DebugThread : TDebugThread;
 begin
   DebugThread := TDebugThread.Create(Self);
-end {TProcess.Run};
+end ;
 
 
 (**********************************)
@@ -409,8 +409,8 @@ begin
         ProjectDataBase_.ImageBase+ProgrammOffset_);
     end ;
     inc(CIdx);
-  end {while};
-end {TProcess.SetInitialBreakPoints};
+  end ;
+end ;
 
 
 (*****************************)
@@ -436,9 +436,9 @@ begin
         inc(LogInfos_.R.UnSettedBreakPoints);
       end else
         aPoint.IsBreakPointSet := true;
-    end {with};
+    end ;
   end ;
-end {TProcess.SetOneBreakPoint};
+end ;
 
 
 (************************)
@@ -453,7 +453,7 @@ begin
     Result := 1
   else
     Result := 0;
-end {TThreadInfos.Compare};
+end ;
 
 
 (**********************)
@@ -463,7 +463,7 @@ end {TThreadInfos.Compare};
 function TThreadInfos.KeyOf;
 begin
   Result := pointer(TThreadInfo(Item).Id);
-end {TThreadInfos.KeyOf};
+end ;
 
 
 {~b}

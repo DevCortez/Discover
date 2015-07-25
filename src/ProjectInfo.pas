@@ -66,7 +66,7 @@ begin
   FBackGndUnits := TStringList.Create;
   FBackGndRoutines := TStringList.Create;
   inherited;
-end {TProjectInfo.Create};
+end ;
 
 
 (************************)
@@ -78,7 +78,7 @@ begin
   FBackGndRoutines.Free;
   FBackGndUnits.Free;
   inherited;
-end {TProjectInfo.Destroy};
+end ;
 
 
 (*****************************)
@@ -98,8 +98,8 @@ begin
     LoadStringList(IniFile, FBackGndRoutines, 'BkndR');
   finally
     IniFile.Free;
-  end {try};
-end {TProjectInfo.LoadFromFile};
+  end ;
+end ;
 
 
 (*******************************)
@@ -121,11 +121,11 @@ begin
       s := F.ReadString(Section, IntToStr(n), '');
       T.CommaText := s;
       L.AddStrings(T);
-    end {for};
+    end ;
   finally
     T.Free;
-  end {try};
-end {TProjectInfo.LoadStringList};
+  end ;
+end ;
 
 
 (*******************************)
@@ -149,13 +149,13 @@ begin
       F.WriteString(Section, IntToStr(n), s);
       s := '';
     end ;
-  end {for};
+  end ;
   if s <> '' then begin
     inc(n);
     F.WriteString(Section, IntToStr(n), s);
   end ;
   F.WriteInteger(Section, '0', n);
-end {TProjectInfo.SaveStringList};
+end ;
 
 
 (***************************)
@@ -175,8 +175,8 @@ begin
     SaveStringList(IniFile, FBackGndRoutines, 'BkndR');
   finally
     IniFile.Free;
-  end {try};
-end {TProjectInfo.SaveToFile};
+  end ;
+end ;
 
 
 {~b}

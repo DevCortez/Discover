@@ -80,7 +80,7 @@ interface
       RunMinimized : boolean;
       Merge : boolean;
       FileName : string;
-    end {record};
+    end ;
 
 
 implementation
@@ -93,7 +93,7 @@ implementation
 
 procedure InitUnit;
   begin
-    {Défaut: répertoire d'où le programme à été démarré}
+    
     GetModuleFileName(hInstance,ApplicationDir_,SizeOf(ApplicationDir_));
     StrPCopy(ApplicationDir_,ExtractFilePath(StrPas(ApplicationDir_)));
     PrivateProfileFileName_ := StrPas(ApplicationDir_)+ApplicationName+'.cfg';
@@ -111,12 +111,12 @@ procedure InitUnit;
           VersionStr]));
       except
         LogFileEnabled_ := false;
-      end {try};
+      end ;
     end ;
     FillChar(LogInfos_, SizeOf(LogInfos_), 0);
     FillChar(CommandLineParams_, SizeOf(CommandLineParams_), 0);
     CommandLineActionEnabled_ := false;
-end {InitUnit};
+end ;
 {$R-}
 {$O-}
 initialization

@@ -40,9 +40,9 @@ type
     EDITStartupDirectory: TEdit;
     procedure BTNBrowseClick(Sender: TObject);
   private
-    { Private declarations }
+    
   public
-    { Public declarations }
+    
   end;
 
 var

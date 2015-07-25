@@ -38,7 +38,7 @@ implementation
 procedure Fatal(ErrorNr : integer);
 begin
   raise Exception.Create('Fatal '+IntToStr(ErrorNr));
-end {Fatal};
+end ;
 
 
 (*******************)
@@ -58,11 +58,11 @@ begin
           Result := t;
           exit;
         end ;
-      end {for};
+      end ;
       Result := '';
   end else
     Result := ExpandFileName(FileName)
-end {GetFullFilePath};
+end ;
 
 
 {~b}

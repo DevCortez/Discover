@@ -30,7 +30,7 @@ interface
       toEqual, toAt, toEndOfBuffer, toBraOpen, toBraClose, toDeref, toStringConstant,
       toPoint, toRange, toSlash, toAssignement, toLessEqual, toLess, toGreaterEqual,
       toGreater, toNumber, toIdentifier, toSegOffset,
-       {ReserwedWords}
+       
        toAnd, toArray, toAs, toAsm, toAssembler,
        toBegin,
        toCase, tocDecl, toClass, toConst, toConstructor,
@@ -42,7 +42,7 @@ interface
        toLabel, toLibrary,
        toMod,
        toNil, toNot,
-       toObject, toOf, toOn, toOr, {toOut,}
+       toObject, toOf, toOn, toOr, 
        toPacked, toPascal, toProcedure, toProgram, toProperty,
        toRaise, toRecord, toRegister, toRepeat, toResourcestring,
        toSafeCall, toSet, toShl, toShr, toStdCall, toString,
@@ -135,33 +135,33 @@ implementation
  const
    TokenStrings : array [Low(TToken)..High(TToken)] of string =
    (
-     {toNone} '',
-     {toParOpen} '"("',
-     {toParClose} '")"',
-     {toMult} '"*"',
-     {toPlus} '"+"',
-     {toComma} '","',
-     {toMinus} '"-"',
-     {toColon} '":"',
-     {toSemiColon} '";"',
-     {toEqual} '"="',
-     {toAt} '"@"',
-     {toEndOfBuffer} 'EndofBuffer',
-     {toBraOpen} '"["',
-     {toBraClose} '"]"',
-     {toDeref} '"^"',
-     {toStringConstant} 'StringConstant',
-     {toPoint} '"."',
-     {toRange} '".."',
-     {toSlash} '"/"',
-     {toAssignement} '":="',
-     {toLessEqual} '"<="',
-     {toLess} '"<"',
-     {toGreaterEqual} '">="',
-     {toGreater} '">"',
-     {toNumber} 'Number',
-     {toIdentifier} 'Identifier',
-     {toSegOffset} 'SegOffset',
+      '',
+      '"("',
+      '")"',
+      '"*"',
+      '"+"',
+      '","',
+      '"-"',
+      '":"',
+      '";"',
+      '"="',
+      '"@"',
+      'EndofBuffer',
+      '"["',
+      '"]"',
+      '"^"',
+      'StringConstant',
+      '"."',
+      '".."',
+      '"/"',
+      '":="',
+      '"<="',
+      '"<"',
+      '">="',
+      '">"',
+      'Number',
+      'Identifier',
+      'SegOffset',
      'and', 'array', 'as', 'asm', 'assembler',
      'begin',
      'case', 'cdecl', 'class', 'const', 'constructor',
@@ -173,7 +173,7 @@ implementation
      'label', 'library',
      'mod',
      'nil', 'not',
-     'object', 'of', 'on', 'or', {'out',}
+     'object', 'of', 'on', 'or', 
      'packed', 'pascal', 'procedure', 'program', 'property',
      'raise', 'record', 'register', 'repeat',
      'safecall', 'set', 'shl', 'shr', 'stdcall', 'string', 'resourcestring',
@@ -210,7 +210,7 @@ var
 function TokenString(aToken : TToken) : string;
 begin
   Result := TokenStrings[aToken]
-end {TokenString};
+end ;
 
 
 (****************************************)
@@ -232,7 +232,7 @@ begin
     FToken := TToken(ord(FirstReservedWord) + i)
   else
     FToken := toIdentifier;
-end {TObjectPascalTokenizer.AsmIdentifier};
+end ;
 
 
 (***************************************)
@@ -242,7 +242,7 @@ end {TObjectPascalTokenizer.AsmIdentifier};
 function TObjectPascalTokenizer.BufferLength;
 begin
   Result := Length(Buffer);
-end {TObjectPascalTokenizer.BufferLength};
+end ;
 
 
 (******************************************)
@@ -264,7 +264,7 @@ begin
       Done := true;
     until Done;
     FToken := toStringConstant;
-end {TObjectPascalTokenizer.CharacterString};
+end ;
 
 
 (********************************)
@@ -279,7 +279,7 @@ begin
     inc(Index);
   end else
     FToken := toColon;
-end {TObjectPascalTokenizer.Colon};
+end ;
 
 
 (***********************************)
@@ -343,7 +343,7 @@ procedure TObjectPascalTokenizer.CurlOpen;
               ConditionnalStack[ConditionnalStackPtr] := cosFalse;
             cosFalse:
               ConditionnalStack[ConditionnalStackPtr] := cosTrue;
-          end {case};
+          end ;
 
         dirENDIF:
           if ConditionnalStackPtr > 0 then
@@ -367,11 +367,11 @@ procedure TObjectPascalTokenizer.CurlOpen;
               Included.OnIncludeDirective := OnIncludeDirective;
             end ;
           end ;
-      end {case};
+      end ;
       ToCurlClose;
     end else
       ToCurlClose
-  end {Directive};
+  end ;
 
 begin
   Done := false;
@@ -382,7 +382,7 @@ begin
   end else
     ToCurlClose;
   FToken := toNone;
-end {TObjectPascalTokenizer.CurlOpen};
+end ;
 
 
 (****************************************)
@@ -392,7 +392,7 @@ end {TObjectPascalTokenizer.CurlOpen};
 procedure TObjectPascalTokenizer.DigitSequence;
 begin
   repeat inc(Index) until (Buffer[Index] < '0') or (Buffer[Index] > '9');
-end {TObjectPascalTokenizer.DigitSequence};
+end ;
 
 
 (*************************************)
@@ -410,7 +410,7 @@ begin
     aContext.Index := Index;
     aContext.TokenIndex := FTokenIndex;
   end ;
-end {TObjectPascalTokenizer.GetContext};
+end ;
 
 
 (**************************************)
@@ -423,7 +423,7 @@ begin
     Result := Included.Filename
   else
     Result := FFileName;
-end {TObjectPascalTokenizer.GetFileName};
+end ;
 
 
 (****************************************)
@@ -436,7 +436,7 @@ begin
     Result := Included.GetIdentifier
   else
     Result := Copy(Buffer, FTokenIndex, Index-FTokenIndex);
-end {TObjectPascalTokenizer.GetIdentifier};
+end ;
 
 
 (****************************************)
@@ -449,7 +449,7 @@ begin
     Result := Included.LineNumber
   else
     Result := FLineNumber;
-end {TObjectPascalTokenizer.GetLineNumber};
+end ;
 
 
 (******************************************)
@@ -462,7 +462,7 @@ begin
     Result := Included.OffsetInLine
   else
     Result := Index - FLineIndex;
-end {TObjectPascalTokenizer.GetOffsetInLine};
+end ;
 
 
 (***********************************)
@@ -475,7 +475,7 @@ begin
     Result := Included.Token
   else
     Result := FToken;
-end {TObjectPascalTokenizer.GetToken};
+end ;
 
 
 (*********************************************)
@@ -496,11 +496,11 @@ begin
         FLineIndex := Index;
       end ;
       inc(StartIndex);
-    end {while};
+    end ;
     Result := true;
   end else
     Result := false;
-end {TObjectPascalTokenizer.GotoLineContaining};
+end ;
 
 
 (**************************************)
@@ -515,7 +515,7 @@ begin
     inc(Index);
   end else
     FToken := toGreater;
-end {TObjectPascalTokenizer.GreaterThan};
+end ;
 
 
 (*******************************************)
@@ -537,8 +537,8 @@ begin
     end ;
     inc(Index);
     c := UpCase(Buffer[Index]);
-  end {while};
-end {TObjectPascalTokenizer.HexDigitSequence};
+  end ;
+end ;
 
 
 (*************************************)
@@ -560,7 +560,7 @@ begin
     FToken := TToken(ord(FirstReservedWord) + i)
   else
     FToken := toIdentifier;
-end {TObjectPascalTokenizer.Identifier};
+end ;
 
 
 (**********************************)
@@ -570,7 +570,7 @@ end {TObjectPascalTokenizer.Identifier};
 procedure TObjectPascalTokenizer.Illegal;
 begin
   raise Exception.Create('Illegal character');
-end {TObjectPascalTokenizer.Illegal};
+end ;
 
 
 (***********************************)
@@ -585,7 +585,7 @@ begin
     inc(Index);
   end else
     FToken := toLess;
-end {TObjectPascalTokenizer.LessThan};
+end ;
 
 
 (**********************************)
@@ -597,7 +597,7 @@ begin
   inc(Index);
   inc(FLineNumber);
   FLineIndex := Index;
-end {TObjectPascalTokenizer.NewLine};
+end ;
 
 
 (*******************************)
@@ -768,10 +768,10 @@ begin
 
         '{':
           CurlOpen;
-        else {case}
+        else 
           // ignore
           inc(Index);
-      end {case};
+      end ;
     end else begin
       Included.Next;
       FToken := Included.Token;
@@ -782,7 +782,7 @@ begin
       end ;
     end ;
   until (FToken <> toNone) and (ConditionnalStack[ConditionnalStackPtr] = cosTrue);
-end {TObjectPascalTokenizer.Next};
+end ;
 
 
 (**********************************)
@@ -803,7 +803,7 @@ procedure TObjectPascalTokenizer.ParOpen;
       else
         inc(Index);
     until Done or (Buffer [Index] = #0);
-  end {Comment};
+  end ;
 
 begin
   inc(Index);
@@ -812,7 +812,7 @@ begin
     Comment
   end else
     FToken := toParOpen;
-end {TObjectPascalTokenizer.ParOpen};
+end ;
 
 
 (********************************)
@@ -827,7 +827,7 @@ begin
     FToken := toRange
   end else
     FToken := toPoint;
-end {TObjectPascalTokenizer.Point};
+end ;
 
 
 (*********************************************)
@@ -841,7 +841,7 @@ function TObjectPascalTokenizer.PreviousIdentifier : string;
     repeat
       dec(Index);
     until (Index < 1) or ((Buffer[Index] <> TAB) and (Buffer[Index] <> ' '));
-  end {PWhiteSpace};
+  end ;
 
   procedure PComment;
   begin
@@ -881,9 +881,9 @@ begin
 
       else
         dec(Index);
-    end {case};
+    end ;
   until (index < 1) or (Token in [toIdentifier]);
-end {TObjectPascalTokenizer.PreviousIdentifier};
+end ;
 
 
 (***************************************)
@@ -906,7 +906,7 @@ begin
     end else
       Inc(Index);
   until Done or (Buffer[Index] = #0);
-end {TObjectPascalTokenizer.QuotedString};
+end ;
 
 
 (*************************************)
@@ -924,7 +924,7 @@ begin
     Index := aContext.Index;
     FTokenIndex := aContext.TokenIndex;
   end ;
-end {TObjectPascalTokenizer.SetContext};
+end ;
 
 
 (**********************************)
@@ -949,8 +949,8 @@ begin
     ConditionnalStack[ConditionnalStackPtr] := cosTrue;
   finally
     S.Free;
-  end {try};
-end {TObjectPascalTokenizer.SetFile};
+  end ;
+end ;
 
 
 (*************************************)
@@ -971,8 +971,8 @@ begin
         end ;
       end else
         inc(Index);
-    end {while};
-end {TObjectPascalTokenizer.SkipToLine};
+    end ;
+end ;
 
 
 (***************************************)
@@ -982,7 +982,7 @@ end {TObjectPascalTokenizer.SkipToLine};
 procedure TObjectPascalTokenizer.SkipToOffset;
 begin
   inc(Index, Offset-OffsetInLine);
-end {TObjectPascalTokenizer.SkipToOffset};
+end ;
 
 
 (********************************)
@@ -996,7 +996,7 @@ begin
     repeat inc(Index) until (Buffer[Index] = CR) or (Buffer[Index] = #0)
   else
     FToken := toSlash
-end {TObjectPascalTokenizer.Slash};
+end ;
 
 
 (******************************************)
@@ -1011,7 +1011,7 @@ begin
   end else
     DigitSequence;
   FToken := toNumber;
-end {TObjectPascalTokenizer.UnsignedInteger};
+end ;
 
 
 (*****************************************)
@@ -1028,7 +1028,7 @@ procedure TObjectPascalTokenizer.UnsignedNumber;
         inc(Index);
       DigitSequence;
     end ;
-  end {ScaleFactor};
+  end ;
 
 begin
   DigitSequence;
@@ -1039,7 +1039,7 @@ begin
   end else
     ScaleFactor;
   FToken := toNumber;
-end {TObjectPascalTokenizer.UnsignedNumber};
+end ;
 
 
 (*************************************)
@@ -1049,7 +1049,7 @@ end {TObjectPascalTokenizer.UnsignedNumber};
 procedure TObjectPascalTokenizer.WhiteSpace;
 begin
   repeat inc(Index) until (Buffer [Index] <> ' ') and (Buffer[Index] <> TAB);
-end {TObjectPascalTokenizer.WhiteSpace};
+end ;
 
 
 {~b}

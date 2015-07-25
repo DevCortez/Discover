@@ -59,9 +59,9 @@ type
     procedure BTNRoutineDefaultClick(Sender: TObject);
     procedure BTNOkClick(Sender: TObject);
   private
-    { Private declarations }
+    
   public
-    { Public declarations }
+    
   end;
 
 var
@@ -86,7 +86,7 @@ begin
       EDITRoutineFileName.Text := ExportFileNameDialog.FileName
   end ;
 
-end {TFormExport.BTNBrowseClick};
+end ;
 
 
 (**************************)
@@ -101,7 +101,7 @@ begin
   if CHKExportRoutines.Checked and (EDITRoutineFileName.Text = '') then
     raise Exception.Create('No routine file name specified');
   ModalResult := mrOk;
-end {TFormExport.BTNOkClick};
+end ;
 
 
 (**************************************)
@@ -111,7 +111,7 @@ end {TFormExport.BTNOkClick};
 procedure TFormExport.BTNRoutineDefaultClick(Sender: TObject);
 begin
   EDITRoutineFormatString.Text := '%0:s;%1:s;%2:s;%3:s';
-end {TFormExport.BTNRoutineDefaultClick};
+end ;
 
 
 (***********************************)
@@ -121,7 +121,7 @@ end {TFormExport.BTNRoutineDefaultClick};
 procedure TFormExport.BTNUnitDefaultClick(Sender: TObject);
 begin
   EDITUnitFormatString.Text := '%0:s;%1:s;%2:s;%3:s;%4:s;%5:s;%6:s';
-end {TFormExport.BTNUnitDefaultClick};
+end ;
 
 
 (**************************)
@@ -135,7 +135,7 @@ begin
     BTNUnitDefaultClick(nil);
   if EDITRoutineFormatString.Text = '' then
     BTNRoutineDefaultClick(nil);
-end {TFormExport.FormCreate};
+end ;
 
 
 (************************)
@@ -145,7 +145,7 @@ end {TFormExport.FormCreate};
 procedure TFormExport.FormHide(Sender: TObject);
 begin
   WriteToProfile;
-end {TFormExport.FormHide};
+end ;
 
 
 {~b}

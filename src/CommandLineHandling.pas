@@ -35,7 +35,7 @@ function CheckCommandLineParams : boolean;
   begin
     MessageBox(HWnd(0), PChar(s), nil, MB_OK or MB_ICONERROR);
     Result := false;
-  end {Error};
+  end ;
 
   function StripQuotes(const s : string) : string;
   begin
@@ -43,7 +43,7 @@ function CheckCommandLineParams : boolean;
       Result := Copy(s, 2, length(s)-2)
     else
       Result := s;
-  end {StripQuotes};
+  end ;
 
   procedure HandleOptionWithFileName(const Param : string; var s : string);
   begin
@@ -56,7 +56,7 @@ function CheckCommandLineParams : boolean;
       if (s <> '') and not FileExists(s) then
         Error(Format('File "%s" does not exist.',[s]));
     end ;
-  end {HandleOptionWithFileName};
+  end ;
 
   var
     i : integer;
@@ -84,9 +84,9 @@ begin
         'r', 'R':
           CommandLineParams_.ReportWhenAppTerminated := true;
 
-      else {case}
+      else 
         Error(Format('Illegal command line switch %s', [Param]));
-      end {case};
+      end ;
     end else begin
       // Assme this is a file name
       Param := StripQuotes(Param);
@@ -101,7 +101,7 @@ begin
       end ;
     end ;
     inc(i);
-  end {while};
-end {CheckCommandLineParams};
+  end ;
+end ;
 
 end.

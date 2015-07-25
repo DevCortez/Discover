@@ -32,7 +32,7 @@ type
   THeaderTrackingInfo = record
     TrackingRect : TRect;
     TrackingRectDrawn : boolean;
-  end {record};
+  end ;
   PHeaderTrackingInfo = ^THeaderTrackingInfo;
 
   // The very first version of Discover was able to record and play journaling events...
@@ -174,7 +174,7 @@ type
     procedure PBLegendPaint(Sender: TObject);
     procedure TIMERResizeTimer(Sender: TObject);
   private
-    { Private declarations }
+    
     SquaresPerLine : integer;
     CurrentUnit : TUnit;
     CurrentRoutine : TRoutine;
@@ -238,7 +238,7 @@ type
     property StateMachineState : TStateMachineState read FStateMachineState
       write SetStatemachineState;
   public
-    { Public declarations }
+    
     procedure LoadProject(const DelphiProjectFileName : string);
     procedure LoadState(const StateFileName : string);
     procedure SaveStateFile(const FileName : string);
@@ -291,8 +291,8 @@ begin
     for i := 0 to Count - 2 do
       inc(w, Panels[i].Width);
     Panels[pred(Count)].Width := Width - w - GetSystemMetrics(SM_CXHSCROLL);
-  end {with};
-end {TFormmain.AdjustStatusbar};
+  end ;
+end ;
 
 
 (*****************************)
@@ -309,7 +309,7 @@ begin
     SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE or
       SWP_NOSIZE)
     // FormStyle := fsNormal;
-end {TFormMain.AdjustStayOnTop};
+end ;
 
 
 (****************************)
@@ -334,8 +334,8 @@ begin
         Result := true;
       mrCancel:
         Result := false;
-    end {case};
-end {TFormMain.AllowsNewState};
+    end ;
+end ;
 
 
 (***********************************)
@@ -351,8 +351,8 @@ begin
       t := ' ('+IntToStr(succ(LBFile.ItemIndex))+')';
       s := MinimizeName(CurrentSourceFileName, Canvas, Width-Canvas.TextWidth(t)) + t;
       Text := s;
-    end {with};
-end {TFormMain.DisplayStatusFilename};
+    end ;
+end ;
 
 
 (***************************************)
@@ -373,7 +373,7 @@ begin
     CommandLineParams_.Action := caNoAction; // Command line ignored
     Application.Restore;
   end ;
-end {TFormMain.DoCommandLineFinalActions};
+end ;
 
 
 (*****************************************)
@@ -416,7 +416,7 @@ begin
     RunApplication;
 
   end ;
-end {TFormMain.DoCommandLineInitialActions};
+end ;
 
 
 (********************************)
@@ -437,13 +437,13 @@ begin
     while (StripCount < Length(s)) and (TextWidth(t) > (R.Right - R.Left)) do begin
       t := Copy(s,1,Length(s)-StripCount)+'...';
       inc(StripCount);
-    end {while};
+    end ;
     if RightJustify then
       TextOut(R.Right-TextWidth(t), R.Top, t)
     else
       TextOut(R.Left, R.Top, t);
-  end {with};
-end {TFormmain.DrawStringInColumn};
+  end ;
+end ;
 
 
 (****************************)
@@ -461,9 +461,9 @@ begin
     for i := 0 to pred(Count) do begin
       R := At(i);
       LBRoutines.Items.AddObject('',R);
-    end {for};
+    end ;
   LBRoutines.Items.EndUpdate;
-end {TFormMain.FillLBRoutines};
+end ;
 
 
 (*************************)
@@ -481,9 +481,9 @@ begin
     for i := 0 to pred(Count) do begin
       U := At(i);
       LBUnits.Items.AddObject('',U);
-    end {for};
+    end ;
   LBUnits.Items.EndUpdate;
-end {TFormMain.FillLBUnits};
+end ;
 
 
 (***********************************)
@@ -504,9 +504,9 @@ begin
       U := ProjectDataBase_.Units.At(R.UnitIndex);
       if (R.FirstPointIndex >= 0) and U.IsSourceAvailable then
         SortedRoutines.Insert(R);
-    end {for};
+    end ;
   end ;
-end {TFormMain.FillSortedRoutineList};
+end ;
 
 
 (********************************)
@@ -527,9 +527,9 @@ begin
         U := At(i);
         if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
           SortedUnits.Insert(U);
-      end {for};
+      end ;
   end ;
-end {TFormMain.FillSortedUnitList};
+end ;
 
 
 (*************************)
@@ -571,8 +571,8 @@ begin
       MEMOSummary.Lines.Add('COVERAGE');
       MEMOSummary.Lines.Add(Format('  Source:     %5.1f',[TotalCoverage])+'%');
       MEMOSummary.Lines.Add(Format('  Foreground: %5.1f', [EnabledCoverage])+'%');
-    end {with};
-end {TFormMain.FillSummary};
+    end ;
+end ;
 
 
 (***********************)
@@ -592,12 +592,12 @@ begin
           I.WriteString(ProfileSectionStrings[psLastFiles],DefaultState_Key,StateFileName);
         finally
           I.Free;
-        end {try};
+        end ;
       end ;
     end ;
     SaveInformationFile;
   end ;
-end {TFormMain.FormClose};
+end ;
 
 
 (****************************)
@@ -611,7 +611,7 @@ begin
     CanClose := false
   end else
     CanClose := True;
-end {TFormMain.FormCloseQuery};
+end ;
 
 
 (************************)
@@ -667,19 +667,19 @@ begin
       if AppearanceArray[j] <> -MaxInt then
         Items[i].Width := AppearanceArray[j];
       inc(j);
-    end {for};
+    end ;
   with HCUnits.Sections do
     for i := 0 to pred(Count) do begin
       if AppearanceArray[j] <> -MaxInt then
         Items[i].Width := AppearanceArray[j];
       inc(j);
-    end {for};
+    end ;
   CaptureBitmapStream := TMemoryStream.Create;
   OpenLibDialog.Filter := '*'+LibraryExtension+'|*'+LibraryExtension;
   SaveLibDialog.Filter := '*'+LibraryExtension+'|*'+LibraryExtension;
   OpenStateDialog.Filter := '*'+ProjectStateExtension+'|*'+ProjectStateExtension;
   ProjectInfo := TProjectInfo.Create;
-end {TFormMain.FormCreate};
+end ;
 
 
 (*************************)
@@ -709,12 +709,12 @@ begin
     for i := 0 to pred(Count) do begin
       AppearanceArray[j] := Items[i].Width;
       inc(j);
-    end {for};
+    end ;
   with HCUnits.Sections do
     for i := 0 to pred(Count) do begin
       AppearanceArray[j] := Items[i].Width;
       inc(j);
-    end {for};
+    end ;
   Config.SetIntegerArray(Appearence_Key, AppearanceArray);
   CaptureBitmapStream.Free;
   ProjectInfo.Free;
@@ -724,7 +724,7 @@ begin
   Application.OnDeactivate := nil;
   Application.OnIdle := nil;
   Application.OnException := nil;
-end {TFormMain.FormDestroy};
+end ;
 
 
 (************************)
@@ -737,7 +737,7 @@ begin
   Resizing := true;
   if not TIMERResize.Enabled then
     TIMERResize.Enabled := true;
-end {TFormMain.FormResize};
+end ;
 
 
 (***********************************)
@@ -758,8 +758,8 @@ procedure TFormMain.GotoNextCoveragePoint(RedGreen: boolean);
         (((Result.Counter = 0) and (RedGreen) ) or ((Result.Counter <> 0) and (not RedGreen))) then
         break;
       inc(n);
-    end {while};
-  end {NextGreenCoveragePoint};
+    end ;
+  end ;
 
 begin
   n := LBFile.ItemIndex;
@@ -773,7 +773,7 @@ begin
       PositionRoutineViewToPoint(C);
     end ;
   end ;
-end {TFormMain.GotoNextCoveragePoint};
+end ;
 
 
 (********************************)
@@ -784,7 +784,7 @@ procedure TFormMain.HandleApplActivate;
 begin
   if (ProjectDataBase_ <> nil) and (ProjectDataBase_.ChangedCount <> LastChangedCount) then
     UpdateOnActivate;
-end {TFormMain.HandleApplActivate};
+end ;
 
 
 (**********************************)
@@ -798,7 +798,7 @@ begin
     DeltaCovered := 0;
     UpdateCoverageOnStatusBar;
   end ;
-end {TFormMain.HandleApplDeActivate};
+end ;
 
 
 (*****************************)
@@ -813,7 +813,7 @@ begin
    [IntToHex(Address,8), ErrorCode, SysErrorMessage(ErrorCode)]);;
   if LogFileEnabled_ then
     Writeln(LogFile_, s);
-end {TFormMain.HandleErrorCode};
+end ;
 
 
 (******************************)
@@ -824,7 +824,7 @@ procedure TFormMain.HandleExceptions(Sender: TObject; E: Exception);
 begin
   Application.Restore;
   MessageDlg(E.Message, mtError, [mbOk], 0); 
-end {TFormMain.HandleExceptions};
+end ;
 
 
 (***********************************)
@@ -842,7 +842,7 @@ begin
     CommandLineActionEnabled_ := false;
     DoCommandLineInitialActions;
   end ;
-end {TFormMain.HandleIdleApplication};
+end ;
 
 
 (********************************)
@@ -868,13 +868,13 @@ procedure TFormMain.HandleJournalEvent;
         StateMachineState := stIdle;
       end;
 
-      jeWMCancelJournal, {jeApplRestored,} jeCtrlBreak,
-        {jeProcessJustTerminated,} jeDebugString: begin
+      jeWMCancelJournal,  jeCtrlBreak,
+         jeDebugString: begin
         StateMachineState := stIdle;
         Application.Restore;
       end;
-    end {case}
-  end {DefaultHandling};
+    end 
+  end ;
 
   procedure StateIdle;
   begin
@@ -891,10 +891,10 @@ procedure TFormMain.HandleJournalEvent;
 
       jeRecord, jeRecordContinue: begin
       end;
-    else {case}
+    else 
       DefaultHandling;
-    end {case};
-  end {StateIdle};
+    end ;
+  end ;
 
   procedure StateWaitForProcessRunning;
   begin
@@ -916,7 +916,7 @@ procedure TFormMain.HandleJournalEvent;
 
     else
       DefaultHandling;
-    end {case};
+    end ;
   end;
 
   procedure StateWaitForProcessReadyForPlaying;
@@ -931,7 +931,7 @@ procedure TFormMain.HandleJournalEvent;
         // Just ignore it
     else
       DefaultHandling;
-    end {case};
+    end ;
   end;
 
 begin
@@ -946,8 +946,8 @@ begin
       StateIdle;
     stWaitForProcessRunning:
       StateWaitForProcessRunning;
-  end {case};
-end {TFormMain.HandleJournalEvent};
+  end ;
+end ;
 
 
 (***************************)
@@ -958,7 +958,7 @@ procedure TFormMain.HandleMessage(var Msg: TMsg; var Handled: Boolean);
 begin
   if Msg.Message = WM_CANCELJOURNAL then
     HandleJournalEvent(jeWMCancelJournal);
-end {TFormMain.HandleMessage};
+end ;
 
 
 (********************************)
@@ -976,8 +976,8 @@ begin
     UpdateFileLine(Point);
     inc(DeltaCovered);
     UpdateCoverageOnStatusBar;
-  end {with};
- end {TFormMain.HandlePointCovered};
+  end ;
+ end ;
 
 
 (**************************************)
@@ -990,7 +990,7 @@ begin
   if LogFileEnabled_ then
     Writeln(LogFile_, Format('Debug string received: "%s"',[DebugString]));
   // MessageDlg(Format('Debug string received: "%s"',[DebugString]), mtWarning, [mbOk], 0);
-end {TFormMain.HandleProcessDebugString};
+end ;
 
 
 (**********************************)
@@ -1001,7 +1001,7 @@ procedure TFormMain.HandleProcessRunning;
 begin
   HandleJournalEvent(jeProcessJustRunning);
   StatusBar.Panels[pProcessState].Text := 'Running';
-end {TFormMain.HandleProcessRunning};
+end ;
 
 
 (*************************************)
@@ -1015,7 +1015,7 @@ begin
   MMApplicationTerminate.Enabled := false;
   UpdateOnActivate;
   Timer1.Enabled := true;
-end {TFormMain.HandleProcessTerminated};
+end ;
 
 
 (****************************)
@@ -1035,7 +1035,7 @@ begin
     Statusbar.Refresh;
     PRevPerCent := PerCent;
   end ;
-end {TFormMain.HandleProgress};
+end ;
 
 
 (******************************)
@@ -1045,7 +1045,7 @@ end {TFormMain.HandleProgress};
 procedure TFormMain.HCRoutinesResize(Sender: TObject);
 begin
   LBRoutines.Refresh;
-end {TFormMain.HCRoutinesResize};
+end ;
 
 
 (************************************)
@@ -1091,7 +1091,7 @@ begin
         SortedRoutines.Inverted := false;
       end ;
     end;
-  end {case};
+  end ;
   Screen.Cursor := crHourGlass;
   try
     FillSortedRoutineList;
@@ -1099,8 +1099,8 @@ begin
     PBOverViewPaint(PBOverView);
   finally
     Screen.Cursor := crDefault;
-  end {try};
-end {TFormMain.HCRoutinesSectionClick};
+  end ;
+end ;
 
 
 (****************************)
@@ -1128,11 +1128,11 @@ procedure TFormMain.HCSectionTrack(
           Top := 0;
           Bottom := ClientRect.Bottom;
           InvertRect(Handle, TrackingRect);
-        end {with};
+        end ;
       end else
         InvertRect(LB.Canvas.Handle, H.TrackingRect);
       H.TrackingRectDrawn := Draw;
-  end {DrawTrackingRect};
+  end ;
 
 begin
   if HeaderControl = HCRoutines then begin
@@ -1153,8 +1153,8 @@ begin
       DrawTrackingRect(false);
       DrawTrackingRect(true);
     end;
-  end {case};
-end {TFormMain.HCSectionTrack};
+  end ;
+end ;
 
 
 (*********************************)
@@ -1218,15 +1218,15 @@ begin
         SortedUnits.Inverted := false;
       end ;
     end;
-  end {case};
+  end ;
   Screen.Cursor := crHourGlass;
   try
     FillSortedUnitList;
     FillLBUnits;
   finally
     Screen.Cursor := crDefault;
-  end {try};
-end {TFormMain.HCUnitsSectionClick};
+  end ;
+end ;
 
 
 (**********************************)
@@ -1237,7 +1237,7 @@ procedure TFormMain.HCUnitsSectionResize(HeaderControl: THeaderControl;
   Section: THeaderSection);
 begin
   LBUnits.Refresh;
-end {TFormMain.HCUnitsSectionResize};
+end ;
 
 
 (**************************************)
@@ -1279,8 +1279,8 @@ begin
       OverviewPointSquareSide := 5;
   finally
     StatusBar.Panels[pFilePos].Text := '';
-  end {try};
-end {TFormMain.InitAfterLoadingDatabase};
+  end ;
+end ;
 
 
 (*************************)
@@ -1298,7 +1298,7 @@ begin
       PositionRoutineViewToPoint(C);
     end ;
   DisplayStatusFilename;
-end {TFormMain.LBFileClick};
+end ;
 
 
 (****************************)
@@ -1329,8 +1329,8 @@ procedure TFormMain.LBFileDrawItem(Control: TWinControl; Index: Integer;
       end else
         Result := Result + s[i];
       inc(i);
-    end {while};
-  end {Expandtabs};
+    end ;
+  end ;
 
 begin
   with Control as TListBox, Canvas do begin
@@ -1348,13 +1348,13 @@ begin
         Right := Left + MarkSide;
         Top := Rect.Top + (ItemHeight - MarkSide) div 2;
         Bottom := Top + MarkSide;
-      end {with};
+      end ;
       with R2 do begin
         Top := 0;
         Left := 0;
         Right := MarkSide;
         Bottom := MarkSide;
-      end {with};
+      end ;
       if C.Counter > 0 then
         BrushCopy(R1, CoveredBitMap, R2, clWhite)
       else
@@ -1362,8 +1362,8 @@ begin
 
     end ;
     TextOut(Rect.Left+HOffset, Rect.Top, ExpandTabs(Items[Index]));
-  end {with};
-end {TFormMain.LBFileDrawItem};
+  end ;
+end ;
 
 
 (****************************)
@@ -1379,8 +1379,8 @@ begin
     #18:
       GotoNextCoveragePoint(true);
   else
-  end {case};
-end {TFormMain.LBFileKeyPress};
+  end ;
+end ;
 
 
 (*****************************)
@@ -1394,7 +1394,7 @@ begin
     if LBFile.ItemIndex = - 1 then
       LBFile.ItemIndex := LBFile.ItemAtPos(Point(X, Y), True);
   end ;
-end {TFormMain.LBFileMouseDown};
+end ;
 
 
 (*****************************)
@@ -1426,7 +1426,7 @@ begin
           inc(RoutineIndex);
           if RoutineIndex < ProjectDataBase_.Routines.Count then
             R := ProjectDataBase_.Routines.At(RoutineIndex);
-        end {while};
+        end ;
         PointIndex := R.FirstPointIndex;
         if PointIndex >= 0 then
           C := ProjectDataBase_.CoveragePoints.At(PointIndex)
@@ -1447,12 +1447,12 @@ begin
                 C := ProjectDataBase_.CoveragePoints.At(PointIndex);
             end else
               LBFile.Items.AddObject(S[i],nil)
-          end {for};
+          end ;
         LBFile.Items.EndUpdate;
       finally
         S.Free;
         Screen.Cursor := crDefault;
-      end {try};
+      end ;
     end ;
     // Scroll into position
     if CurrentRoutine.FileIndex >= 0 then begin
@@ -1463,7 +1463,7 @@ begin
       // Set LBUnit item index
       LBUnits.TopIndex := SortedUnits.IndexOf(CurrentUnit);
     end ;
-end {TFormMain.LBRoutinesClick};
+end ;
 
 
 (********************************)
@@ -1502,7 +1502,7 @@ begin
       Bottom := Rect.Bottom;
       Left := HCRoutines.Sections[0].Left;
       Right := HCRoutines.Sections[0].Right;
-    end {with};
+    end ;
     s := Routine.Name;
     if PreviousRoutine <> nil then begin
       // Do we have the same class name
@@ -1518,19 +1518,19 @@ begin
     with R do begin
       Left := HCRoutines.Sections[1].Left;
       Right := HCRoutines.Sections[1].Right;
-    end {with};
+    end ;
     DrawStringInColumn(Canvas, R, U.Name, false);
 
     with R do begin
       Left := HCRoutines.Sections[2].Left;
       Right := HCRoutines.Sections[2].Right;
-    end {with};
+    end ;
     DrawStringInColumn(Canvas, R, IntToStr(Routine.ValidPointsQty), true);
 
     with R do begin
       Left := HCRoutines.Sections[3].Left;
       Right := HCRoutines.Sections[3].Right;
-    end {with};
+    end ;
     if Routine.ValidPointsQty = 0 then
       s := '?'
     else begin
@@ -1539,8 +1539,8 @@ begin
       s := Format('%3.0f',[x])+'%';
     end ;
     DrawStringInColumn(Canvas, R, s, true);
-  end {with};
-end {TFormMain.LBRoutinesDrawItem};
+  end ;
+end ;
 
 
 (********************************)
@@ -1560,7 +1560,7 @@ begin
       #6: // Ctrl-F
         PURoutinesEnableDisableClick(PURoutinesEnable);
     else
-    end {case};
+    end ;
   end else begin
     FormEdit := TFormEdit.Create(Self);
     try
@@ -1577,13 +1577,13 @@ begin
           LBRoutines.ItemIndex := i;
         finally
           R.Free;
-        end {try};
+        end ;
       end ;
     finally
       FormEdit.Free;
-    end {try};
+    end ;
   end ;
-end {TFormMain.LBRoutinesKeyPress};
+end ;
 
 
 (*********************************)
@@ -1602,7 +1602,7 @@ begin
       LBRoutinesClick(LBRoutines);
     end ;
   end ;
-end {TFormMain.LBRoutinesMouseDown};
+end ;
 
 
 (**************************)
@@ -1647,15 +1647,15 @@ begin
                 C := ProjectDataBase_.CoveragePoints.At(PointIndex);
             end else
               LBFile.Items.AddObject(S[i],nil)
-          end {for};
+          end ;
         LBFile.Items.EndUpdate;
       finally
         S.Free;
         Screen.Cursor := crDefault;
         DisplayStatusFilename;
-      end {try};
+      end ;
     end ;
-end {TFormMain.LBUnitsClick};
+end ;
 
 
 (*****************************)
@@ -1687,16 +1687,16 @@ procedure TFormMain.LBUnitsDrawItem(Control: TWinControl; Index: Integer;
         Top := R.Top;
         Right := Left + B.Width;
         Bottom := Top + B.Height;
-      end {with};
+      end ;
       with BitMapRect do begin
         Left := 0;
         Top := 0;
         Right := B.Width;
         Bottom := B.Height;
-      end {with};
+      end ;
       BrushCopy(CheckBoxRect, B, BitMapRect, clOlive);
-    end {with};
-  end {DrawCheckBox};
+    end ;
+  end ;
 
 begin
   with (Control as TListBox), Canvas do begin
@@ -1712,7 +1712,7 @@ begin
       Bottom := Rect.Bottom;
       Left := HCUnits.Sections[0].Left;
       Right := HCUnits.Sections[0].Right;
-    end {with};
+    end ;
     DrawCheckBox(R, Canvas);
     inc(R.Left, EnabledBitMap.Width+4);
     if U.Disabled then
@@ -1722,32 +1722,32 @@ begin
     with R do begin
       Left := HCUnits.Sections[1].Left;
       Right := HCUnits.Sections[1].Right;
-    end {with};
+    end ;
     DrawStringInColumn(Canvas, R, IntToStr(U.Size), true);
 
     with R do begin
       Left := HCUnits.Sections[2].Left;
       Right := HCUnits.Sections[2].Right;
-    end {with};
+    end ;
     DrawStringInColumn(Canvas, R, IntToStr(U.RoutinesQty), true);
 
     if U.IsSourceAvailable then begin
       with R do begin
         Left := HCUnits.Sections[3].Left;
         Right := HCUnits.Sections[3].Right;
-      end {with};
+      end ;
       DrawStringInColumn(Canvas, R, IntToStr(U.R0Pc), true);
 
       with R do begin
         Left := HCUnits.Sections[4].Left;
         Right := HCUnits.Sections[4].Right;
-      end {with};
+      end ;
       DrawStringInColumn(Canvas, R, IntToStr(U.R100Pc), true);
 
       with R do begin
         Left := HCUnits.Sections[5].Left;
         Right := HCUnits.Sections[5].Right;
-      end {with};
+      end ;
       if U.ValidPointsQty = 0 then
         s := '?'
       else begin
@@ -1757,8 +1757,8 @@ begin
       end ;
       DrawStringInColumn(Canvas, R, s, true);
     end ;
-  end {with};
-end {TFormMain.LBUnitsDrawItem};
+  end ;
+end ;
 
 
 (*****************************)
@@ -1782,7 +1782,7 @@ begin
       #4: // Ctrl-f
         PUUnitsSelectGroupClick(LBUnits);
     else
-    end {case};
+    end ;
   end else begin
     FormEdit := TFormEdit.Create(Self);
     try
@@ -1801,13 +1801,13 @@ begin
             LBUnits.Selected[i] := true;
         finally
           U.Free;
-        end {try};
+        end ;
       end ;
     finally
       FormEdit.Free;
     end ;
   end ;
-end {TFormMain.LBUnitsKeyPress};
+end ;
 
 
 (*********************************)
@@ -1830,13 +1830,13 @@ begin
     U := ProjectDataBase_.Units.AtName(ProjectInfo.BackGndUnits[i]);
     if U <> nil then
       ProjectDataBase_.EnableDisableUnit(U, false);
-  end {for};
+  end ;
   for i := 0 to pred(ProjectInfo.BackGndRoutines.Count) do begin
     R := ProjectDataBase_.Routines.AtName(ProjectInfo.BackGndRoutines[i]);
     if R <> nil then
       ProjectDataBase_.EnableDisableRoutine(R, false);
-  end {for};
-end {TFormMain.LoadInformationFile};
+  end ;
+end ;
 
 
 (********************************)
@@ -1860,8 +1860,8 @@ begin
     end ;
   finally
     I.Free;
-  end {try};
-end {TFormMain.LoadLastSavedState};
+  end ;
+end ;
 
 
 (*************************)
@@ -1896,7 +1896,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
     begin
       s := ExpandFileName(Path);
       SearchPath_.Add(s);
-    end {AddPath};
+    end ;
 
   begin
     SearchPath_.Clear;
@@ -1910,8 +1910,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
         AddPath(s);
         s := '';
       end ;
-    end {while};
-  end {BuildSearchPath};
+    end ;
+  end ;
 
   procedure BuildConditionnals(s : string);
     var
@@ -1927,8 +1927,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
         GlobalDefinedConditionnals_.Add(s);
         s := '';
       end ;
-    end {while};
-  end {BuildConditionnals};
+    end ;
+  end ;
 
   procedure FilterOutCovereagePoints;
     var
@@ -1940,8 +1940,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
       Parser.Parse;
     finally
       Parser.Free;
-    end {try};
-  end {FilterOutCovereagePoints};
+    end ;
+  end ;
 
   procedure LogDataBase;
   begin
@@ -1953,8 +1953,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
         end ;
       finally
         Free;
-      end {try};
-  end {LogDataBase};
+      end ;
+  end ;
 
   procedure ShowNotFoundSrcFiles;
    const
@@ -1971,7 +1971,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
          s := s +CR+LF;
        s := s + NotFoundFiles.Strings[i];
        inc(i);
-      end {while};
+      end ;
 
       if NotFoundFiles.Count > MaxMissingFiles then
        s := s + CR + LF +'And more...';
@@ -1980,7 +1980,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
        'could not be found on the Delphi project search path.', [NotFoundFiles.Count, s]),
        mtWarning, [mbOk], 0);
     end ;
-  end {ShowNotFoundSrcFiles};
+  end ;
 
   procedure ExtractFromDof(const FileName : string);
     var
@@ -1998,9 +1998,9 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
       ProjectInfos.ImageBase := ProjectOptions.ReadInteger('Linker', 'ImageBase',0);
     finally
       ProjectOptions.Free;
-    end {try};
+    end ;
     IsBDS := false;
-  end {ExtractFormDof};
+  end ;
 
   procedure ExtractFromBdsProj(const FileName : string);
     var
@@ -2013,14 +2013,14 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
       if LogFileEnabled_ then
         Writeln(LogFile_,s);
       raise Exception.Create(s);
-    end {LogError};
+    end ;
 
     function PosEnd(const Substr, Str : string) : integer;
     begin
       Result := Pos(SubStr, Str);
       if Result > 0 then
         inc(Result, length(SubStr));
-    end {PosEnd};
+    end ;
 
     function ExtractElement(const From, Element : string) : string;
       var
@@ -2037,7 +2037,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
       if e = 0 then
         LogError(Format('%s not found', [s]));
       Result := Copy(Result, 1, pred(e));
-    end {ExtractElement};
+    end ;
 
     procedure SetDirElem(const ElemName : string; var Result : string);
       var
@@ -2055,7 +2055,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
         exit;
 
       Result := Copy(s, 1, p-1);
-    end {SetElem};
+    end ;
 
   begin
     if LogFileEnabled_ then
@@ -2083,9 +2083,9 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
 
     finally
       F.Free;
-    end {try};
+    end ;
     IsBDS := true; // Bds map file format
-  end {ExtractFromBdsProj};
+  end ;
 
   procedure ExtractFromDProj(const FileName : string);
     var
@@ -2107,7 +2107,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
           Readln(F, s);
           if (Pos('PropertyGroup Condition', s) > 0) and (Pos('Debug', s) > 0) then
             break;
-        end {while};
+        end ;
 
 (**)
       // Locate one of the required info
@@ -2162,16 +2162,16 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
 (**)
         until true;
 
-      end {while};
+      end ;
 
       if ProjectInfos.OutputDir <> '' then
         ProjectInfos.OutputDir := ProjectInfos.OutputDir + '/';
 
     finally
       CloseFile(F);
-    end {try};
+    end ;
     IsBDS := true; // BDS map file format
-  end {ExtractFromDProj};
+  end ;
 
   procedure LogWindowsVersion;
     var
@@ -2184,9 +2184,9 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
         VersionInfo.dwBuildNumber, VersionInfo.dwPlatformId, StrPas(VersionInfo.szCSDVersion)]));
     end ;
 
-  end {LogWindowsVersion};
+  end ;
 
-begin {LoadProject}
+begin 
   if LogFileEnabled_ then
     begin
       Writeln(LogFile_,'-');
@@ -2246,7 +2246,7 @@ begin {LoadProject}
           //ShowNotFoundSrcFiles;
         finally
           NotFoundFiles.Free;
-        end {try};
+        end ;
       end
     else
       begin
@@ -2269,8 +2269,8 @@ begin {LoadProject}
 
     inc(ProjectDataBase_.ChangedCount); // force dirty
   finally
-  end {try};
-end {TFormMain.LoadProject};
+  end ;
+end ;
 
 
 (***********************)
@@ -2297,8 +2297,8 @@ begin
   finally
     F.Free;
     Screen.Cursor := crDefault;
-  end {try};
-end {TFormMain.LoadState};
+  end ;
+end ;
 
 
 (**********************)
@@ -2332,8 +2332,8 @@ begin
       end;
     XM_ERRORCODE:
       HandleErrorCode(Message.WParam, Message.lParam);
-  end {case};
-end {TFormMain.MainHook};
+  end ;
+end ;
 
 
 (************************)
@@ -2380,10 +2380,10 @@ begin
             Writeln(F, Format(t,
               [UnitFileName, U.Name, IntToStr(U.Size), IntToStr(U.RoutinesQty),
                 IntToStr(U.R0Pc), IntToStr(U.R100Pc), s]));
-          end {for};
+          end ;
       finally
         CloseFile(F);
-      end {try};
+      end ;
     end ;
 
     if IniFile.ReadBool(Section, 'CHKExportRoutines', false) then begin
@@ -2406,15 +2406,15 @@ begin
             t := IniFile.ReadString(Section, 'EDITRoutineFormatString','%0:s;%1:s;%2:s;%3:s');
             Writeln(F, Format(t,
               [R.Name, U.Name, IntToStr(R.ValidPointsQty), s]));
-          end {for};
+          end ;
       finally
         CloseFile(F);
-      end {try};
+      end ;
     end ;
   finally
     IniFile.Free;
-  end {try};
-end {TFormMain.MakeReport};
+  end ;
+end ;
 
 
 (********************************)
@@ -2437,8 +2437,8 @@ begin
     OldDataBase.Free;
     StateStream.Free;
     InitAfterLoadingDataBase;
-  end {try};
-end {TFormMain.MergeWithStateFile};
+  end ;
+end ;
 
 
 (********************************)
@@ -2450,7 +2450,7 @@ begin
   MMApplicationRun.Enabled := (ProjectDataBase_ <> nil) and not
     Process.Created;
   MMApplicationTerminate.Enabled := Process.Running;
-end {TFormMain.MMApplicationClick};
+end ;
 
 
 (***********************************)
@@ -2460,7 +2460,7 @@ end {TFormMain.MMApplicationClick};
 procedure TFormMain.MMApplicationRunClick(Sender: TObject);
 begin
   RunApplication;
-end {TFormMain.MMApplicationRunClick};
+end ;
 
 
 (*****************************************)
@@ -2477,7 +2477,7 @@ begin
                 'Do you want to terminate the application ?'
                 , mtWarning, [mbYes, mbNo], 0) = mrYes then
     Process.Reset;
-end {TFormMain.MMApplicationTerminateClick};
+end ;
 
 
 (*******************************)
@@ -2492,9 +2492,9 @@ begin
       MakeReport;
     finally
       Screen.Cursor := crDefault;
-    end {try};
+    end ;
   end ;
-end {TFormMain.MMExportDataClick};
+end ;
 
 
 (******************************)
@@ -2507,7 +2507,7 @@ begin
   FormAbout_ := TFormAbout.Create(Self);
   FormAbout_.ShowModal;
   FormAbout_.Free;
-end {TFormMain.MMHelpAboutClick};
+end ;
 
 
 (*************************)
@@ -2516,7 +2516,7 @@ end {TFormMain.MMHelpAboutClick};
 
 procedure TFormMain.MMHelpClick(Sender: TObject);
 begin
-end {TFormMain.MMHelpClick};
+end ;
 
 
 (*****************************)
@@ -2527,7 +2527,7 @@ procedure TFormMain.MMHelpHelpClick(Sender: TObject);
 begin
   ShellExecute(Handle, 'open',
     PChar(ChangeFileExt(Application.ExeName, '.rtf')), nil, nil, SW_SHOWNORMAL) ;
-end {TFormMain.MMHelpHelpClick};
+end ;
 
 
 (***********************************)
@@ -2537,7 +2537,7 @@ end {TFormMain.MMHelpHelpClick};
 procedure TFormMain.MMMacroRecordNewClick(Sender: TObject);
 begin
   HandleJournalEvent(jeRecord);
-end {TFormMain.MMMacroRecordNewClick};
+end ;
 
 
 (****************************)
@@ -2551,7 +2551,7 @@ begin
     FillSortedUnitList;
     FillLBUnits;
   end ;
-end {TFormMain.MMOptionsClick};
+end ;
 
 
 (**************************************)
@@ -2566,8 +2566,8 @@ begin
     InitAfterLoadingDatabase;
   finally
     Screen.Cursor := crDefault;
-  end {try};
-end {TFormMain.MMProjectClearStateClick};
+  end ;
+end ;
 
 
 (****************************)
@@ -2581,7 +2581,7 @@ begin
   MMProjectSave.Enabled := ProjectDatabase_ <> nil;
   MMProjectMerge.Enabled := (ProjectDatabase_ <> nil) and not Process.Running;
   MMProjectClearState.Enabled := (ProjectDatabase_ <> nil) and not Process.Running;
-end {TFormMain.MMProjectClick};
+end ;
 
 
 (********************************)
@@ -2591,7 +2591,7 @@ end {TFormMain.MMProjectClick};
 procedure TFormMain.MMProjectExitClick(Sender: TObject);
 begin
   Close;
-end {TFormMain.MMProjectExitClick};
+end ;
 
 
 (*********************************)
@@ -2621,13 +2621,13 @@ begin
         inc(ProjectDataBase_.ChangedCount); // force dirty
       finally
         OldDataBase.Free;
-      end {try};
+      end ;
     finally
       S.Free;
       Screen.Cursor := crDefault;
-    end {Try};
+    end ;
   end ;
-end {TFormMain.MMProjectMergeClick};
+end ;
 
 
 (*******************************)
@@ -2656,16 +2656,16 @@ begin
             MergeWithStateFile(StateFileName);
           finally
             Screen.Cursor := crDefault;
-          end {try};
+          end ;
         end ;
       end ;
       LoadInformationFile;
     finally
       Screen.Cursor := crDefault;
       HandleProgress(-1, '');
-    end {try};
+    end ;
   end ;
-end {TFormMain.MMProjectNewClick};
+end ;
 
 
 (**********************************)
@@ -2685,7 +2685,7 @@ begin
       LoadInformationFile;
     end ;
   end ;
-end {TFormMain.MMProjectReloadClick};
+end ;
 
 
 (********************************)
@@ -2698,7 +2698,7 @@ begin
     Config.ExecDialog(SaveStateDialog, State_Key) then begin
     SaveStateFile(ChangeFileExt(SaveStateDialog.FileName,ProjectStateExtension));
   end ;
-end {TFormMain.MMProjectSaveClick};
+end ;
 
 
 (************************************)
@@ -2712,7 +2712,7 @@ begin
     ProjectInfo.StartupDirectory := FormProjectInfo.EDITStartupDirectory.Text;
     ProjectInfo.RunMaximized := FormProjectInfo.CHKRunMaximized.Checked;
   end ;
-end {TFormMain.MMProjectSettingsClick};
+end ;
 
 
 (***************************)
@@ -2751,8 +2751,8 @@ begin
     h := P.Canvas.TextHeight(t);
     P.Canvas.TextOut(x + ((dx-w) div 2), y + ((dy-h) div 2), t);
     inc(x, dx);
-  end {for};
-end {TFormMain.PBLegendPaint};
+  end ;
+end ;
 
 
 (*******************************)
@@ -2772,7 +2772,7 @@ begin
     LBRoutines.ItemIndex := RoutineIndex;
     LBRoutinesClick(LBRoutines);
   end ;
-end {TFormMain.PBOverViewMouseUp};
+end ;
 
 
 (*****************************)
@@ -2794,8 +2794,8 @@ begin
         Canvas.FillRect(ClientRect);
       end ;
     end ;
-  end {with};
-end {TFormMain.PBOverViewPaint};
+  end ;
+end ;
 
 
 (**************************)
@@ -2806,7 +2806,7 @@ procedure TFormMain.PCLeftChange(Sender: TObject);
 begin
   if PCLeft.ActivePage = TSSummary then
     FillSummary;
-end {TFormMain.PCLeftChange};
+end ;
 
 
 (*****************************)
@@ -2819,7 +2819,7 @@ begin
 {$IfDef NOMacros}
   AllowChange := false;
 {$EndIf}
-end {TFormMain.PCRightChanging};
+end ;
 
 
 (****************************************)
@@ -2846,7 +2846,7 @@ begin
         [odSelected]);
     end ;
   end ;
-end {TFormMain.PositionRoutineViewToPoint};
+end ;
 
 
 (******************************************)
@@ -2871,10 +2871,10 @@ begin
             if Routine.FileIndex >= 0 then
               ProjectDataBase_.EnableDisableRoutine(Routine,
                 Sender = PURoutinesEnable);
-          end {with};
+          end ;
     finally
       LBRoutines.Items.EndUpdate;
-    end {try};
+    end ;
 
     Screen.Cursor := crHourGlass;
     try
@@ -2882,13 +2882,13 @@ begin
       FillLBRoutines;
     finally
       Screen.Cursor := crDefault;
-    end {try};
+    end ;
     
     LBRoutines.ItemIndex := j;
     LBRoutinesClick(LBRoutines);
     UpdateCoverageOnStatusBar;
   end ;
-end {TFormMain.PURoutinesEnableDisableClick};
+end ;
 
 
 (*****************************)
@@ -2902,8 +2902,8 @@ begin
       (TRoutine(SortedRoutines.At(ItemIndex)).Disabled);
     PURoutinesDisable.Enabled := (ItemIndex >= 0) and
       not (TRoutine(SortedRoutines.At(ItemIndex)).Disabled);
-  end {with};
-end {TFormMain.PURoutinesPopup};
+  end ;
+end ;
 
 
 (************************************)
@@ -2913,7 +2913,7 @@ end {TFormMain.PURoutinesPopup};
 procedure TFormMain.PUSourceNextGreenClick(Sender: TObject);
 begin
   GotoNextCoveragePoint(false);
-end {TFormMain.PUSourceNextGreenClick};
+end ;
 
 
 (**********************************)
@@ -2923,7 +2923,7 @@ end {TFormMain.PUSourceNextGreenClick};
 procedure TFormMain.PUSourceNextRedClick(Sender: TObject);
 begin
   GotoNextCoveragePoint(true)
-end {TFormMain.PUSourceNextRedClick};
+end ;
 
 
 (***************************************)
@@ -2955,10 +2955,10 @@ begin
         PBOverviewPaint(PBOverView);
       finally
         Screen.Cursor := crDefault;
-      end {try};
+      end ;
     end ;
     UpdateCoverageOnStatusBar;
-end {TFormMain.PUUnitsEnableDisableClick};
+end ;
 
 
 (**************************)
@@ -2972,7 +2972,7 @@ begin
   PUUnitsEnable.Enabled := LBUnits.SelCount > 0;
   PUUnitsDisable.Enabled := LBUnits.SelCount > 0;
   PUUnitsSelectGroup.Enabled := LBUnits.SelCount = 1;
-end {TFormMain.PUUnitsPopup};
+end ;
 
 
 (***********************************)
@@ -2992,8 +2992,8 @@ begin
       TopIndex := n;
       Items.EndUpdate;
     end ;
-  end {with};
-end {TFormMain.PUUnitsSelectAllClick};
+  end ;
+end ;
 
 
 (*************************************)
@@ -3025,16 +3025,16 @@ begin
                 (ExtractFilePath(UpperCase(RefU.FileNames[0])) =
                  ExtractFilePath(UpperCase(U.FileNames[0]))) then
                 Selected[i] := true;
-           end {for};
+           end ;
         end ;
       finally
         Screen.Cursor := crDefault;
         TopIndex := n;
         Items.EndUpdate;
-      end {try};
+      end ;
     end ;
     UpdateCoverageOnStatusBar;
-end {TFormMain.PUUnitsSelectGroupClick};
+end ;
 
 
 (****************************)
@@ -3060,7 +3060,7 @@ begin
   Process.ExeName := ExeFileName;
 
   Process.Run;
-end {TFormMain.RunApplication};
+end ;
 
 
 (**************************)
@@ -3093,8 +3093,8 @@ begin
     lFileBuffer.Free();
     Screen.Cursor := crDefault;
     StatusBar.Panels[pFilePos].Text := '';
-  end {try};
-end {TFormMain.SaveDataBase};
+  end ;
+end ;
 
 
 (*********************************)
@@ -3112,7 +3112,7 @@ begin
     U := ProjectDataBase_.Units.At(i);
     if (U.IsSourceAvailable) and U.Disabled then
       ProjectInfo.BackGndUnits.Add(U.Name);
-  end {for};
+  end ;
   ProjectInfo.BackGndRoutines.Clear;
   for i := 0 to pred(ProjectDataBase_.Routines.Count) do begin
     R := ProjectDataBase_.Routines.At(i);
@@ -3120,10 +3120,10 @@ begin
     
     if (U.IsSourceAvailable) and (not U.Disabled) and R.Disabled then
       ProjectInfo.BackGndRoutines.Add(R.Name);
-  end {for};
+  end ;
   if InfoFileName <> '' then
     ProjectInfo.SaveToFile(InfoFileName);
-end {TFormMain.SaveInformationFile};
+end ;
 
 
 (***************************)
@@ -3133,7 +3133,7 @@ end {TFormMain.SaveInformationFile};
 procedure TFormMain.SaveStateFile(const FileName : string);
 begin
   SaveDataBase(FileName);
-end {TFormMain.SaveStateFile};
+end ;
 
 
 (**********************************)
@@ -3146,7 +3146,7 @@ begin
   if LogFileEnabled_ then
     Writeln(LogFile_, Format('%d %s',[GetTickCount,
     StateMachineStrings[StateMachineState]]));
-end {TFormMain.SetStateMachineState};
+end ;
 
 
 (*******************)
@@ -3156,7 +3156,7 @@ end {TFormMain.SetStateMachineState};
 procedure TFormMain.Sleep(Delay: integer);
 begin
   Windows.Sleep(Delay);
-end {TFormMain.Sleep};
+end ;
 
 
 (*****************************)
@@ -3167,7 +3167,7 @@ procedure TFormMain.StatusBarResize(Sender: TObject);
 begin
   AdjustStatusbar;
   DisplayStatusFilename;
-end {TFormMain.StatusBarResize};
+end ;
 
 
 (*************************)
@@ -3183,7 +3183,7 @@ begin
     PBOverViewPaint(PBOverView);
   if Globals.CommandLineParams_.Action <> caNoAction then
     DoCommandLineFinalActions;
-end {TFormMain.Timer1Timer};
+end ;
 
 
 (******************************)
@@ -3197,7 +3197,7 @@ begin
     PBOverViewPaint(PBOverView);
   end else
     Resizing := false;
-end {TFormMain.TIMERResizeTimer};
+end ;
 
 
 (************************)
@@ -3207,7 +3207,7 @@ end {TFormMain.TIMERResizeTimer};
 procedure TFormMain.TimerTimer(Sender: TObject);
 begin
   HandleJournalEvent(jeTimerElapsed);
-end {TFormMain.TimerTimer};
+end ;
 
 
 (***************************************)
@@ -3222,7 +3222,7 @@ begin
         IntToStr(ValidEnabledCoveredPointsQty);
     StatusBar.Panels[pDeltaCovered].Text := '+'+IntToStr(DeltaCovered);
   end ;
-end {TFormMain.UpdateCoverageOnStatusBar};
+end ;
 
 
 (****************************)
@@ -3251,7 +3251,7 @@ begin
       InvalidateRect(LBFile.handle, @R, true);
     end ;
   end ;
-end {TFormMain.UpdateFileLine};
+end ;
 
 
 (******************************)
@@ -3271,9 +3271,9 @@ begin
       FillLBUnits;
     finally
       Screen.Cursor := crDefault;
-    end {try};
+    end ;
   end ;
-end {TFormMain.UpdateOnActivate};
+end ;
 
 
 (****************************)
@@ -3294,7 +3294,7 @@ begin
       Top := LineNr*OverviewPointSquareSide;
       Bottom := Top + OverviewPointSquareSide;
       Right := Left + OverviewPointSquareSide;
-    end {with};
+    end ;
     if not Routine.Disabled then begin
       if Routine.ValidPointsQty = 0 then
         x := 0
@@ -3321,7 +3321,7 @@ begin
     with R do
       PBOverView.Canvas.Rectangle(pred(R.Left), pred(R.Top), R.Right, R.Bottom);
   end ;
-end {TFormMain.UpdateOverView};
+end ;
 
 
 {~b}

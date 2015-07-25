@@ -56,48 +56,48 @@ procedure TPersistentForm.ReadFromProfile;
         while i < Count do begin
           Items.Add(Inifile.ReadString(Section, IntToStr(i), ''));
           inc(i);
-        end {while};
+        end ;
     end {};
 
     begin
       if aControl is TEdit then
         with aControl as TEdit do begin
           Text := IniFile.ReadString(Self.Name, Name, Text);
-        end {with}
+        end 
       else if aControl is TSpinEdit then
         with aControl as TSpinEdit do begin
           Text := IniFile.ReadString(Self.Name, Name, Text);
-        end {with}
+        end 
       else if aControl is TCheckBox then
         with aControl as TCheckBox do begin
           Checked := IniFile.ReadBool(Self.Name, Name, Checked)
-        end {with}
+        end 
       else if aControl is TRadioButton then
         with aControl as TRadioButton do begin
           Checked := IniFile.ReadBool(Self.Name, Name, Checked)
-        end {with}
+        end 
       else if aControl is TListBox then
         with aControl as TListBox do begin
           ReadItems(Self.Name+'.'+Name, Items);
-        end {with}
+        end 
       else if aControl is TComboBox then
         with aControl as TComboBox do begin
           Text := IniFile.ReadString(Self.Name, Name, '');
-        end {with}
+        end 
       else if aControl is TRadioGroup then
         with aControl as TRadioGroup do begin
           ItemIndex := IniFile.ReadInteger(Self.Name, Name, 0);
-        end {with}
+        end 
       else if (aControl is TLabel) or (aControl is TButton) or
         (aControl is TTabSheet) or (aControl is TGroupBox) or
         (aControl is TPageControl) or (aControl is TNoteBook) or
         (aControl is TPaintBox) or (aControl is TPanel) or
         (aControl is TBevel)
         then
-        {Do nothing}
+        
       else
         Fatal(1329);
-  end {DoOneControl};
+  end ;
 
   var
     i : integer;
@@ -107,7 +107,7 @@ procedure TPersistentForm.ReadFromProfile;
       if (Components[i] is TControl) then
         DoOneControl(Components[i] as TControl);
     IniFile.Free;
-end {TPersistentForm.ReadFromProfile};
+end ;
 
 
 (**********************************)
@@ -129,49 +129,49 @@ procedure TPersistentForm.WriteToProfile;
         while i < Items.Count do begin
           Inifile.WriteString(Section, IntToStr(i), Items[i]);
           inc(i);
-        end {while};
+        end ;
     end {};
 
     begin
       if aControl is TEdit then
         with aControl as TEdit do begin
           IniFile.WriteString(Self.Name, Name, Text);
-        end {with}
+        end 
       else if aControl is TSpinEdit then
         with aControl as TSpinEdit do begin
           IniFile.WriteString(Self.Name, Name, Text);
-        end {with}
+        end 
       else if aControl is TCheckBox then
         with aControl as TCheckBox do begin
           IniFile.WriteBool(Self.Name, Name, Checked)
-        end {with}
+        end 
       else if aControl is TRadioButton then
         with aControl as TRadioButton do begin
           IniFile.WriteBool(Self.Name, Name, Checked)
-        end {with}
+        end 
       else if aControl is TListBox then
         with aControl as TListBox do begin
            IniFile.EraseSection(Self.Name+'.'+Name);
            WriteItems(Self.Name+'.'+Name, Items);
-        end {with}
+        end 
       else if aControl is TComboBox then
         with aControl as TComboBox do begin
           IniFile.WriteString(Self.Name, Name, Text);
-        end {with}
+        end 
       else if aControl is TRadioGroup then
         with aControl as TRadioGroup do begin
           IniFile.WriteInteger(Self.Name, Name, ItemIndex);
-        end {with}
+        end 
       else if (aControl is TLabel) or (aControl is TButton) or
         (aControl is TTabSheet) or (aControl is TPageControl) or
         (aControl is TGroupBox) or (aControl is TNoteBook) or
         (aControl is TPaintBox) or (aControl is TPanel) or
         (aControl is TBevel)
       then
-        {Do nothing}
+        
       else
         Fatal(1329);
-  end {DoOneControl};
+  end ;
 
   var
     i : integer;
@@ -181,9 +181,9 @@ procedure TPersistentForm.WriteToProfile;
       if (Components[i] is TControl) then
         DoOneControl(Components[i] as TControl);
     IniFile.Free;
-end {TPersistentForm.WriteToProfile};
+end ;
 
 
 {~b}
 end.
- 
+  

@@ -75,8 +75,8 @@ implementation
         IniFile.WriteString(ProfileSectionStrings[psLastFiles],Key,D.FileName);
     finally
       IniFile.Free;
-    end {try};
-  end {ExecDialog};
+    end ;
+  end ;
 
 
 (*******************)
@@ -94,8 +94,8 @@ implementation
         A[i] := IniFile.ReadInteger(Key, IntToStr(i),-MaxInt);
     finally
       IniFile.Free;
-    end {try};
-  end {GetIntegerArray};
+    end ;
+  end ;
 
 
 (****************)
@@ -111,8 +111,8 @@ implementation
       Result := IniFile.ReadString(ProfileSectionStrings[psLastFiles],Key,'');
     finally
       IniFile.Free;
-    end {try};
-  end {LastFileName};
+    end ;
+  end ;
 
 
 (*******************)
@@ -130,8 +130,8 @@ implementation
         IniFile.WriteInteger(Key, IntToStr(i), A[i]);
     finally
       IniFile.Free;
-    end {try};
-  end {SetIntegerArray};
+    end ;
+  end ;
 
 
 (*******************)
@@ -147,8 +147,8 @@ implementation
       IniFile.WriteString(ProfileSectionStrings[psLastFiles],Key,Name);
     finally
       IniFile.Free;
-    end {try};
-  end {SetLastFileName};
+    end ;
+  end ;
 
 
 {~b}

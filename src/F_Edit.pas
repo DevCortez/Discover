@@ -34,13 +34,13 @@ type
     Edit1: TEdit;
     procedure FormShow(Sender: TObject);
   private
-    { Private declarations }
+    
     FirstEditFocus : boolean;
     procedure CheckOnScreen;
     procedure WMCommand(var Msg : TWMCommand);
       message WM_Command;
   public
-    { Public declarations }
+    
   end;
 
 implementation
@@ -52,7 +52,7 @@ implementation
 (***************************)
 
 procedure TFormEdit.CheckOnScreen;
-  {Fait en sorte que le dialogue soit complètement sur l'écran}
+  
 var
   TargetRect, WorkRect, R : TRect;
   d : integer;
@@ -72,7 +72,7 @@ begin
     dec(TargetRect.Right, d);
   end ;
   BoundsRect := TargetRect;
-end {TFormEdit.CheckOnScreen};
+end ;
 
 
 (**********************)
@@ -88,7 +88,7 @@ begin
   Top := P.Y;
   CheckOnScreen;
   FirstEditFocus := true;
-end {TFormEdit.FormShow};
+end ;
 
 
 (***********************)
@@ -103,7 +103,7 @@ procedure TFormEdit.WMCommand;
       Edit1.SelLength := 0;
     end ;
     Inherited;
-end {TFormEdit.WMCommand};
+end ;
 
 
 {~b}

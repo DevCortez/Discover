@@ -39,9 +39,9 @@ type
     procedure FormHide(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    
   public
-    { Public declarations }
+    
   end;
 
 var
@@ -58,7 +58,7 @@ implementation
 procedure TFormOptions.FormCreate(Sender: TObject);
 begin
   ReadFromProfile;
-end {TFormOptions.FormCreate};
+end ;
 
 
 (*************************)
@@ -68,7 +68,7 @@ end {TFormOptions.FormCreate};
 procedure TFormOptions.FormHide(Sender: TObject);
 begin
   WriteToProfile;
-end {TFormOptions.FormHide};
+end ;
 
 
 {~b}

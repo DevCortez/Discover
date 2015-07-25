@@ -58,7 +58,7 @@ begin
   LineNr := aLineNr;
   OffsetInLine := aOffsetInLine;
   FileName := aFileName;
-end {EParserExpect.Create};
+end ;
 
 
 {~b}

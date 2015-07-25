@@ -33,9 +33,9 @@ type
     LBLText: TLabel;
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    
   public
-    { Public declarations }
+    
   end;
 
 var
@@ -59,7 +59,7 @@ begin
   s := Globals.ApplicationName + CR + LF + 'Version ' + VersionStr + CR + LF +
     Copyright + CR + LF;
   LBLText.Caption := s;
-end {TFormAbout.FormCreate};
+end ;
 
 
 {~b}

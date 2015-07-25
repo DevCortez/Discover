@@ -188,7 +188,7 @@ begin
   Result := '';
   while length(Result) < Size do
     Result := Result + ' ';
-end {BlankStr};
+end ;
 
 
 (************)
@@ -203,7 +203,7 @@ begin
   c := ' ';
   for i := 1 to Qty do
     aStream.Write(c, SizeOf(char));
-end {DoIndent};
+end ;
 
 
 (*************)
@@ -216,7 +216,7 @@ procedure DoNewLine(aStream : TStream);
 begin
   s := #$D + #$A;
   aStream.Write(s[1], 2*SizeOf(char));
-end {DoNewLine};
+end ;
 
 
 (************************)
@@ -230,7 +230,7 @@ begin
   aStream.Read(n, SizeOf(n));
   SetLength(Result, n);
   aStream.Read(Result[1], n*SizeOf(char));
-end {ReadStringFromStream};
+end ;
 
 
 (***********************)
@@ -244,7 +244,7 @@ begin
   n := Length(s);
   aStream.Write(n, SizeOf(n));
   aStream.Write(s[1], n*SizeOf(char));
-end {WriteStringToStream};
+end ;
 
 
 (*********************)
@@ -254,7 +254,7 @@ end {WriteStringToStream};
 constructor TAddressable.Load(aStream : TStream);
 begin
   aStream.Read(Address, SizeOf(Address));
-end {TAddressable.Load};
+end ;
 
 
 (*********************)
@@ -264,7 +264,7 @@ end {TAddressable.Load};
 procedure TAddressable.Save(aStream : TStream);
 begin
   aStream.Write(Address, SizeOf(Address));
-end {TAddressable.Save};
+end ;
 
 
 (***********************)
@@ -279,7 +279,7 @@ begin
   aStream.Read(Counter, SizeOf(Counter));
   aStream.Read(Disabled, SizeOf(Disabled));
   aStream.Read(Valid, SizeOf(Valid));
-end {TCoveragePoint.Load};
+end ;
 
 
 (************************)
@@ -294,7 +294,7 @@ begin
   s := IntToStr(LineNumber) + ' ' + IntToHex(Address,8);
   aStream.Write(s[1], Length(s));
   DoNewLine(aStream);
-end {TCoveragePoint.Print};
+end ;
 
 
 (***********************)
@@ -309,7 +309,7 @@ begin
   aStream.Write(Counter, SizeOf(Counter));
   aStream.Write(Disabled, SizeOf(Disabled));
   aStream.Write(Valid, SizeOf(Valid));
-end {TCoveragePoint.Save};
+end ;
 
 
 (************************)
@@ -337,8 +337,8 @@ begin
       end ;
     end ;
     dec(n);
-  end {while};
-end {TCoveragePoints.Load};
+  end ;
+end ;
 
 
 (************************)
@@ -353,7 +353,7 @@ begin
   aStream.Write(n, SizeOf(n));
   for n := 0 to pred(Count) do
     TCoveragePoint(At(n)).Save(aStream);
-end {TCoveragePoints.Save};
+end ;
 
 
 (******************************)
@@ -368,7 +368,7 @@ begin
     Result := 1
   else
     Result := 0;
-end {TListOfAddressable.Compare};
+end ;
 
 
 (*****************************)
@@ -379,7 +379,7 @@ constructor TListOfAddressable.Create;
 begin
   inherited Create;
   Duplicates := true;
-end {TListOfAddressable.Create};
+end ;
 
 
 (****************************)
@@ -389,7 +389,7 @@ end {TListOfAddressable.Create};
 function TListOfAddressable.KeyOf(Item : Pointer) : Pointer;
 begin
   integer(Result) := TAddressable(Item).Address;
-end {TListOfAddressable.KeyOf};
+end ;
 
 
 (**************************)
@@ -403,31 +403,15 @@ procedure TProjectDataBase.Clear;
     R : TRoutine;
     U : TUnit;
 begin
-  with Units do
-    for i := 0 to pred(Count) do begin
-      U := Units.At(i);
-      U.R0pc := 0;
-      U.R100Pc := 0;
-      U.ValidPointsQty := 0;
-      U.CoveredPointsQty := 0;
-    end {for};
+  Units.Free();
+  Units := TUnits.Create();
+  Routines.Free();
+  Routines := TRoutines.Create();
 
-  with Routines do
-    for i := 0 to pred(Count) do begin
-      R := At(i);
-      R.CoveredPointsQty := 0;
-    end {for};
-
-  with CoveragePoints do begin
-    ValidCoveredPointsQty := 0;
-    ValidEnabledCoveredPointsQty := 0;
-    for i := 0 to pred(CoveragePoints.Count) do begin
-      C := CoveragePoints.At(i);
-      C.Counter := 0;
-    end {for};
-  end {with};
+  CoveragePoints.Free();
+  CoveragePoints := TCoveragePoints.Create();
   InitStatistics;
-end {TProjectDataBase.Clear};
+end ;
 
 
 (***************************)
@@ -439,7 +423,7 @@ begin
   Units := TUnits.Create;
   Routines := TRoutines.Create;
   CoveragePoints := TCoveragePoints.Create;
-end {TProjectDataBase.Create};
+end ;
 
 
 (****************************)
@@ -452,7 +436,7 @@ begin
   CoveragePoints.Free;
   Routines.Free;
   inherited Destroy;
-end {TProjectDataBase.Destroy};
+end ;
 
 
 (*********************************)
@@ -468,7 +452,7 @@ begin
       dec(CoveragePoints.ValidEnabledCoveredPointsQty);
     inc(ChangedCount);
   end ;
-end {TProjectDataBase.DisablePoint};
+end ;
 
 
 (************************************)
@@ -483,7 +467,7 @@ begin
       Result := 100*Result / ValidEnabledPointsQty;
     end else
       Result := 0;
-end {TProjectDataBase.EnabledCoverage};
+end ;
 
 
 (*****************************************)
@@ -510,12 +494,12 @@ begin
         inc(i);
         if i < Count then
           C := CoveragePoints.At(i);
-      end {while};
+      end ;
     end ;
-  end {with};
+  end ;
   R.Disabled := not Enable;
   inc(ChangedCount);
-end {TProjectDataBase.EnableDisableRoutine};
+end ;
 
 
 (**************************************)
@@ -533,10 +517,10 @@ begin
       R := At(i);
       if R.UnitIndex = UIdx then
         EnableDisableRoutine(R, Enable);
-    end {for};
+    end ;
   U.Disabled := not Enable;
   inc(ChangedCount);
-end {TProjectDataBase.EnableDisableUnit};
+end ;
 
 
 (***************************************)
@@ -552,7 +536,7 @@ begin
     for i := 0 to pred(Count) do
       if not TRoutine(At(i)).Disabled then
         inc(Result);
-end {TProjectDataBase.EnabledRoutinesQty};
+end ;
 
 
 (************************************)
@@ -568,7 +552,7 @@ begin
     for i := 0 to pred(Count) do
       if not TUnit(At(i)).Disabled then
         inc(Result);
-end {TProjectDataBase.EnabledUnitsQty};
+end ;
 
 
 (********************************)
@@ -584,7 +568,7 @@ begin
       inc(CoveragePoints.ValidEnabledCoveredPointsQty);
     inc(ChangedCount);
   end ;
-end {TProjectDataBase.EnablePoint};
+end ;
 
 
 (******************************)
@@ -605,8 +589,8 @@ begin
         inc(R100Pc, U.R100Pc);
         inc(R0Pc, U.R0Pc);
       end ;
-    end {for};
-end {TProjectDataBase.GetR100R0};
+    end ;
+end ;
 
 
 (***********************************)
@@ -628,7 +612,7 @@ begin
       U.Disabled := U.Disabled or not U.IsSourceAvailable;
       if U.IsSourceAvailable then
         inc(RoutinesWithSource);
-    end {for};
+    end ;
   with Units do
     for i := 0 to pred(Count) do begin
       U := At(i);
@@ -636,9 +620,9 @@ begin
         EnableDisableUnit(U,false)
       else
         inc(UnitsWithSource);
-    end {for};
+    end ;
   ChangedCount := 0;
-end {TProjectDataBase.InitStatistics};
+end ;
 
 
 (*************************)
@@ -660,7 +644,7 @@ begin
   Routines := TRoutines.Load(aStream);
   CoveragePoints := TCoveragePoints.Load(aStream);
   ChangedCount := 0;
-end {TProjectDataBase.Load};
+end ;
 
 
 (**********************************)
@@ -702,8 +686,8 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
           Result := (NewPoint.RoutineIndex = NewRIndex) =
             (OldPoint.RoutineIndex = OldRIndex);
         end ;
-      end {while};
-    end {RoutineMatch};
+      end ;
+    end ;
 
     procedure TransferCoverage;
       var
@@ -726,8 +710,8 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
           NewPoint := CoveragePoints.At(NewPointIndex);
           OldPoint := OldDataBase.CoveragePoints.At(OldPointIndex);
         end ;
-      end {while};
-    end {TransferCoverage};
+      end ;
+    end ;
 
   begin
     NewRIndex := NewU.FirstRoutineIndex;
@@ -746,7 +730,7 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
             inc(OldRIndex);
             if (not RoutineFound) and (OldRIndex < OldDataBase.Routines.Count) then
               OldR := OldDataBase.Routines.At(OldRIndex);
-          end {while};
+          end ;
           if RoutineFound then
             TransferCoverage
           else
@@ -757,9 +741,9 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
         inc(NewRIndex);
         if NewRIndex < Routines.Count then
           NewR := Routines.At(NewRIndex);
-      end {while};
+      end ;
     end ;
-  end {DoUnit};
+  end ;
 
 begin
   with Units do
@@ -771,8 +755,8 @@ begin
         DoUnit
       end else
         // Unit not found in OldDataBase
-    end {for};
-end {TProjectDataBase.MergeCoverage};
+    end ;
+end ;
 
 
 (*************************)
@@ -795,7 +779,7 @@ begin
   Routines.Save(aStream);
   CoveragePoints.Save(aStream);
   ChangedCount := 0;
-end {TProjectDataBase.Save};
+end ;
 
 
 (*******************************)
@@ -817,7 +801,7 @@ begin
         inc(CoveragePoints.ValidEnabledCoveredPointsQty);
     end ;
   end ;
-end {TProjectDataBase.SetCovered};
+end ;
 
 
 (**********************************)
@@ -832,7 +816,7 @@ begin
       Result := 100*Result / ValidPointsQty;
     end else
       Result := 0;
-end {TProjectDataBase.TotalCoverage};
+end ;
 
 
 (***************************)
@@ -858,7 +842,7 @@ begin
     N.Name := NewU.Name+NewR.Name;
     N.Index := i;
     S.Insert(N);
-  end {for};
+  end ;
 
   try
     for i := 0 to pred(OldDataBase.Routines.Count) do begin
@@ -871,10 +855,10 @@ begin
           Self.EnableDisableRoutine(NewR, false);
         end ;
       end ;
-    end {for};
+    end ;
   finally
     S.Free;
-  end {try};
+  end ;
 
   S := TSortedNameIndex.Create;
   for i := 0 to pred(Units.Count) do begin
@@ -883,7 +867,7 @@ begin
     N.Name := NewU.Name;
     N.Index := i;
     S.Insert(N);
-  end {for};
+  end ;
   try
     for i := 0 to pred(OldDataBase.Units.Count) do begin
       OldU := OldDataBase.Units.At(i);
@@ -894,11 +878,11 @@ begin
           NewU.Disabled := true;
         end ;
       end ;
-    end {for};
+    end ;
   finally
     S.Free;
-  end {try};
-end {TProjectDataBase.Update};
+  end ;
+end ;
 
 
 (*************************************)
@@ -918,7 +902,7 @@ begin
       U.R100Pc := 0;
       U.ValidPointsQty := 0;
       U.CoveredPointsQty := 0;
-    end {for};
+    end ;
 
   with Routines do
     for i := 0 to pred(Count) do begin
@@ -935,8 +919,8 @@ begin
         end else
           U := U;  // For BP
       end ;
-    end {for};
-end {TProjectDataBase.UpdateStatistics};
+    end ;
+end ;
 
 
 (*******************)
@@ -948,7 +932,7 @@ begin
   inherited Create;
   FileIndex := -1;
   FirstPointIndex := -1;
-end {TRoutine.Create};
+end ;
 
 
 (********************)
@@ -958,7 +942,7 @@ end {TRoutine.Create};
 destructor TRoutine.Destroy;
 begin
   inherited Destroy;
-end {TRoutine.Destroy};
+end ;
 
 
 (*****************)
@@ -975,7 +959,7 @@ begin
   aStream.Read(ValidPointsQty, SizeOf(ValidPointsQty));
   aStream.Read(CoveredPointsQty, SizeOf(CoveredPointsQty));
   aStream.Read(Disabled, SizeOf(Disabled));
-end {TRoutine.Load};
+end ;
 
 
 (******************)
@@ -985,7 +969,7 @@ end {TRoutine.Load};
 procedure TRoutine.Print;
 begin
   Writeln(aFile, Format('%sUIndex=%d, FIndex=%d, FirstPIndex=%d',[BlankStr(Indent), UnitIndex, FileIndex, FirstPointIndex]));
-end {TRoutine.Print};
+end ;
 
 
 (*****************)
@@ -1002,7 +986,7 @@ begin
   aStream.Write(ValidPointsQty, SizeOf(ValidPointsQty));
   aStream.Write(CoveredPointsQty, SizeOf(CoveredPointsQty));
   aStream.Write(Disabled, SizeOf(Disabled));
-end {TRoutine.Save};
+end ;
 
 
 (********************)
@@ -1017,9 +1001,9 @@ begin
     Result := At(i);
     if Comparetext(Result.Name, aName) = 0 then
       exit;
-  end {for};
+  end ;
   Result := nil;
-end {TRoutines.AtName};
+end ;
 
 
 (*************************)
@@ -1036,9 +1020,9 @@ begin
     R := At(i);
     if Comparetext(R.Name, aName) = 0 then
       exit;
-  end {for};
+  end ;
   Result := -1;
-end {TRoutines.AtNameIndex};
+end ;
 
 
 (******************)
@@ -1054,8 +1038,8 @@ begin
   while n > 0 do begin
     Insert(TRoutine.Load(aStream));
     dec(n);
-  end {while};
-end {TRoutines.Load};
+  end ;
+end ;
 
 
 (*******************)
@@ -1071,8 +1055,8 @@ begin
     R := At(i);
     Writeln(aFile, Format('%sRoutine[%d]=%s', [BlankStr(Indent), i, R.Name]));
     R.Print(aFile, Indent+2);
-  end {for};
-end {TRoutines.Print};
+  end ;
+end ;
 
 
 (******************)
@@ -1087,7 +1071,7 @@ begin
   aStream.Write(n, SizeOf(n));
   for n := 0 to pred(Count) do
     TRoutine(At(n)).Save(aStream);
-end {TRoutines.Save};
+end ;
 
 
 (****************************)
@@ -1097,7 +1081,7 @@ end {TRoutines.Save};
 function TSortedNameIndex.Compare(Item1, Item2: pointer): integer;
 begin
   Result := StrComp(PChar(Item1), PChar(Item2))
-end {TSortedNameIndex.Compare};
+end ;
 
 
 (**************************)
@@ -1107,7 +1091,7 @@ end {TSortedNameIndex.Compare};
 function TSortedNameIndex.KeyOf(Item: pointer): pointer;
 begin
   Result := PChar(TNameIndex(Item).Name);
-end {TSortedNameIndex.KeyOf};
+end ;
 
 
 (***************************)
@@ -1166,13 +1150,13 @@ begin
         else
           Result := CompareText(R1.Name, R2.Name);
       end;
-    end {case};
+    end ;
     if Inverted then
       Result := -Result;
 (*
   end ;
 *)  
-end {TSortedRoutines.Compare};
+end ;
 
 
 (************************)
@@ -1245,11 +1229,11 @@ begin
       else
         Result := CompareText(U1.Name, U2.Name);
     end;
-  end {case};
+  end ;
   if Inverted then
     Result := -Result;
 
-end {TSortedUnits.Compare};
+end ;
 
 
 (****************)
@@ -1262,7 +1246,7 @@ begin
   DefinedConditionnals := TStringList.Create;
   FileNames := TStringList.Create;
   FirstRoutineIndex := -1;
-end {TUnit.Create};
+end ;
 
 
 (*****************)
@@ -1274,7 +1258,7 @@ begin
   DefinedConditionnals.Free;
   FileNames.Free;
   inherited Destroy;
-end {TUnit.Destroy};
+end ;
 
 
 (***************************)
@@ -1284,7 +1268,7 @@ end {TUnit.Destroy};
 function TUnit.IsSourceAvailable : boolean;
 begin
   Result := FileNames.Count > 0;
-end {TUnit.IsSourceAvailable};
+end ;
 
 
 (**************)
@@ -1303,13 +1287,13 @@ begin
   while n > 0 do begin
     FileNames.Add(ReadStringFromStream(aStream));
     dec(n);
-  end {while};
+  end ;
   aStream.Read(FirstRoutineIndex, SizeOf(FirstRoutineIndex));
   aStream.Read(Disabled, SizeOf(Disabled));
   aStream.Read(RoutinesQty, SizeOf(RoutinesQty));
   aStream.Read(ValidPointsQty, SizeOf(ValidPointsQty));
   aStream.Read(CoveredPointsQty, SizeOf(CoveredPointsQty));
-end {TUnit.Load};
+end ;
 
 
 (***************)
@@ -1325,9 +1309,9 @@ begin
   with FileNames do
     for i := 0 to pred(Count) do begin
       Writeln(aFile, Format('%sFileName[%d]=%s', [IndentStr, i, Strings[i]]));
-    end {for};
+    end ;
   Writeln(aFile, Format('%sFirstRIndex=%d, RQty=%d',[IndentStr, FirstRoutineIndex, RoutinesQty]));
-end {TUnit.Print};
+end ;
 
 
 (**************)
@@ -1351,7 +1335,7 @@ begin
   aStream.Write(RoutinesQty, SizeOf(RoutinesQty));
   aStream.Write(ValidPointsQty, SizeOf(ValidPointsQty));
   aStream.Write(CoveredPointsQty, SizeOf(CoveredPointsQty));
-end {TUnit.Save};
+end ;
 
 
 (*****************)
@@ -1366,9 +1350,9 @@ begin
     Result := At(i);
     if Comparetext(Result.Name, aName) = 0 then
       exit;
-  end {for};
+  end ;
   Result := nil;
-end {TUnits.AtName};
+end ;
 
 
 (**********************)
@@ -1385,9 +1369,9 @@ begin
     U := At(i);
     if CompareText(U.Name, aName) = 0 then
       exit;
-  end {for};
+  end ;
   Result := -1;
-end {TUnits.AtNameIndex};
+end ;
 
 
 (***************)
@@ -1403,8 +1387,8 @@ begin
   while n > 0 do begin
     Insert(TUnit.Load(aStream));
     dec(n);
-  end {while};
-end {TUnits.Load};
+  end ;
+end ;
 
 
 (****************)
@@ -1420,8 +1404,8 @@ begin
     U := At(i);
     Writeln(aFile, Format('%sUnit[%d]=%s', [BlankStr(Indent), i, U.Name]));
     U.Print(aFile, Indent+2);
-  end {for};
-end {TUnits.Print};
+  end ;
+end ;
 
 
 (***************)
@@ -1436,7 +1420,7 @@ begin
   aStream.Write(n, SizeOf(n));
   for n := 0 to pred(Count) do
     TUnit(At(n)).Save(aStream);
-end {TUnits.Save};
+end ;
 
 
 {~b}

@@ -21,7 +21,7 @@
 ***************************************************************************)
 unit Objects;
 
-{ O+,F+,X+,I-,S-}
+
 
 interface
   uses
@@ -37,7 +37,7 @@ type
     procedure Save(aStream : TStream); virtual;
     property OnChanged : TNotifyEvent read FOnChanged write SetOnChanged;
     procedure HasChanged;
-  end {TSavableObject};
+  end ;
 
   TOwlCollection = class(TSavableObject)
   public
@@ -65,7 +65,7 @@ type
     property Count : integer read GetCount;
   end;
 
-{ TSortedCollection object }
+
 
   TSortedCollection = class(TOwlCollection)
     Duplicates: Boolean;
@@ -77,7 +77,7 @@ type
     function Search(Key: Pointer; var Index: Integer): Boolean; virtual;
   end;
 
-{ TStrCollection object }
+
 
   TStrCollection = class(TSortedCollection)
     function Compare(Key1, Key2: Pointer): Integer; override;
@@ -96,7 +96,7 @@ implementation
 function TOwlCollection.At(Index: Integer): pointer;
   begin
     At := List.Items[Index];
-end {TOwlCollection.At};
+end ;
 
 
 (***************************)
@@ -107,7 +107,7 @@ procedure TOwlCollection.AtDelete(Index: Integer);
   begin
     List.Delete(Index);
     HasChanged;
-end {TOwlCollection.AtDelete};
+end ;
 
 
 (*************************)
@@ -121,7 +121,7 @@ begin
   Item := At(Index);
   AtDelete(Index);
   FreeItem(Item);
-end {TOwlCollection.AtFree};
+end ;
 
 
 (***************************)
@@ -133,7 +133,7 @@ procedure TOwlCollection.AtInsert(Index: Integer; Item: Pointer);
     List.Insert(Index, Item);
     SetItemOnChanged(Item);
     HasChanged;
-end {TOwlCollection.AtInsert};
+end ;
 
 
 (************************)
@@ -148,10 +148,10 @@ procedure TOwlCollection.AtPut(Index: Integer; Item: Pointer);
       while Index >= Count do
         Add(nil);
       Items[Index] := Item;
-    end {with};
+    end ;
     SetItemOnChanged(Item);
     HasChanged;
-end {TOwlCollection.AtPut};
+end ;
 
 
 (*************************)
@@ -162,7 +162,7 @@ constructor TOwlCollection.Create;
 begin
   Inherited Create;
   List := TList.Create;
-end {TOwlCollection.Create};
+end ;
 
 
 (****************************)
@@ -173,7 +173,7 @@ procedure TOwlCollection.DeleteAll;
 begin
   List.Count := 0;
   HasChanged;
-end {TOwlCollection.DeleteAll};
+end ;
 
 
 (**************************)
@@ -186,7 +186,7 @@ begin
   FreeAll;
   List.Free;
   inherited Destroy;
-end {TOwlCollection.Destroy};
+end ;
 
 
 (**************************)
@@ -200,7 +200,7 @@ begin
   for I := 0 to List.Count - 1 do
     FreeItem(At(I));
   DeleteAll;
-end {TOwlCollection.FreeAll};
+end ;
 
 
 (***************************)
@@ -211,7 +211,7 @@ procedure TOwlCollection.FreeItem(Item: Pointer);
 begin
   if Item <> nil then
     (TObject(Item) as TObject).Free;
-end {TOwlCollection.FreeItem};
+end ;
 
 
 (******************************)
@@ -222,7 +222,7 @@ procedure TOwlCollection.FreeOneItem(Item: Pointer);
 begin
   AtDelete(IndexOf(Item));
   FreeItem(Item);
-end {TOwlCollection.FreeOneItem};
+end ;
 
 
 (***************************)
@@ -232,7 +232,7 @@ end {TOwlCollection.FreeOneItem};
 function TOwlCollection.GetCount : integer;
   begin
     Result := List.Count;
-end {TOwlCollection.GetCount};
+end ;
 
 
 (**************************)
@@ -242,7 +242,7 @@ end {TOwlCollection.GetCount};
 function TOwlCollection.IndexOf(Item: Pointer): Integer;
   begin
     IndexOf := List.IndexOf(Item);
-end {TOwlCollection.IndexOf};
+end ;
 
 
 (*************************)
@@ -254,7 +254,7 @@ begin
   List.Add(Item);
   SetItemOnChanged(Item);
   HasChanged;
-end {TOwlCollection.Insert};
+end ;
 
 
 (***********************)
@@ -264,7 +264,7 @@ end {TOwlCollection.Insert};
 procedure TOwlCollection.Pack;
   begin
     List.Pack;
-end {TOwlCollection.Pack};
+end ;
 
 
 (***********************************)
@@ -275,7 +275,7 @@ procedure TOwlCollection.SetItemOnChanged(Item : pointer);
 begin
   if Assigned(OnChanged) then
     (TObject(Item) as TSavableObject).OnChanged := OnChanged;
-end {TOwlCollection.SetItemOnChanged};
+end ;
 
 
 (*******************************)
@@ -289,7 +289,7 @@ begin
   inherited SetOnChanged(aOnChanged);
   for i := 0 to pred(Count) do
     SetItemOnChanged(At(i));
-end {TOwlCollection.SetOnChanged};
+end ;
 
 
 (*****************************)
@@ -300,7 +300,7 @@ procedure TSavableObject.HasChanged;
 begin
   if Assigned(FOnChanged) then
     FOnChanged(Self);
-end {TSavableObject.HasChanged};
+end ;
 
 
 (***********************)
@@ -310,7 +310,7 @@ end {TSavableObject.HasChanged};
 procedure TSavableObject.Save;
   begin
     raise Exception.Create('Call to TSavableObject.Save');
-end {TSavableObject.Save};
+end ;
 
 
 (*******************************)
@@ -320,7 +320,7 @@ end {TSavableObject.Save};
 procedure TSavableObject.SetOnChanged;
 begin
   FOnChanged := aOnChanged;
-end {TSavableObject.SetOnChanged};
+end ;
 
 
 (****************************)
@@ -331,7 +331,7 @@ constructor TSortedCollection.Create;
 begin
   Inherited Create;
   Duplicates := False;
-end {TSortedCollection.Create};
+end ;
 
 
 (*****************************)
@@ -349,7 +349,7 @@ begin
       while (I < List.Count) and (Item <> List.Items[I]) do Inc(I);
     if I < List.Count then IndexOf := I;
   end;
-end {TSortedCollection.IndexOf};
+end ;
 
 
 (****************************)
@@ -361,7 +361,7 @@ var
   I: Integer;
 begin
   if not Search(KeyOf(Item), I) or Duplicates then AtInsert(I, Item);
-end {TSortedCollection.Insert};
+end ;
 
 
 (***************************)
@@ -371,7 +371,7 @@ end {TSortedCollection.Insert};
 function TSortedCollection.KeyOf(Item: Pointer): Pointer;
 begin
   KeyOf := Item;
-end {TSortedCollection.KeyOf};
+end ;
 
 
 (****************************)
@@ -400,7 +400,7 @@ begin
     end;
   end;
   Index := L;
-end {TSortedCollection.Search};
+end ;
 
 
 (**************************)
@@ -410,7 +410,7 @@ end {TSortedCollection.Search};
 function TStrCollection.Compare(Key1, Key2: Pointer): Integer;
 begin
   Compare := StrComp(pChar(Key1), pChar(Key2));
-end {TStrCollection.Compare};
+end ;
 
 
 (***************************)
@@ -420,7 +420,7 @@ end {TStrCollection.Compare};
 procedure TStrCollection.FreeItem(Item: Pointer);
 begin
   StrDispose(pChar(Item));
-end {TStrCollection.FreeItem};
+end ;
 
 
 (***********************************)
@@ -429,9 +429,8 @@ end {TStrCollection.FreeItem};
 
 procedure TStrCollection.SetItemOnChanged(Item : pointer);
 begin
-end {TStrCollection.SetItemOnChanged};
+end ;
 
 
 {~b}
 end.
-

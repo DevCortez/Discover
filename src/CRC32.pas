@@ -103,7 +103,7 @@ begin
     if (FileMap <> 0) then begin
       Memory := MapViewOfFile(FileMap, FILE_MAP_READ, 0, 0, 0);
       if (Memory <> nil) then begin
-        Result := $FFF00FFF;  {special CRC init}
+        Result := $FFF00FFF;  
         UpdateCRC32(Result, Memory^, Size);
         UnmapViewOfFile(Memory);
       end;
@@ -111,7 +111,7 @@ begin
     end;
     CloseHandle(Fh);
   end;
-end {FileCRC32};
+end ;
 
 
 (***************)
@@ -128,7 +128,7 @@ begin
     B := TLongIntRec(CRC).LoLo xor Bytes[I];
     CRC := (CRC shr 8) xor CRC32Table[B];
   end;
-end {UpdateCRC32};
+end ;
 
 
 {~b}

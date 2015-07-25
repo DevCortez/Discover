@@ -83,7 +83,7 @@ procedure TCodeParser.CaseStatement;
     Statement(LineNumber);
     if LineNumber > 0 then
       ValidateCoveragePointAt(LineNumber);
-  end {OneCase};
+  end ;
 
 begin
   Expect(toCase);
@@ -107,7 +107,7 @@ begin
   if T.Token = toSemiColon then
     T.Next;
   Expect(toEnd);
-end {TCodeParser.CaseStatement};
+end ;
 
 
 (*********************************)
@@ -135,7 +135,7 @@ begin
       Done := true;
   until Done;
   Expect(toEnd);
-end {TCodeParser.CompoundStatement};
+end ;
 
 
 (**********************)
@@ -150,7 +150,7 @@ begin
   T.OnDefUndefDirective := OnDefUndefDirective;
   T.OnIncludeDirective := OnIncludeDirective;
   CurrentRoutineLineNumbersToPoints := TLineNumbersToPoints.Create;
-end {TCodeParser.Create};
+end ;
 
 
 (***********************)
@@ -163,7 +163,7 @@ begin
   CurrentRoutineLineNumbersToPoints.DeleteAll;
   CurrentRoutineLineNumbersToPoints.Free;
   inherited Destroy;
-end {TCodeParser.Destroy};
+end ;
 
 
 (**********************)
@@ -176,7 +176,7 @@ begin
     raise EParserExpect.Create([aToken], T.FileName, T.LineNumber, T.OffsetInLine)
   else
     T.Next;
-end {TCodeParser.Expect};
+end ;
 
 
 (****************************)
@@ -191,7 +191,7 @@ begin
     Result := T.GetIdentifier;
     T.Next;
   end ;
-end {TCodeParser.ExpectAndGet};
+end ;
 
 
 (***************************)
@@ -204,7 +204,7 @@ begin
     raise EParserExpect.Create(aTokenSet, T.FileName, T.LineNumber, T.OffsetInLine)
   else
     T.Next;
-end {TCodeParser.ExpectOneOf};
+end ;
 
 
 (****************************)
@@ -221,7 +221,7 @@ begin
   Statement(LineNumber);
   if LineNumber > 0 then
     ValidateCoveragePointAt(LineNumber);
-end {TCodeParser.ForStatement};
+end ;
 
 
 (***************************)
@@ -244,7 +244,7 @@ begin
     if LineNumber > 0 then
       ValidateCoveragePointAt(LineNumber);
   end ;
-end {TCodeParser.IfStatement};
+end ;
 
 
 (***********************************)
@@ -267,8 +267,8 @@ begin
         CurrentUnit.DefinedConditionnals.Delete(i);
   else
     Assert(false);
-  end {case};
-end {TCodeParser.OnDefUndefDirective};
+  end ;
+end ;
 
 
 (*****************************)
@@ -289,8 +289,8 @@ begin
         (GlobalDefinedConditionnals_.IndexOf(s) < 0);
   else
     Assert(false);
-  end {case};
-end {TCodeParser.OnIfDirective};
+  end ;
+end ;
 
 
 (**********************************)
@@ -311,8 +311,8 @@ begin
       FileName := SearchPath_[i] + '\' + s;
       if FileExists(FileName) then
         break;
-    end {for};
-end {TCodeParser.OnIncludeDirective};
+    end ;
+end ;
 
 
 (*********************)
@@ -367,7 +367,7 @@ procedure TCodeParser.Parse;
       end else
         Done := true;
     until Done;
-  end {FindNextRoutine};
+  end ;
 
   procedure ParseRoutine;
     var
@@ -387,7 +387,7 @@ procedure TCodeParser.Parse;
         C.Valid := true;
         with Projectdatabase_.CoveragePoints do begin
           inc(ValidPointsQty); inc(ValidEnabledPointsQty);
-        end {with};
+        end ;
         CurrentRoutine.ValidPointsQty := 1;
         CurrentRoutineLineNumbersToPoints.DeleteAll;
         i := CurrentRoutine.FirstPointIndex;
@@ -397,7 +397,7 @@ procedure TCodeParser.Parse;
           inc(i);
           if i < ProjectDataBase_.CoveragePoints.Count then
             C := ProjectDataBase_.CoveragePoints.At(i);
-        end {while};
+        end ;
         case T.Token of
           toFunction, toProcedure:;
             // assume a one line routine
@@ -419,7 +419,7 @@ procedure TCodeParser.Parse;
             // One line routine, we do nothing
           else
             CompoundStatement(true, Dmy);
-        end {case};
+        end ;
       except
         on E:EParserExpect do
           // Silence...
@@ -427,11 +427,11 @@ procedure TCodeParser.Parse;
             Writeln(LogFile_, Format('"%s" in %s, at %d',[E.Message, E.FileName, E.LineNr]));
         else
           raise
-      end {try};
+      end ;
     end else begin
       // Completely ignore init and exitcode
     end ;
-  end {ParseRoutine};
+  end ;
 
 begin
   CurrentRoutineIndex := -1;
@@ -445,7 +445,7 @@ begin
       OnProgressEvent(100*CurrentRoutineIndex div
         ProjectDataBase_.Routines.Count,'Processing source code');
   until Done;
-end {TCodeParser.Parse};
+end ;
 
 
 (*******************************)
@@ -458,7 +458,7 @@ begin
   StatementList(LineNumber);
   Expect(toUntil);
   SkipUntil([toEnd, toElse, toSemiColon, toEndOfBuffer, toUntil, toFinally, toExcept]);
-end {TCodeParser.RepeatStatement};
+end ;
 
 
 (*************************)
@@ -469,7 +469,7 @@ procedure TCodeParser.SkipUntil;
 begin
   while not (T.Token in aTokenSet) do
     T.Next;
-end {TCodeParser.SkipUntil};
+end ;
 
 
 (*************************)
@@ -522,10 +522,10 @@ begin
       T.EnableAsmIdentifiers := false;
       Expect(toEnd);
     end;
-    else {case}
+    else 
       LineNumber := -1;
-  end {case};
-end {TCodeParser.Statement};
+  end ;
+end ;
 
 
 (*****************************)
@@ -550,7 +550,7 @@ begin
     else
       T.Next;
   until Done;
-end {TCodeParser.StatementList};
+end ;
 
 
 (****************************)
@@ -591,7 +591,7 @@ begin
     end ;
   until T.Token = toEnd;
   Expect(toEnd);
-end {TCodeParser.TryStatement};
+end ;
 
 
 (***************************************)
@@ -610,11 +610,11 @@ begin
         inc(CurrentRoutine.ValidPointsQty);
         with Projectdatabase_.CoveragePoints do begin
           inc(ValidPointsQty); inc(ValidEnabledPointsQty);
-        end {with};
+        end ;
         C.Valid := true;
       end ;
   end ;
-end {TCodeParser.ValidateCoveragePointAt};
+end ;
 
 
 (******************************)
@@ -631,7 +631,7 @@ begin
   Statement(LineNumber);
   if LineNumber > 0 then
     ValidateCoveragePointAt(LineNumber);
-end {TCodeParser.WhileStatement};
+end ;
 
 
 (*****************************)
@@ -644,7 +644,7 @@ begin
   SkipUntil([toDo, toEndOfBuffer]);
   Expect(toDo);
   Statement(LineNumber);
-end {TCodeParser.WithStatement};
+end ;
 
 
 (********************************)
@@ -659,7 +659,7 @@ begin
     Result := 0
   else
     Result := 1;
-end {TLineNumbersToPoints.Compare};
+end ;
 
 
 (******************************)
@@ -669,7 +669,7 @@ end {TLineNumbersToPoints.Compare};
 function TLineNumbersToPoints.KeyOf;
 begin
   Result := pointer(TCoveragePoint(Item).LineNumber);
-end {TLineNumbersToPoints.KeyOf};
+end ;
 
 
 {~b}
