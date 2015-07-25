@@ -14,8 +14,10 @@ uses
 {$IFDEF DUNIT_CONSOLE_MODE}
   {$APPTYPE CONSOLE}
 {$ELSE}
-  {$R *.RES}
+  //{$R *.RES}
 {$ENDIF}
+
+{$R ..\src\Discover.RES}
 
 begin
 {$IFDEF DUNIT_CONSOLE_MODE}

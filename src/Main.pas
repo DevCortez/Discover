@@ -2194,7 +2194,7 @@ begin {LoadProject}
       Writeln(LogFile_, Format('Opening project: %s', [DelphiProjectFileName]));
     end ;
   
-  ProjectPath := ExtractFilePath(DelphiProjectFileName);
+  ProjectPath := ExpandFileName(ExtractFilePath(DelphiProjectFileName));
 
   // Locate the option file
   s1 := ChangeFileExt(DelphiProjectFileName, '.bdsproj');
@@ -2560,16 +2560,13 @@ end {TFormMain.MMOptionsClick};
 
 procedure TFormMain.MMProjectClearStateClick(Sender: TObject);
 begin
-  if MessageDlg('Do you want to clear the current state?',
-    mtConfirmation, [mbYes, mbNo], 0) = mrYes then begin
-    Screen.Cursor := crHourGlass;
-    try
-      ProjectDataBase_.Clear;
-      InitAfterLoadingDatabase;
-    finally
-      Screen.Cursor := crDefault;
-    end {try};
-  end ;
+  Screen.Cursor := crHourGlass;
+  try
+    ProjectDataBase_.Clear;
+    InitAfterLoadingDatabase;
+  finally
+    Screen.Cursor := crDefault;
+  end {try};
 end {TFormMain.MMProjectClearStateClick};
 
 

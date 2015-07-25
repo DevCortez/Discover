@@ -6,34 +6,79 @@ uses
   TestFramework, TestExtensions;
 
 type
-  TSetupDunit = class(TTestSetup)
+  TSetupDiscover = class(TTestSetup)
   protected
     procedure SetUp; override;
-    procedure TearDown; override;
-  
+    procedure TearDown; override;  
   end;
 
   BasicTests = class(TTestCase)
   published
-    procedure CreateProject;
+    procedure CreateProjectRelativePath;
+    procedure CreateProjectAbsolutePath;
+    procedure SaveLoadStress;
+    procedure ClearStateStress;
   end;
 
 implementation
 
 uses
-  Forms, Main, F_Options, F_Export, F_ProjectInfo;
+  Forms, Main, F_Options, F_Export, F_ProjectInfo, SysUtils, DataBase;
 
 { BasicTests }
 
-procedure BasicTests.CreateProject;
+procedure BasicTests.ClearStateStress;
+var
+  i : integer;
 begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
-  While true do application.ProcessMessages();
+  FormMain.SaveStateFile('Teste.dps');
+
+  for i := 1 to 10 do
+    begin
+      FormMain.MMProjectClearStateClick(nil);
+      CheckEquals(0, ProjectDataBase_.Units.Count, 'Unit count');
+      CheckEquals(0, ProjectDataBase_.Routines.Count, 'Routine count');
+      CheckEquals(0, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
+      FormMain.LoadState('Teste.dps');
+    end;
+end;
+
+procedure BasicTests.CreateProjectAbsolutePath;
+begin
+  FormMain.LoadProject(ExpandFileName('Dummy\Dummy.dpr'));
+  CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
+  CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
+  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
+end;
+
+procedure BasicTests.CreateProjectRelativePath;
+begin
+  FormMain.LoadProject('Dummy\Dummy.dpr');
+  CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
+  CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
+  CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');  
+end;
+
+procedure BasicTests.SaveLoadStress;
+var
+  i : integer;
+begin
+  FormMain.LoadProject('Dummy\Dummy.dpr');
+  FormMain.SaveStateFile('Teste.dps');
+
+  for i := 1 to 10 do
+    begin
+      FormMain.LoadState('Teste.dps');
+      CheckEquals(ProjectDataBase_.Units.Count, 59, 'Unit count');
+      CheckEquals(ProjectDataBase_.Routines.Count, 2873, 'Routine count');
+      CheckEquals(ProjectDataBase_.CoveragePoints.Count, 14, 'Unit count');
+    end;
 end;
 
 { TSetupDunit }
 
-procedure TSetupDunit.SetUp;
+procedure TSetupDiscover.SetUp;
 begin
   inherited;
   FormMain := TFormMain.Create(nil);
@@ -44,7 +89,7 @@ begin
   FormMain.Show();
 end;
 
-procedure TSetupDunit.TearDown;
+procedure TSetupDiscover.TearDown;
 begin
   inherited;
   FormMain.Free;
@@ -54,7 +99,7 @@ begin
 end;
 
 initialization
-  TestFramework.RegisterTest(BasicTests.Suite);
+  TestFramework.RegisterTest(TSetupDiscover.Create(BasicTests.Suite));
 
 end.
 
