@@ -2233,7 +2233,15 @@ begin
     ProjectDataBase_ := TProjectDataBase.Create;
     InitAfterLoadingDatabase;
 
-    ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe');
+    if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')) then
+      ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')
+    else
+      if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')) then
+        ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')
+      else
+        if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl')) then
+          ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl');
+
     ProjectDataBase_.ModuleFileCRC := CRC32.FileCRC32(ProjectDataBase_.ModuleFileName);
     ProjectDataBase_.RelativePath := ProjectPath;
 
