@@ -479,11 +479,14 @@ procedure TFormMain.FillLBUnits;
 begin
   LBUnits.Items.BeginUpdate;
   LBUnits.Items.Clear;
+
   with SortedUnits do
-    for i := 0 to pred(Count) do begin
-      U := At(i);
-      LBUnits.Items.AddObject('',U);
-    end ;
+    for i := 0 to pred(Count) do
+      begin
+        U := At(i);
+
+        LBUnits.Items.AddObject('',U);
+      end ;
   LBUnits.Items.EndUpdate;
 end ;
 
@@ -524,12 +527,15 @@ begin
   if ProjectDatabase_ <> nil then begin
     ProjectDataBase_.UpDateStatistics;
     SortedUnits.DeleteAll;
+
     with ProjectDataBase_.Units do
-      for i := 0 to pred(Count) do begin
-        U := At(i);
-        if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
-          SortedUnits.Insert(U);
-      end ;
+      for i := 0 to pred(Count) do
+        begin
+          U := At(i);
+
+          if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
+            SortedUnits.Insert(U);
+        end ;
   end ;
 end ;
 

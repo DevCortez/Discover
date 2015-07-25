@@ -62,6 +62,8 @@ object FormOptions: TFormOptions
     Caption = 
       'Don'#39't display UNITS without accessible source or without routine' +
       's'
+    Checked = True
+    State = cbChecked
     TabOrder = 2
   end
   object CHKLoadState: TCheckBox
