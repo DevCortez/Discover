@@ -20,6 +20,7 @@ type
     procedure ClearStateStress;
     procedure ModalTest;
     procedure CoverageTest;
+    procedure ModuleCoverageTest;
   end;
 
 implementation
@@ -92,12 +93,35 @@ begin
   // while FormMain.Visible do Application.ProcessMessages();
 end;
 
+procedure BasicTests.ModuleCoverageTest;
+var
+  i : integer;
+begin
+  FormMain.LoadProject('ModuleDummy\ModuleDummy.dpr');
+  ProjectDataBase_.HostApplication := ExpandFileName('ModuleDummy\Loader.exe');
+  FormMain.MMApplicationRunClick(nil);
+
+  {
+    For the same reason as before, this loop waits coverage to end.
+    This coverage should actually end before the delay, but thats not
+    really an issue for the test at all
+  }
+  for i := 1 to 500 do
+    begin
+      Sleep(1);
+      Application.ProcessMessages();
+    end;
+
+  FormMain.MMApplicationTerminateClick(nil);
+  CheckEquals(trunc(66.6666641235352), Trunc(ProjectDataBase_.TotalCoverage), 'Coverage percentage');
+end;
+
 procedure BasicTests.SaveLoadStress;
 var
   i : integer;
 begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
-  FormMain.SaveStateFile(ExpandFileName(ExpandFileName('Teste.dps')));
+  FormMain.SaveStateFile(ExpandFileName('Teste.dps'));
 
   for i := 1 to 25 do
     begin
