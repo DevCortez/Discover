@@ -16,6 +16,7 @@ type
   published
     procedure CreateProjectRelativePath;
     procedure CreateProjectAbsolutePath;
+    procedure SaveLoadIntegrity;
     procedure SaveLoadStress;
     procedure ClearStateStress;
     procedure ModalTest;
@@ -114,6 +115,22 @@ begin
 
   FormMain.MMApplicationTerminateClick(nil);
   CheckEquals(trunc(66.6666641235352), Trunc(ProjectDataBase_.TotalCoverage), 'Coverage percentage');
+end;
+
+procedure BasicTests.SaveLoadIntegrity;
+begin
+  FormMain.LoadProject('Dummy\Dummy.dpr');
+
+  ProjectDataBase_.RunParameters := 'Run params';
+  ProjectDataBase_.HostApplication := 'Host application';
+  ProjectDataBase_.StartupDirectory := 'Current directory';
+
+  FormMain.SaveStateFile(ExpandFileName('Teste.dps'));
+  FormMain.LoadState(ExpandFileName('Teste.dps'));
+
+  CheckEqualsString(ProjectDataBase_.RunParameters, 'Run params');
+  CheckEqualsString(ProjectDataBase_.HostApplication, 'Host application');
+  CheckEqualsString(ProjectDataBase_.StartupDirectory, 'Current directory');
 end;
 
 procedure BasicTests.SaveLoadStress;
