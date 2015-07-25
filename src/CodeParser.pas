@@ -103,7 +103,7 @@ begin
     StatementList(LineNumber);
     if LineNumber > 0 then
       ValidateCoveragePointAt(LineNumber);
-  end {if};
+  end ;
   if T.Token = toSemiColon then
     T.Next;
   Expect(toEnd);
@@ -190,7 +190,7 @@ begin
   else begin
     Result := T.GetIdentifier;
     T.Next;
-  end {if};
+  end ;
 end {TCodeParser.ExpectAndGet};
 
 
@@ -243,7 +243,7 @@ begin
     Statement(LineNumber);
     if LineNumber > 0 then
       ValidateCoveragePointAt(LineNumber);
-  end {if};
+  end ;
 end {TCodeParser.IfStatement};
 
 
@@ -344,7 +344,7 @@ procedure TCodeParser.Parse;
             SyncLost := false;
             if LogFileEnabled_ then
               Writeln(LogFile_, Format('Opening src-file: %s', [RoutineFileName]));
-          end {if};
+          end ;
           // skip to the routine line
           C := ProjectDataBase_.CoveragePoints.At(CurrentRoutine.FirstPointIndex);
           // WARNING: In certain files (ex:windows.pas in Delphi 5) several line
@@ -357,13 +357,13 @@ procedure TCodeParser.Parse;
                 Writeln(LogFile_, Format('*** ERROR *** Sync lost at line %d.',
                   [C.LineNumber]));
              SyncLost := true;
-            end {if};
-          end {if};
+            end ;
+          end ;
           if not SyncLost then begin
             Result := true;
             Done := true;
-          end {if};
-        end {if};
+          end ;
+        end ;
       end else
         Done := true;
     until Done;
@@ -430,7 +430,7 @@ procedure TCodeParser.Parse;
       end {try};
     end else begin
       // Completely ignore init and exitcode
-    end {if};
+    end ;
   end {ParseRoutine};
 
 begin
@@ -488,7 +488,7 @@ begin
       // Label
     end else
       T.SetContext(C);
-  end {if};
+  end ;
   LineNumber := T.LineNumber;
   case T.Token of
     toIdentifier, toRaise, toAt, toInherited, toParOpen:
@@ -588,7 +588,7 @@ begin
       StatementList(LineNumber);
       if (LineNumber > 0) and not IsFinally then
         ValidateCoveragePointAt(LineNumber);
-    end {if};
+    end ;
   until T.Token = toEnd;
   Expect(toEnd);
 end {TCodeParser.TryStatement};
@@ -612,8 +612,8 @@ begin
           inc(ValidPointsQty); inc(ValidEnabledPointsQty);
         end {with};
         C.Valid := true;
-      end {if};
-  end {if};
+      end ;
+  end ;
 end {TCodeParser.ValidateCoveragePointAt};
 
 

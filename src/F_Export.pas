@@ -84,7 +84,7 @@ begin
       EDITUnitFileName.TExt := ExportFileNameDialog.FileName
     else
       EDITRoutineFileName.Text := ExportFileNameDialog.FileName
-  end {if};
+  end ;
 
 end {TFormExport.BTNBrowseClick};
 

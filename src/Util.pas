@@ -57,7 +57,7 @@ begin
         if FileExists(t) then begin
           Result := t;
           exit;
-        end {if};
+        end ;
       end {for};
       Result := '';
   end else

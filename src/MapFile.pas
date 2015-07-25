@@ -96,7 +96,7 @@ implementation
           ProjectDataBase_.Units.Insert(U);
           Readln(MapFile, s);
         end {while};
-      end {if};
+      end ;
     end {DetailedMapOfSegments};
 
     procedure PublicsByValue;
@@ -139,9 +139,9 @@ implementation
                   R := ProjectDatabase_.Routines.At(pred(ProjectDataBase_.Routines.Count));
                   ProjectDataBase_.Routines.AtFree(pred(ProjectDataBase_.Routines.Count));
                   dec(LastU.RoutinesQty);
-                end {if};
+                end ;
                 LastU := U;
-              end {if};
+              end ;
 *)
             end {while};
             RoutineName := Identifier(s, 22);
@@ -155,7 +155,7 @@ implementation
               else
                 // Remove the unit name and the separating dot
                 Delete(RoutineName, 1, length(U.Name)+1);
-            end {if};
+            end ;
             
             if (RoutineName[1] <> '@') and  (RoutineName[1] <> '.') and
               (UpperCase(RoutineName) <> 'FINALIZATION') then begin
@@ -167,11 +167,11 @@ implementation
                 U.FirstRoutineIndex := ProjectDataBase_.Routines.Count;
               ProjectDataBase_.Routines.Insert(R);
               inc(U.RoutinesQty);
-            end {if};
-          end {if};
+            end ;
+          end ;
           ReadLn(MapFile, s);
         end {while};
-      end {if};
+      end ;
     end {PublicsByValue};
 
     procedure LineNumbers;
@@ -216,7 +216,7 @@ implementation
             if not (Address < U.Address + U.Size) then begin
               p := p; // for BP
               exit;
-            end {if};
+            end ;
 
             while (CurrentRoutine <> nil) and
               not ((Address >= CurrentRoutine.Address) and (Address <= LastRoutineAddress)) do
@@ -233,10 +233,10 @@ implementation
                     CurrentFileIndex := pred(U.FileNames.Count);
                     if LogFileEnabled_ then
                       Writeln(LogFile_, '  File found:'+ FileFullPath);
-                  end {if};
-                end {if};
+                  end ;
+                end ;
                 FileDone := true;
-              end {if};
+              end ;
               // Create the new point
               C := TCoveragePoint.Create;
               C.LineNumber := LineNumber;
@@ -245,12 +245,12 @@ implementation
               if CurrentRoutine.FirstPointIndex < 0 then begin
                 CurrentRoutine.FirstPointIndex := ProjectDataBase_.CoveragePoints.Count;
                 CurrentRoutine.FileIndex := CurrentFileIndex;
-              end {if};
+              end ;
               ProjectDataBase_.CoveragePoints.Insert(C);
-            end {if};
+            end ;
             LastCPAddress := Address;
             LastCPLineNumber := LineNumber;
-          end {if};
+          end ;
         end {EnterPoint};
 
         procedure ProcessLine;

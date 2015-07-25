@@ -177,8 +177,8 @@ procedure TDebugThread.Execute;
           EFlags := EFlags and not($100);
         end {with};
         SetThreadContext(CurrentThreadHandle, Context);
-      end {if};
-    end {if};
+      end ;
+    end ;
     if not CurrentCoveragePoint.IsBreakPointSet then
      SetOneBreakPoint(ProcessHandle, CurrentCoveragePoint);
   end {HandleSingleStep};
@@ -315,7 +315,7 @@ begin
   if not CreateProcess then begin
     SendMessage(Application.Handle, XM_PROCESSNOTCREATED, 0, Windows.GetLastError);
     exit;
-  end {if};
+  end ;
   Process.FCreated := true;
 
   ThreadInfos := TThreadInfos.Create;
@@ -331,10 +331,10 @@ begin
           if WaitForInputIdle(Handle,1) <> WAIT_TIMEOUT then begin
             SendMessage(Application.Handle, XM_RUNNING, 0, 0);
             Process.FRunning := true;
-          end {if};
+          end ;
         end else
           TimeOut := INFINITE;
-      end {if};
+      end ;
     until Done;
   finally
     LogInfos_.R.MaxThreads := ThreadInfos.Count;
@@ -403,11 +403,11 @@ begin
     if (not U.Disabled) and (not R.Disabled) and (not C.Disabled) and
       (C.Counter = 0) then begin
       ErrorCode := SetOneBreakPoint(aProcess, C);
-    end {if};
+    end ;
     if (ErrorCode > 0) and (LogInfos_.R.AccessMemFailures < MaxAccessMemFailures) then begin
       SendMessage(Application.Handle, XM_ERRORCODE, ErrorCode, C.Address+
         ProjectDataBase_.ImageBase+ProgrammOffset_);
-    end {if};
+    end ;
     inc(CIdx);
   end {while};
 end {TProcess.SetInitialBreakPoints};
@@ -437,7 +437,7 @@ begin
       end else
         aPoint.IsBreakPointSet := true;
     end {with};
-  end {if};
+  end ;
 end {TProcess.SetOneBreakPoint};
 
 

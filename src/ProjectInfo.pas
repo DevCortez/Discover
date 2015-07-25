@@ -148,12 +148,12 @@ begin
       inc(n);
       F.WriteString(Section, IntToStr(n), s);
       s := '';
-    end {if};
+    end ;
   end {for};
   if s <> '' then begin
     inc(n);
     F.WriteString(Section, IntToStr(n), s);
-  end {if};
+  end ;
   F.WriteInteger(Section, '0', n);
 end {TProjectInfo.SaveStringList};
 

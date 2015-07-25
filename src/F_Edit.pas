@@ -64,13 +64,13 @@ begin
   if d > 0 then begin
     dec(TargetRect.Top, d);
     dec(TargetRect.Bottom, d);
-  end {if};
+  end ;
 
   d := (TargetRect.Right-TargetRect.Left) - (R.Right - R.Left);
   if d > 0 then begin
     dec(TargetRect.Left, d);
     dec(TargetRect.Right, d);
-  end {if};
+  end ;
   BoundsRect := TargetRect;
 end {TFormEdit.CheckOnScreen};
 
@@ -101,7 +101,7 @@ procedure TFormEdit.WMCommand;
       FirstEditFocus := false;
       Edit1.SelStart := Length(Edit1.Text);
       Edit1.SelLength := 0;
-    end {if};
+    end ;
     Inherited;
 end {TFormEdit.WMCommand};
 

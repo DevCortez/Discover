@@ -334,8 +334,8 @@ begin
         inc(ValidEnabledPointsQty);
         if C.Counter > 0 then
          inc(ValidEnabledCoveredPointsQty);
-      end {if};
-    end {if};
+      end ;
+    end ;
     dec(n);
   end {while};
 end {TCoveragePoints.Load};
@@ -467,7 +467,7 @@ begin
     if C.Counter > 0 then
       dec(CoveragePoints.ValidEnabledCoveredPointsQty);
     inc(ChangedCount);
-  end {if};
+  end ;
 end {TProjectDataBase.DisablePoint};
 
 
@@ -506,12 +506,12 @@ begin
             EnablePoint(C)
           else
             DisablePoint(C);
-        end {if};
+        end ;
         inc(i);
         if i < Count then
           C := CoveragePoints.At(i);
       end {while};
-    end {if};
+    end ;
   end {with};
   R.Disabled := not Enable;
   inc(ChangedCount);
@@ -583,7 +583,7 @@ begin
     if C.Counter > 0 then
       inc(CoveragePoints.ValidEnabledCoveredPointsQty);
     inc(ChangedCount);
-  end {if};
+  end ;
 end {TProjectDataBase.EnablePoint};
 
 
@@ -604,7 +604,7 @@ begin
       if U.IsSourceAvailable then begin
         inc(R100Pc, U.R100Pc);
         inc(R0Pc, U.R0Pc);
-      end {if};
+      end ;
     end {for};
 end {TProjectDataBase.GetR100R0};
 
@@ -701,7 +701,7 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
           OldPoint := OldDataBase.CoveragePoints.At(OldPointIndex);
           Result := (NewPoint.RoutineIndex = NewRIndex) =
             (OldPoint.RoutineIndex = OldRIndex);
-        end {if};
+        end ;
       end {while};
     end {RoutineMatch};
 
@@ -725,7 +725,7 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
         if (NewPointIndex < CoveragePoints.Count) then begin
           NewPoint := CoveragePoints.At(NewPointIndex);
           OldPoint := OldDataBase.CoveragePoints.At(OldPointIndex);
-        end {if};
+        end ;
       end {while};
     end {TransferCoverage};
 
@@ -752,13 +752,13 @@ procedure TProjectDataBase.MergeCoverage(OldDataBase : TProjectDataBase);
           else
 //            if LogFileEnabled_ then
 //              Writeln(LogFile_, Format('New or changed: Unit=%s, R=%s',[NewU.Name, NewR.Name]));
-        end {if};
+        end ;
 
         inc(NewRIndex);
         if NewRIndex < Routines.Count then
           NewR := Routines.At(NewRIndex);
       end {while};
-    end {if};
+    end ;
   end {DoUnit};
 
 begin
@@ -815,8 +815,8 @@ begin
       inc(CoveragePoints.ValidCoveredPointsQty);
       if not C.Disabled then
         inc(CoveragePoints.ValidEnabledCoveredPointsQty);
-    end {if};
-  end {if};
+    end ;
+  end ;
 end {TProjectDataBase.SetCovered};
 
 
@@ -869,8 +869,8 @@ begin
           N := S.At(Index);
           NewR := Routines.At(N.Index);
           Self.EnableDisableRoutine(NewR, false);
-        end {if};
-      end {if};
+        end ;
+      end ;
     end {for};
   finally
     S.Free;
@@ -892,8 +892,8 @@ begin
           N := S.At(Index);
           NewU := Units.At(N.Index);
           NewU.Disabled := true;
-        end {if};
-      end {if};
+        end ;
+      end ;
     end {for};
   finally
     S.Free;
@@ -934,7 +934,7 @@ begin
             inc(U.R100pc);
         end else
           U := U;  // For BP
-      end {if};
+      end ;
     end {for};
 end {TProjectDataBase.UpdateStatistics};
 
@@ -1170,7 +1170,7 @@ begin
     if Inverted then
       Result := -Result;
 (*
-  end {if};
+  end ;
 *)  
 end {TSortedRoutines.Compare};
 

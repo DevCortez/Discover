@@ -55,7 +55,7 @@ function CheckCommandLineParams : boolean;
       s := StripQuotes(Copy(Param, 4, length(Param)));
       if (s <> '') and not FileExists(s) then
         Error(Format('File "%s" does not exist.',[s]));
-    end {if};
+    end ;
   end {HandleOptionWithFileName};
 
   var
@@ -98,8 +98,8 @@ begin
           CommandLineParams_.Action := caDPS
         else
           CommandLineParams_.Action := caDPR;
-      end {if};
-    end {if};
+      end ;
+    end ;
     inc(i);
   end {while};
 end {CheckCommandLineParams};

@@ -74,10 +74,10 @@ begin
   end else begin
     if CommandLineParams_.RunMinimized then
       FormMain.WindowState := wsMinimized;
-  end {if};
+  end ;
 
   if CommandLineParams_.Action <> caNoAction then begin
     CommandLineActionEnabled_ := true;
-  end {if};
+  end ;
   Application.Run;
 end.

@@ -112,7 +112,7 @@ procedure InitUnit;
       except
         LogFileEnabled_ := false;
       end {try};
-    end {if};
+    end ;
     FillChar(LogInfos_, SizeOf(LogInfos_), 0);
     FillChar(CommandLineParams_, SizeOf(CommandLineParams_), 0);
     CommandLineActionEnabled_ := false;

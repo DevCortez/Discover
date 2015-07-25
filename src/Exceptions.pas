@@ -53,7 +53,7 @@ begin
         s := s + ', ';
       s := s + TokenString(t);
       inc(TokenQty);
-    end {if};
+    end ;
   inherited Create(s+' expected');
   LineNr := aLineNr;
   OffsetInLine := aOffsetInLine;

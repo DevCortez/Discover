@@ -335,7 +335,7 @@ procedure TObjectPascalTokenizer.CurlOpen;
             FTokenIndex := Index;
             Identifier;
             OnDefUndefDirective(d, GetIdentifier);
-          end {if};
+          end ;
 
         dirELSE:
           case ConditionnalStack[ConditionnalStackPtr] of
@@ -365,8 +365,8 @@ procedure TObjectPascalTokenizer.CurlOpen;
               Included.OnIfDirective := OnIfDirective;
               Included.OnDefUndefDirective := OnDefUndefDirective;
               Included.OnIncludeDirective := OnIncludeDirective;
-            end {if};
-          end {if};
+            end ;
+          end ;
       end {case};
       ToCurlClose;
     end else
@@ -409,7 +409,7 @@ begin
     aContext.LineIndex := FLineIndex;
     aContext.Index := Index;
     aContext.TokenIndex := FTokenIndex;
-  end {if};
+  end ;
 end {TObjectPascalTokenizer.GetContext};
 
 
@@ -494,7 +494,7 @@ begin
       if Buffer[StartIndex] = NewLineChar then begin
         inc(FLineNumber);
         FLineIndex := Index;
-      end {if};
+      end ;
       inc(StartIndex);
     end {while};
     Result := true;
@@ -534,7 +534,7 @@ begin
       inc(HexValue,ord(c)-ord('A')+10);
     end else begin
       inc(HexValue,ord(c)-ord('0'));
-    end {if};
+    end ;
     inc(Index);
     c := UpCase(Buffer[Index]);
   end {while};
@@ -729,7 +729,7 @@ begin
           else begin
             FToken := toAt;
             inc(Index);
-          end {if};
+          end ;
         end;
 
         'A'..'Z' :
@@ -779,8 +779,8 @@ begin
         Included.Free;
         Included := nil;
         FToken := toNone;
-      end {if};
-    end {if};
+      end ;
+    end ;
   until (FToken <> toNone) and (ConditionnalStack[ConditionnalStackPtr] = cosTrue);
 end {TObjectPascalTokenizer.Next};
 
@@ -923,7 +923,7 @@ begin
     FLineIndex := aContext.LineIndex;
     Index := aContext.Index;
     FTokenIndex := aContext.TokenIndex;
-  end {if};
+  end ;
 end {TObjectPascalTokenizer.SetContext};
 
 
@@ -968,7 +968,7 @@ begin
         if FLineNumber = LineNr then begin
           Result := true;
           break;
-        end {if};
+        end ;
       end else
         inc(Index);
     end {while};
@@ -1027,7 +1027,7 @@ procedure TObjectPascalTokenizer.UnsignedNumber;
       if (Buffer[Index] = '-') or (Buffer[Index] = '+') then
         inc(Index);
       DigitSequence;
-    end {if};
+    end ;
   end {ScaleFactor};
 
 begin
