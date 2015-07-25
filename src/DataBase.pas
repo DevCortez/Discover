@@ -79,6 +79,7 @@ interface
       Disabled : boolean;
       RoutinesQty, R0Pc, R100Pc, ValidPointsQty, CoveredPointsQty : integer;
       DefinedConditionnals : TStringList;
+      
       function IsSourceAvailable : boolean;
       constructor Create;
       destructor Destroy; override;
@@ -397,19 +398,16 @@ end ;
 (**************************)
 
 procedure TProjectDataBase.Clear;
-  var
-    i : integer;
-    C : TCoveragePoint;
-    R : TRoutine;
-    U : TUnit;
 begin
   Units.Free();
   Units := TUnits.Create();
+  
   Routines.Free();
   Routines := TRoutines.Create();
 
   CoveragePoints.Free();
   CoveragePoints := TCoveragePoints.Create();
+  
   InitStatistics;
 end ;
 
@@ -605,6 +603,7 @@ procedure TProjectDataBase.InitStatistics;
 begin
   RoutinesWithSource := 0;
   UnitsWithSource := 0;
+
   with Routines do
     for i := 0 to pred(Count) do begin
       R := At(i);
@@ -613,6 +612,7 @@ begin
       if U.IsSourceAvailable then
         inc(RoutinesWithSource);
     end ;
+
   with Units do
     for i := 0 to pred(Count) do begin
       U := At(i);
@@ -621,6 +621,7 @@ begin
       else
         inc(UnitsWithSource);
     end ;
+    
   ChangedCount := 0;
 end ;
 
@@ -773,9 +774,6 @@ begin
   WriteStringToStream(aStream, ExecutableFileName);
   aStream.Write(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
   aStream.Write(ImageBase, SizeOf(ImageBase));
-  Units.Save(aStream);
-  Routines.Save(aStream);
-  CoveragePoints.Save(aStream);
   Units.Save(aStream);
   Routines.Save(aStream);
   CoveragePoints.Save(aStream);
@@ -1285,10 +1283,12 @@ begin
   aStream.Read(Size, SizeOf(Size));
   FileNames := TStringList.Create;
   aStream.Read(n, SizeOf(n));
+
   while n > 0 do begin
     FileNames.Add(ReadStringFromStream(aStream));
     dec(n);
   end ;
+  
   aStream.Read(FirstRoutineIndex, SizeOf(FirstRoutineIndex));
   aStream.Read(Disabled, SizeOf(Disabled));
   aStream.Read(RoutinesQty, SizeOf(RoutinesQty));

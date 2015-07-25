@@ -1265,14 +1265,16 @@ begin
 
     PBOverViewPaint(PBOverView);
 
-    if ProjectDataBase_.ExecutableFileName <> '' then begin
-      Caption := Format('%s - %s',[ApplicationName, ProjectDataBase_.ExecutableFileName]);
-    end else
+    if ProjectDataBase_.ExecutableFileName <> '' then
+      Caption := Format('%s - %s',[ApplicationName, ProjectDataBase_.ExecutableFileName])
+    else
       Caption := ApplicationName;
+
     Application.Title := Caption;
     FillSummary;
     DeltaCovered := 0;
     UpdateCoverageOnStatusBar;
+    
     if ProjectDataBase_.Routines.Count < 1000 then
       OverviewPointSquareSide := 8
     else
