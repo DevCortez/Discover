@@ -1630,7 +1630,7 @@ begin
 
   // Update LBFile
   if (CurrentUnit.FileNames.Count > 0) then begin
-    CurrentSourceFileName := CurrentUnit.FileNames[0];
+    CurrentSourceFileName := ProjectDataBase_.RelativePath + CurrentUnit.FileNames[0];
     S := TStringList.Create;
     Screen.Cursor := crHourGlass;
     try
@@ -2318,9 +2318,16 @@ begin
     try
       ProjectDataBase_.RelativePath := lConfigurations.ReadString('Path', 'RelativePath', '');
       ProjectDataBase_.ExecutableFileName := lConfigurations.ReadString('Path', 'Executable', '');
+      ProjectDataBase_.StartupDirectory := lConfigurations.ReadString('Run', 'CurrentDir', '');
+      ProjectDataBase_.RunParameters := lConfigurations.ReadString('Run', 'Params', '');
+      ProjectDataBase_.HostApplication := lConfigurations.ReadString('Run', 'Host', '');
     finally                                          
       lConfigurations.Free();
     end;
+
+    FormProjectInfo.EDITRunParameters.Text := ProjectDataBase_.RunParameters;
+    FormProjectInfo.EDITStartupDirectory.Text := ProjectDataBase_.StartupDirectory;
+    FormProjectInfo.edtHostApplication.Text := ProjectDataBase_.HostApplication;
   finally
     lFileBuffer.Free;
     Screen.Cursor := crDefault;
@@ -2729,6 +2736,7 @@ begin
     ProjectDataBase_.RunParameters := FormProjectInfo.EDITRunParameters.Text;
     ProjectDataBase_.StartupDirectory := FormProjectInfo.EDITStartupDirectory.Text;
     ProjectDataBase_.RunMaximized := FormProjectInfo.CHKRunMaximized.Checked;
+    ProjectDataBase_.HostApplication := FormProjectInfo.edtHostApplication.Text;
   end ;
 end ;
 
@@ -3112,6 +3120,9 @@ begin
     try
       lConfigurations.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
       lConfigurations.WriteString('Path', 'Executable', ProjectDataBase_.ExecutableFileName);
+      lConfigurations.WriteString('Run', 'CurrentDir', ProjectDataBase_.StartupDirectory);
+      lConfigurations.WriteString('Run', 'Params', ProjectDataBase_.RunParameters);
+      lConfigurations.WriteString('Run', 'Host', ProjectDataBase_.HostApplication);
     finally
       lConfigurations.Free;
     end;

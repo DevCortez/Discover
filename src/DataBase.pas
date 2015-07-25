@@ -125,6 +125,7 @@ interface
       StartupDirectory : string;
       RunParameters : string;
       RunMaximized : boolean;
+      HostApplication : string;
 
       constructor Create;
       destructor Destroy; override;
@@ -665,6 +666,8 @@ begin
   //ExecutableFileName := ReadStringFromStream(aStream);
   aStream.Read(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
   aStream.Read(ImageBase, SizeOf(ImageBase));
+  aStream.Read(RunMaximized, SizeOf(RunMaximized));
+
   Units := TUnits.Load(aStream);
   Routines := TRoutines.Load(aStream);
   CoveragePoints := TCoveragePoints.Load(aStream);
@@ -797,6 +800,8 @@ begin
   //WriteStringToStream(aStream, ExecutableFileName);
   aStream.Write(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
   aStream.Write(ImageBase, SizeOf(ImageBase));
+  aStream.Write(RunMaximized, SizeOf(RunMaximized));
+
   Units.Save(aStream);
   Routines.Save(aStream);
   CoveragePoints.Save(aStream);
