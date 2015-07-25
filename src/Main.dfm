@@ -72,7 +72,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 222
         Height = 374
-        ActivePage = TSSummary
+        ActivePage = TSUnits
         Align = alClient
         TabOrder = 0
         OnChange = PCLeftChange

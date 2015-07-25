@@ -340,7 +340,7 @@ procedure TCodeParser.Parse;
           CurrentUnit := ProjectDataBase_.Units.At(CurrentRoutine.UnitIndex);
           RoutineFileName := CurrentUnit.FileNames[CurrentRoutine.FileIndex];
           if RoutineFileName <> T.FileName then begin
-            T.FileName := RoutineFileName;
+            T.FileName := ProjectDataBase_.RelativePath + RoutineFileName;
             SyncLost := false;
             if LogFileEnabled_ then
               Writeln(LogFile_, Format('Opening src-file: %s', [RoutineFileName]));

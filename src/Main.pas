@@ -1415,7 +1415,7 @@ begin
     CurrentUnit := ProjectDataBase_.Units.At(CurrentRoutine.UnitIndex);
     // Update LBFile
     if (CurrentRoutine.FileIndex >= 0) and (CurrentSourceFileName <> CurrentUnit.FileNames[CurrentRoutine.FileIndex]) then begin
-      CurrentSourceFileName := CurrentUnit.FileNames[CurrentRoutine.FileIndex];
+      CurrentSourceFileName := ProjectDataBase_.RelativePath + CurrentUnit.FileNames[CurrentRoutine.FileIndex];
       S := TStringList.Create;
       Screen.Cursor := crHourGlass;
       try
@@ -1620,43 +1620,44 @@ procedure TFormMain.LBUnitsClick(Sender: TObject);
 begin
   if LBUnits.ItemIndex >= 0 then
     CurrentUnit := LBUnits.Items.Objects[LBUnits.ItemIndex] as TUnit;
-    // Update LBFile
-    if (CurrentUnit.FileNames.Count > 0) then begin
-      CurrentSourceFileName := CurrentUnit.FileNames[0];
-      S := TStringList.Create;
-      Screen.Cursor := crHourGlass;
-      try
-        S.LoadFromFile(CurrentSourceFileName);
-        RoutineIndex := CurrentUnit.FirstRoutineIndex;
-        R := ProjectDataBase_.Routines.At(RoutineIndex);
-        PointIndex := R.FirstPointIndex;
-        if PointIndex >= 0 then
-          C := ProjectDataBase_.CoveragePoints.At(PointIndex)
-        else
-          // Must be a finalization routine without explicit code
-          C := nil;
-        LBFile.Items.BeginUpdate;
-        LBFile.Clear;
-        // Scan all file lines
-        with S do
-          for i := 0 to pred(Count) do begin
-            LineNr := succ(i);
-            if (C <> nil) and (LineNr = C.LineNumber) then begin
-              LBFile.Items.AddObject(S[i], C);
-              C := nil;
-              inc(PointIndex);
-              if PointIndex < ProjectDataBase_.CoveragePoints.Count then
-                C := ProjectDataBase_.CoveragePoints.At(PointIndex);
-            end else
-              LBFile.Items.AddObject(S[i],nil)
-          end ;
-        LBFile.Items.EndUpdate;
-      finally
-        S.Free;
-        Screen.Cursor := crDefault;
-        DisplayStatusFilename;
-      end ;
+
+  // Update LBFile
+  if (CurrentUnit.FileNames.Count > 0) then begin
+    CurrentSourceFileName := CurrentUnit.FileNames[0];
+    S := TStringList.Create;
+    Screen.Cursor := crHourGlass;
+    try
+      S.LoadFromFile(CurrentSourceFileName);
+      RoutineIndex := CurrentUnit.FirstRoutineIndex;
+      R := ProjectDataBase_.Routines.At(RoutineIndex);
+      PointIndex := R.FirstPointIndex;
+      if PointIndex >= 0 then
+        C := ProjectDataBase_.CoveragePoints.At(PointIndex)
+      else
+        // Must be a finalization routine without explicit code
+        C := nil;
+      LBFile.Items.BeginUpdate;
+      LBFile.Clear;
+      // Scan all file lines
+      with S do
+        for i := 0 to pred(Count) do begin
+          LineNr := succ(i);
+          if (C <> nil) and (LineNr = C.LineNumber) then begin
+            LBFile.Items.AddObject(S[i], C);
+            C := nil;
+            inc(PointIndex);
+            if PointIndex < ProjectDataBase_.CoveragePoints.Count then
+              C := ProjectDataBase_.CoveragePoints.At(PointIndex);
+          end else
+            LBFile.Items.AddObject(S[i],nil)
+        end ;
+      LBFile.Items.EndUpdate;
+    finally
+      S.Free;
+      Screen.Cursor := crDefault;
+      DisplayStatusFilename;
     end ;
+  end ;
 end ;
 
 
@@ -2228,6 +2229,7 @@ begin
 
     ProjectDataBase_.ExecutableFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe');
     ProjectDataBase_.ExecutableFileCRC := CRC32.FileCRC32(ProjectDataBase_.ExecutableFileName);
+    ProjectDataBase_.RelativePath := ProjectPath;
 
     MapFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map');
 
@@ -2243,7 +2245,7 @@ begin
         StatusBar.Panels[pFilePos].Text := 'Processing map-file';
         NotFoundFiles := TStringList.Create;
         try
-          HandleMapFile( MapFileName, HandleProgress, NotFoundFiles, IsBDS);
+          HandleMapFile( MapFileName, HandleProgress, NotFoundFiles, IsBDS, ProjectPath);
           // Don't show these files anymore!
           //ShowNotFoundSrcFiles;
         finally
@@ -2283,6 +2285,7 @@ procedure TFormMain.LoadState(const StateFileName: string);
 var
   lFileStream : TFileStream;
   lFileBuffer : TMemoryStream;
+  lConfigurations : TIniFile;
 begin
   lFileBuffer := TMemoryStream.Create;
   Screen.Cursor := crHourGlass;
@@ -2304,6 +2307,13 @@ begin
 
     LoadedStatesStr := ExtractFileName(StateFileName);
     InitAfterLoadingDataBase;
+
+    lConfigurations := TIniFile.Create(ChangeFileExt(StateFileName, '.cfg'));
+    try
+      ProjectDataBase_.RelativePath := lConfigurations.ReadString('Path', 'RelativePath', '');
+    finally                                          
+      lConfigurations.Free();
+    end;
   finally
     lFileBuffer.Free;
     Screen.Cursor := crDefault;
@@ -3078,11 +3088,11 @@ end ;
 (**************************)
 
 procedure TFormMain.SaveDataBase(const FileName : string);
-  var
-    lFileBuffer : TMemoryStream;
-    lDpsFile : TFileStream;
+var
+  lFileBuffer : TMemoryStream;
+  lDpsFile : TFileStream;
+  lProjectConfiguration : TIniFile;
 begin
-
   Screen.Cursor := crHourGlass;
   StatusBar.Panels[pFilePos].Text := 'Saving state';
   StatusBar.Refresh;
@@ -3098,6 +3108,13 @@ begin
       lFileBuffer.SaveToStream(lDpsFile);
     finally
       lDpsFile.Free;
+    end;
+
+    lProjectConfiguration := TIniFile.Create(ChangeFileExt(FileName, '.cfg'));
+    try
+      lProjectConfiguration.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
+    finally
+      lProjectConfiguration.Free;
     end;
   finally
     lFileBuffer.Free();

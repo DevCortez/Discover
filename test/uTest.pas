@@ -18,6 +18,7 @@ type
     procedure CreateProjectAbsolutePath;
     procedure SaveLoadStress;
     procedure ClearStateStress;
+    procedure ModalTest;
   end;
 
 implementation
@@ -32,7 +33,7 @@ var
   i : integer;
 begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
-  FormMain.SaveStateFile('Teste.dps');
+  FormMain.SaveStateFile(ExpandFileName('Teste.dps'));
 
   for i := 1 to 25 do
     begin
@@ -40,7 +41,7 @@ begin
       CheckEquals(0, ProjectDataBase_.Units.Count, 'Unit count');
       CheckEquals(0, ProjectDataBase_.Routines.Count, 'Routine count');
       CheckEquals(0, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
-      FormMain.LoadState('Teste.dps');
+      FormMain.LoadState(ExpandFileName('Teste.dps'));
     end;
 end;
 
@@ -60,16 +61,21 @@ begin
   CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');  
 end;
 
+procedure BasicTests.ModalTest;
+begin
+  while FormMain.Visible do Application.ProcessMessages();
+end;
+
 procedure BasicTests.SaveLoadStress;
 var
   i : integer;
 begin
   FormMain.LoadProject('Dummy\Dummy.dpr');
-  FormMain.SaveStateFile('Teste.dps');
+  FormMain.SaveStateFile(ExpandFileName(ExpandFileName('Teste.dps')));
 
   for i := 1 to 25 do
     begin
-      FormMain.LoadState('Teste.dps');
+      FormMain.LoadState(ExpandFileName('Teste.dps'));
       CheckEquals(ProjectDataBase_.Units.Count, 59, 'Unit count');
       CheckEquals(ProjectDataBase_.Routines.Count, 2873, 'Routine count');
       CheckEquals(ProjectDataBase_.CoveragePoints.Count, 14, 'Unit count');

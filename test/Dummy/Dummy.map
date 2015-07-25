@@ -7239,7 +7239,7 @@ Detailed map of segments
  0002:00002BD4       .2
 
 
-Line numbers for DummyUnit(DummyUnit.pas) segment .text
+Line numbers for DummyUnit(SubFolder\DummyUnit.pas) segment .text
 
     28 0001:0004C0F8    29 0001:0004C0F9    30 0001:0004C0FA    31 0001:0004C0FB
     34 0001:0004C0FC    36 0001:0004C100    40 0001:0004C102    42 0001:0004C103

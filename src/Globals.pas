@@ -92,30 +92,29 @@ implementation
 (************)
 
 procedure InitUnit;
-  begin
-    
-    GetModuleFileName(hInstance,ApplicationDir_,SizeOf(ApplicationDir_));
-    StrPCopy(ApplicationDir_,ExtractFilePath(StrPas(ApplicationDir_)));
-    PrivateProfileFileName_ := StrPas(ApplicationDir_)+ApplicationName+'.cfg';
-    ApplicationHelpFileName_ := StrPas(ApplicationDir_)+ApplicationName+'.chm';
-    if not FileExists(ApplicationHelpFileName_) then
-      ApplicationHelpFileName_ := '';
-    GlobalDefinedConditionnals_ := TStringList.Create;
-    SearchPath_ := TStringList.Create;
-    LogFileEnabled_ := true;
-    if LogFileEnabled_ then begin
-      AssignFile(LogFile_, StrPas(ApplicationDir_)+ApplicationName+'.log');
-      try
-        Rewrite(LogFile_);
-        Writeln(LogFile_,Format('%s Version %s',[ApplicationName,
-          VersionStr]));
-      except
-        LogFileEnabled_ := false;
-      end ;
+begin    
+  GetModuleFileName(hInstance,ApplicationDir_,SizeOf(ApplicationDir_));
+  StrPCopy(ApplicationDir_,ExtractFilePath(StrPas(ApplicationDir_)));
+  PrivateProfileFileName_ := StrPas(ApplicationDir_)+ApplicationName+'.cfg';
+  ApplicationHelpFileName_ := StrPas(ApplicationDir_)+ApplicationName+'.chm';
+  if not FileExists(ApplicationHelpFileName_) then
+    ApplicationHelpFileName_ := '';
+  GlobalDefinedConditionnals_ := TStringList.Create;
+  SearchPath_ := TStringList.Create;
+  LogFileEnabled_ := true;
+  if LogFileEnabled_ then begin
+    AssignFile(LogFile_, StrPas(ApplicationDir_)+ApplicationName+'.log');
+    try
+      Rewrite(LogFile_);
+      Writeln(LogFile_,Format('%s Version %s',[ApplicationName,
+        VersionStr]));
+    except
+      LogFileEnabled_ := false;
     end ;
-    FillChar(LogInfos_, SizeOf(LogInfos_), 0);
-    FillChar(CommandLineParams_, SizeOf(CommandLineParams_), 0);
-    CommandLineActionEnabled_ := false;
+  end ;
+  FillChar(LogInfos_, SizeOf(LogInfos_), 0);
+  FillChar(CommandLineParams_, SizeOf(CommandLineParams_), 0);
+  CommandLineActionEnabled_ := false;
 end ;
 {$R-}
 {$O-}

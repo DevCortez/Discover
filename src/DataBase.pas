@@ -121,6 +121,7 @@ interface
       ChangedCount : integer;
       Coverage : single;
       UnitsWithSource, RoutinesWithSource : integer;
+      RelativePath : string;
 
       constructor Create;
       destructor Destroy; override;
@@ -1326,7 +1327,7 @@ begin
   inherited Save(aStream);
   WriteStringToStream(aStream, Name);
   aStream.Write(Size, SizeOf(Size));
-  n := FIleNames.Count;
+  n := FileNames.Count;
   aStream.Write(n, SizeOf(n));
 
   with FileNames do

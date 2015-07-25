@@ -2,7 +2,7 @@ program Dummy;
 
 uses
   Forms,
-  DummyUnit in 'DummyUnit.pas' {Form1};
+  DummyUnit in 'SubFolder\DummyUnit.pas' {Form1};
 
 {$R *.res}
 
