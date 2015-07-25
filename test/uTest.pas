@@ -85,7 +85,6 @@ begin
   FormOptions := TFormOptions.Create(nil);
   FormExport := TFormExport.Create(nil);
   FormProjectInfo := TFormProjectInfo.Create(nil);
-
   FormMain.Show();
 end;
 
