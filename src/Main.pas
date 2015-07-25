@@ -2278,24 +2278,32 @@ end ;
 (***********************)
 
 procedure TFormMain.LoadState(const StateFileName: string);
-  var
-    F : TFileStream;
+var
+  lFileStream : TFileStream;
+  lFileBuffer : TMemoryStream;
 begin
-  F := TFileStream.Create(StateFileName, fmOpenRead);
+  lFileBuffer := TMemoryStream.Create;
   Screen.Cursor := crHourGlass;
   try
-
+    lFileStream := TFileStream.Create(StateFileName, fmOpenRead);
+    try
+      lFileBuffer.LoadFromStream(lFileStream);
+    finally
+      lFileStream.Free();
+    end;
+    
     if LogFileEnabled_ then
       WriteLn(LogFile_, 'Loading state: '+StateFileName);
+
     StatusBar.Panels[pFilePos].Text := 'Loading state';
 
     ProjectDataBase_.Free;
-    ProjectDataBase_ := TProjectDataBase.Load(F);
+    ProjectDataBase_ := TProjectDataBase.Load(lFileBuffer);
 
     LoadedStatesStr := ExtractFileName(StateFileName);
     InitAfterLoadingDataBase;
   finally
-    F.Free;
+    lFileBuffer.Free;
     Screen.Cursor := crDefault;
   end ;
 end ;

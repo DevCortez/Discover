@@ -634,6 +634,7 @@ constructor TProjectDataBase.Load(aStream : TStream);
     n : integer;
 begin
   aStream.Read(n, SizeOf(n));
+
   if n <> DataBaseMagicNumber then
     raise Exception.Create('State file cannot be read because the format is illegal or outdated');
 
@@ -1327,9 +1328,11 @@ begin
   aStream.Write(Size, SizeOf(Size));
   n := FIleNames.Count;
   aStream.Write(n, SizeOf(n));
+
   with FileNames do
     for n := 0 to pred(Count) do
       WriteStringToStream(aStream, Strings[n]);
+
   aStream.Write(FirstRoutineIndex, SizeOf(FirstRoutineIndex));
   aStream.Write(Disabled, SizeOf(Disabled));
   aStream.Write(RoutinesQty, SizeOf(RoutinesQty));
