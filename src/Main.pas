@@ -392,7 +392,7 @@ begin
     // Load the project
     LoadProject(CommandLineParams_.FileName);
 
-    StateFileName := ChangeFileExt(ProjectDataBase_.ExecutableFileName,ProjectStateExtension);
+    StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
     InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
     // Check if an information file exists and if yes take its infos
@@ -549,7 +549,7 @@ begin
     with ProjectDataBase_ do begin
       GetR100R0(R100, R0);
       MEMOSummary.Lines.Clear;
-      MEMOSummary.Lines.Add(ProjectDataBase_.ExecutableFileName);
+      MEMOSummary.Lines.Add(ProjectDataBase_.ModuleFileName);
       MEMOSummary.Lines.Add(LoadedStatesStr);
       MEMOSummary.Lines.Add('UNITS');
       MEMOSummary.Lines.Add(Format('  Total:      %5d',[Units.Count]));
@@ -748,7 +748,7 @@ end ;
 
 function TFormMain.ReadExeFileName: string;
 begin
-  result := ProjectDataBase_.ExecutableFileName
+  result := ProjectDataBase_.ModuleFileName
 end;
 
 procedure TFormMain.GotoNextCoveragePoint(RedGreen: boolean);
@@ -1272,8 +1272,8 @@ begin
 
     PBOverViewPaint(PBOverView);
 
-    if ProjectDataBase_.ExecutableFileName <> '' then
-      Caption := Format('%s - %s',[ApplicationName, ProjectDataBase_.ExecutableFileName])
+    if ProjectDataBase_.ModuleFileName <> '' then
+      Caption := Format('%s - %s',[ApplicationName, ProjectDataBase_.ModuleFileName])
     else
       Caption := ApplicationName;
 
@@ -2233,8 +2233,8 @@ begin
     ProjectDataBase_ := TProjectDataBase.Create;
     InitAfterLoadingDatabase;
 
-    ProjectDataBase_.ExecutableFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe');
-    ProjectDataBase_.ExecutableFileCRC := CRC32.FileCRC32(ProjectDataBase_.ExecutableFileName);
+    ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe');
+    ProjectDataBase_.ModuleFileCRC := CRC32.FileCRC32(ProjectDataBase_.ModuleFileName);
     ProjectDataBase_.RelativePath := ProjectPath;
 
     MapFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map');
@@ -2317,7 +2317,7 @@ begin
     lConfigurations := TIniFile.Create(ChangeFileExt(StateFileName, '.cfg'));
     try
       ProjectDataBase_.RelativePath := lConfigurations.ReadString('Path', 'RelativePath', '');
-      ProjectDataBase_.ExecutableFileName := lConfigurations.ReadString('Path', 'Executable', '');
+      ProjectDataBase_.ModuleFileName := lConfigurations.ReadString('Path', 'Executable', '');
       ProjectDataBase_.StartupDirectory := lConfigurations.ReadString('Run', 'CurrentDir', '');
       ProjectDataBase_.RunParameters := lConfigurations.ReadString('Run', 'Params', '');
       ProjectDataBase_.HostApplication := lConfigurations.ReadString('Run', 'Host', '');
@@ -2670,7 +2670,7 @@ begin
       LoadedStatesStr := '';
       LoadProject(OpenDelphiProjectDialog.FileName);
 
-      StateFileName := ChangeFileExt(ProjectDataBase_.ExecutableFileName,ProjectStateExtension);
+      StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
       InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
       if FileExists(StateFileName) then begin
@@ -3075,7 +3075,7 @@ begin
   if not FileExists(ExeFileName) then
     raise Exception.Create(Format('File "%s" does not exist.', [ExeFileName]));
 
-  if CRC32.FileCRC32(ExeFileName) <> ProjectDatabase_.ExecutableFileCRC then
+  if CRC32.FileCRC32(ExeFileName) <> ProjectDatabase_.ModuleFileCRC then
     raise Exception.Create('The loaded state doesn''t match with the actual map and exe files. '+
       'The application has probably been recompiled. '+
       'You must load your project again.');
@@ -3119,7 +3119,7 @@ begin
     lConfigurations := TIniFile.Create(ChangeFileExt(FileName, '.cfg'));
     try
       lConfigurations.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
-      lConfigurations.WriteString('Path', 'Executable', ProjectDataBase_.ExecutableFileName);
+      lConfigurations.WriteString('Path', 'Executable', ProjectDataBase_.ModuleFileName);
       lConfigurations.WriteString('Run', 'CurrentDir', ProjectDataBase_.StartupDirectory);
       lConfigurations.WriteString('Run', 'Params', ProjectDataBase_.RunParameters);
       lConfigurations.WriteString('Run', 'Host', ProjectDataBase_.HostApplication);
@@ -3179,7 +3179,7 @@ end ;
 
 procedure TFormMain.WriteExeFileName(const Value: string);
 begin
-  ProjectDataBase_.ExecutableFileName := Value
+  ProjectDataBase_.ModuleFileName := Value
 end;
 
 procedure TFormMain.SetStateMachineState;

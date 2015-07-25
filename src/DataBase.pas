@@ -112,8 +112,8 @@ interface
     end;
 
     TProjectDataBase = class(TSavableObject)
-      ExecutableFileName : string;
-      ExecutableFileCRC : integer;
+      ModuleFileName : string;
+      ModuleFileCRC : integer;
       ImageBase : integer;
       Units : TUnits;
       Routines : TRoutines;
@@ -664,7 +664,7 @@ begin
     raise Exception.Create('State file cannot be read because the format is illegal or outdated');
 
   //ExecutableFileName := ReadStringFromStream(aStream);
-  aStream.Read(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
+  aStream.Read(ModuleFileCRC, SizeOf(ModuleFileCRC));
   aStream.Read(ImageBase, SizeOf(ImageBase));
   aStream.Read(RunMaximized, SizeOf(RunMaximized));
 
@@ -798,7 +798,7 @@ begin
   n := DataBaseMagicNumber;
   aStream.Write(n, SizeOf(n));
   //WriteStringToStream(aStream, ExecutableFileName);
-  aStream.Write(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
+  aStream.Write(ModuleFileCRC, SizeOf(ModuleFileCRC));
   aStream.Write(ImageBase, SizeOf(ImageBase));
   aStream.Write(RunMaximized, SizeOf(RunMaximized));
 
