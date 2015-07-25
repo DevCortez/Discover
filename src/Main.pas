@@ -26,7 +26,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, Menus, DataBase, ComCtrls, Objects,
-  Process, Buttons, ImgList, ProjectInfo;
+  Process, Buttons, ImgList, ProjectInfo, StrUtils;
 
 type
   THeaderTrackingInfo = record
@@ -3091,7 +3091,14 @@ begin
   Process.RunParameters := ProjectDataBase_.RunParameters;
   Process.StartupDirectory := ProjectDataBase_.StartupDirectory;
   Process.RunMaximized := ProjectDataBase_.RunMaximized;
-  Process.ExeName := ExeFileName;
+
+  if AnsiContainsText(ProjectDataBase_.ModuleFileName, '.exe') then
+    Process.ExeName := ProjectDataBase_.ModuleFileName
+  else
+    begin
+      Process.DynamicModule := ProjectDataBase_.ModuleFileName;
+      Process.ExeName := ProjectDataBase_.HostApplication;
+    end;
 
   Process.Run;
 end ;

@@ -23,7 +23,7 @@ unit Process;
 
 interface
 uses
-  Classes, Windows, DataBase, Objects, Messages;
+  Classes, Windows, DataBase, Objects, Messages, SysUtils, StrUtils;
 
 const
   XM_COVEREDPOINT = WM_USER + 1;
@@ -54,10 +54,15 @@ type
     FRunMaximized : boolean;
     FRunning, FCreated : boolean;
     FExeName : string;
+    FDynamicModule : string;
+    
     procedure GetCoveragePoint(Address : integer; var
       CoveragePoint : TCoveragePoint; var Index : integer);
     procedure SetInitialBreakPoints(aProcess : THandle);
     function SetOneBreakPoint(aProcess : THandle; aPoint : TCoveragePoint) : integer;
+    function InjectDll(AModule: string):boolean;
+    function ReadDllEvent(ATarget : pointer; AIsUnicode : boolean) : string;
+
   public
     procedure Run;
     procedure Reset;
@@ -67,11 +72,12 @@ type
     property StartupDirectory : string read FStartupDirectory write FStartupDirectory;
     property RunMaximized : boolean read FRunMaximized write FRunMaximized;
     property ExeName : string read FExeName write FExeName;
+    property DynamicModule : string read FDynamicModule write FDynamicModule;
   end;
 
 implementation
   uses
-    Forms, SysUtils, Globals, Dialogs, Exceptions;
+    Forms, Globals, Dialogs, Exceptions;
 {$Q-} {$R-}
 
 type
@@ -160,133 +166,114 @@ procedure TDebugThread.Execute;
     SendMessage(Application.Handle, XM_DEBUGSTRING, 0, integer(@s));
   end ;
 
-(*
-  procedure HandleSingleStep(Address : pointer; ThreadId : THandle);
-    var
-      Context : TContext;
-      i, Idx, a : integer;
-      Count : integer;
-      b : byte;
-      C : TCoveragePoint;
-  begin
-    if ThreadInfos.Search(pointer(ThreadId), Idx) then begin
-      CurrentThreadHandle := TThreadInfo(ThreadInfos.At(Idx)).Handle;
-      Context.ContextFlags := CONTEXT_CONTROL;
-      if GetThreadContext(CurrentThreadHandle, Context) then begin
-        with Context do begin
-          EFlags := EFlags and not($100);
-        end ;
-        SetThreadContext(CurrentThreadHandle, Context);
-      end ;
-    end ;
-    if not CurrentCoveragePoint.IsBreakPointSet then
-     SetOneBreakPoint(ProcessHandle, CurrentCoveragePoint);
-  end ;
-*)
-
   function HandleDebugEvent : boolean;
-    var
-      Idx : integer;
-      ThreadInfo : TThreadInfo;
+  var
+    Idx : integer;
+    ThreadInfo : TThreadInfo;
+    lModuleName : string;
   begin
     Result := false;
     ContinueStatus := DBG_CONTINUE;
+    
     case DebugEvent.dwDebugEventCode of
-      EXCEPTION_DEBUG_EVENT: begin
-        // Process the exception code. When handling
-        // exceptions, remember to set the continuation
-        // status parameter (dwContinueStatus). This value
-        // is used by the ContinueDebugEvent function.
-        case (DebugEvent.Exception.ExceptionRecord.ExceptionCode) of
-          EXCEPTION_BREAKPOINT: begin
-            // First chance: Display the current
-            // instruction and register values.
-            HandleBreakPoint(DebugEvent.Exception.ExceptionRecord.ExceptionAddress,
-              DebugEvent.dwThreadId);
-          end;
+      EXCEPTION_DEBUG_EVENT:
+        begin
+          case (DebugEvent.Exception.ExceptionRecord.ExceptionCode) of
+            EXCEPTION_BREAKPOINT:
+              begin
+                HandleBreakPoint(DebugEvent.Exception.ExceptionRecord.ExceptionAddress,
+                  DebugEvent.dwThreadId);
+              end;
 
-          EXCEPTION_SINGLE_STEP: begin
-            // First chance: Update the display of the
-            // current instruction and register values.
-(*
-            HandleSingleStep(DebugEvent.Exception.ExceptionRecord.ExceptionAddress,
-              DebugEvent.dwThreadId);
-*)
-          end;
+            EXCEPTION_SINGLE_STEP:
+              begin
+              end;
+          else
+            ContinueStatus := DBG_EXCEPTION_NOT_HANDLED;
+          end ;
+        end;
 
-        else
-          // Handle other exceptions.
-          ContinueStatus := DBG_EXCEPTION_NOT_HANDLED;
-        end ;
-      end;
+      CREATE_THREAD_DEBUG_EVENT:
+        begin
+          ThreadInfo := TThreadInfo.Create;
 
-      CREATE_THREAD_DEBUG_EVENT: begin
-        // As needed, examine or change the thread's registers
-        // with the GetThreadContext and SetThreadContext functions;
-        // and suspend and resume thread execution with the
-        // SuspendThread and ResumeThread functions.
-        ThreadInfo := TThreadInfo.Create;
-        with ThreadInfo do begin
-          Id := DebugEvent.dwThreadId;
-          Handle := DebugEvent.CreateThread.hThread;
-        end ;
-        ThreadInfos.Insert(ThreadInfo);
-      end;
+          with ThreadInfo do
+            begin
+              Id := DebugEvent.dwThreadId;
+              Handle := DebugEvent.CreateThread.hThread;
+            end ;
 
-      CREATE_PROCESS_DEBUG_EVENT: begin
-        // As needed, examine or change the registers of the
-        // process's initial thread with the GetThreadContext and
-        // SetThreadContext functions; read from and write to the
-        // process's virtual memory with the ReadProcessMemory and
-        // WriteProcessMemory functions; and suspend and resume
-        // thread execution with the SuspendThread and ResumeThread
-        // functions.
-        ThreadInfo := TThreadInfo.Create;
-        with ThreadInfo do begin
-          Id := DebugEvent.dwThreadId;
-          Handle := DebugEvent.CreateProcessInfo.hThread;
-        end ;
-        ThreadInfos.Insert(ThreadInfo);
-        ProcessHandle := DebugEvent.CreateProcessInfo.hProcess;
-        Process.Handle := ProcessHandle;
-        // Close the image handle so that it is not blocked when the process exits
-        CloseHandle(DebugEvent.CreateProcessInfo.hFile);
-        Process.SetInitialBreakPoints(DebugEvent.CreateProcessInfo.hProcess);
-      end;
+          ThreadInfos.Insert(ThreadInfo);
+        end;
 
-      EXIT_THREAD_DEBUG_EVENT: begin
-        if ThreadInfos.Search(pointer(DebugEvent.dwThreadId),Idx) then
-          ThreadInfos.AtFree(Idx);
-      end;
+      CREATE_PROCESS_DEBUG_EVENT:
+        begin
+          ThreadInfo := TThreadInfo.Create;
 
-      EXIT_PROCESS_DEBUG_EVENT: begin
-        Result := true;
-        Process.FCreated := false;
-      end;
+          with ThreadInfo do
+            begin
+              Id := DebugEvent.dwThreadId;
+              Handle := DebugEvent.CreateProcessInfo.hThread;
+            end ;
+            
+          ThreadInfos.Insert(ThreadInfo);
+          ProcessHandle := DebugEvent.CreateProcessInfo.hProcess;
+          Process.Handle := ProcessHandle;
+          // Close the image handle so that it is not blocked when the process exits
+          CloseHandle(DebugEvent.CreateProcessInfo.hFile);
 
-      OUTPUT_DEBUG_STRING_EVENT: begin
-        HandleDebugString(DebugEvent.DebugString);
-      end;
+          if Length(Process.DynamicModule) = 0 then
+            Process.SetInitialBreakPoints(DebugEvent.CreateProcessInfo.hProcess)
+          else
+            if not Process.InjectDll(Self. Process.DynamicModule) then
+              begin
+                // Dar ruim muito grande aqui
+              end;
+        end;
 
-    end ;
+      EXIT_THREAD_DEBUG_EVENT:
+        begin
+          if ThreadInfos.Search(pointer(DebugEvent.dwThreadId),Idx) then
+            ThreadInfos.AtFree(Idx);
+        end;
 
-  // Resume executing the thread that reported the debugging event.
+      EXIT_PROCESS_DEBUG_EVENT:
+        begin
+          Result := true;
+          Process.FCreated := false;
+        end;
 
-  ContinueDebugEvent(DebugEvent.dwProcessId,
-      DebugEvent.dwThreadId, ContinueStatus);
+      OUTPUT_DEBUG_STRING_EVENT:
+        begin
+          HandleDebugString(DebugEvent.DebugString);
+        end;
 
-  end ;
+      LOAD_DLL_DEBUG_EVENT:
+        begin
+          lModuleName := Process.ReadDllEvent(DebugEvent.LoadDll.lpImageName, bool(DebugEvent.LoadDll.fUnicode));
+
+          if AnsiContainsText(lModuleName, ExtractFileName(Process.DynamicModule)) then
+            begin
+              ProjectDataBase_.ImageBase := dword(DebugEvent.LoadDll.lpBaseOfDll);
+              Process.SetInitialBreakPoints(DebugEvent.CreateProcessInfo.hProcess);
+            end;
+        end;
+    end;
+    
+    ContinueDebugEvent(DebugEvent.dwProcessId, DebugEvent.dwThreadId, ContinueStatus);
+  end;
 
 
   function CreateProcess : boolean;
-    var
-      StartupInfo : TStartupInfo;
-      ProcessInformation : TProcessInformation;
-      RunParams, StartupDir : PChar;
+  var
+    StartupInfo : TStartupInfo;
+    ProcessInformation : TProcessInformation;
+    RunParams, StartupDir : PChar;
   begin
     FillChar(StartupInfo, SizeOf(StartupInfo), #0);
     StartupInfo.cb := SizeOf(StartupInfo);
     StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+    
     if Process.FRunMaximized then
       StartupInfo.wShowWindow := SW_MAXIMIZE
     else
@@ -312,29 +299,35 @@ procedure TDebugThread.Execute;
     Timeout : integer;
 begin
   Process.FCreated := false;
-  if not CreateProcess then begin
-    SendMessage(Application.Handle, XM_PROCESSNOTCREATED, 0, Windows.GetLastError);
-    exit;
-  end ;
+
+  if not CreateProcess then
+    begin
+      SendMessage(Application.Handle, XM_PROCESSNOTCREATED, 0, Windows.GetLastError);
+      exit;
+    end;
+
   Process.FCreated := true;
 
   ThreadInfos := TThreadInfos.Create;
   Done := false;
   Timeout := 200;
   FillChar(LogInfos_, SizeOf(LogInfos_), #0);
+  
   try
     repeat
-      if WaitForDebugEvent(DebugEvent, Timeout) then begin
-        Done := HandleDebugEvent;
-      end else begin
-        if not Process.FRunning then begin
-          if WaitForInputIdle(Handle,1) <> WAIT_TIMEOUT then begin
-            SendMessage(Application.Handle, XM_RUNNING, 0, 0);
-            Process.FRunning := true;
-          end ;
-        end else
-          TimeOut := INFINITE;
-      end ;
+      if WaitForDebugEvent(DebugEvent, Timeout) then
+        Done := HandleDebugEvent
+      else
+        begin
+          if not Process.FRunning then
+            if WaitForInputIdle(Handle,1) <> WAIT_TIMEOUT then
+              begin
+                SendMessage(Application.Handle, XM_RUNNING, 0, 0);
+                Process.FRunning := true;
+              end
+            else
+              TimeOut := INFINITE;
+        end ;
     until Done;
   finally
     LogInfos_.R.MaxThreads := ThreadInfos.Count;
@@ -365,6 +358,41 @@ end ;
 (* TProcess.Reset *)
 (******************)
 
+function TProcess.InjectDll(AModule: string): boolean;
+var
+  lRemoteString : pointer;
+  lBytesWritten : cardinal;
+  lRemoteThread : cardinal;
+begin
+  {
+    There is a strong reason to NOT free the memory we allocated for the string.
+    We have no control when the code will run remotely since we are debugging,
+    so we would have to sync to wait for the full load before freeing the resource.
+    Since we should be dealing with a page of 4k MAX, this shouldn't be an issue at all.
+  }
+  lRemoteString := VirtualAllocEx(Handle, nil, Length(AModule) + 1, MEM_COMMIT, PAGE_READWRITE);
+  WriteProcessMemory(Handle, lRemoteString, pchar(AModule), Length(AModule), lBytesWritten);
+  result := CreateRemoteThread(Handle, nil, 0, GetProcAddress(LoadLibraryA('kernel32.dll'), 'LoadLibraryA'), lRemoteString, 0, lRemoteThread) <> 0;
+end;
+
+function TProcess.ReadDllEvent(ATarget : pointer; AIsUnicode : boolean): string;
+var
+  lMemBuffer : pointer;
+  lDestination : pointer;
+  lRead : cardinal;
+begin
+  ReadProcessMemory(Handle, ATarget, @lDestination, 4, lRead);
+  lMemBuffer := GetMemory(1024);
+  ReadProcessMemory(Handle, lDestination, lMemBuffer, 1024, lRead);
+
+  if AIsUnicode then
+    result := WideCharToString(lMemBuffer)
+  else
+    result := pChar(lMemBuffer);
+
+  FreeMemory(lMemBuffer);
+end;
+
 procedure TProcess.Reset;
 begin
   TerminateProcess(Handle,0);
@@ -376,10 +404,8 @@ end ;
 (****************)
 
 procedure TProcess.Run;
-  var
-    DebugThread : TDebugThread;
 begin
-  DebugThread := TDebugThread.Create(Self);
+  TDebugThread.Create(Self);
 end ;
 
 
@@ -404,7 +430,7 @@ begin
       U := ProjectDataBase_.Units.At(R.UnitIndex);
 
       if (not U.Disabled) and (not R.Disabled) and (not C.Disabled) and (C.Counter = 0) then
-        ErrorCode := SetOneBreakPoint(aProcess, C);
+        ErrorCode := SetOneBreakPoint(Handle, C);
 
       if (ErrorCode > 0) and (LogInfos_.R.AccessMemFailures < MaxAccessMemFailures) then
         SendMessage(Application.Handle, XM_ERRORCODE, ErrorCode, C.Address + ProjectDataBase_.ImageBase + ProgrammOffset_);
@@ -422,23 +448,35 @@ function TProcess.SetOneBreakPoint(aProcess : THandle; aPoint : TCoveragePoint) 
   var
     b : byte;
     Dmy : DWORD;
+    lOldProtect : cardinal;
 begin
   Result := 0;
-  if aPoint.Valid then begin
-    inc(LogInfos_.R.WantedBreakPoints);
-    b := $CC;
-    with ProjectDataBase_ do begin
-      if not ReadProcessMemory(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), @aPoint.OpCode, 1, Dmy) then begin
-        Result := GetLastError();
-        inc(LogInfos_.R.AccessMemFailures);
-      end else if not WriteProcessMemory(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), @b, 1, Dmy) then begin
-        Result := GetLastError();
-        inc(LogInfos_.R.AccessMemFailures);
-        inc(LogInfos_.R.UnSettedBreakPoints);
-      end else
-        aPoint.IsBreakPointSet := true;
+  if aPoint.Valid then
+    begin
+      inc(LogInfos_.R.WantedBreakPoints);
+      b := $CC;
+      with ProjectDataBase_ do
+        begin
+          VirtualProtectEx(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), 1, PAGE_EXECUTE_READWRITE, lOldProtect);
+
+          if not ReadProcessMemory(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), @aPoint.OpCode, 1, Dmy) then
+            begin
+              Result := GetLastError();
+              inc(LogInfos_.R.AccessMemFailures);
+            end
+          else
+            if not WriteProcessMemory(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), @b, 1, Dmy) then
+              begin
+                Result := GetLastError();
+                inc(LogInfos_.R.AccessMemFailures);
+                inc(LogInfos_.R.UnSettedBreakPoints);
+              end
+            else
+              aPoint.IsBreakPointSet := true;
+
+          VirtualProtectEx(aProcess, Pointer(aPoint.Address+ImageBase+ProgrammOffset_), 1, lOldProtect, lOldProtect);
+        end ;
     end ;
-  end ;
 end ;
 
 
