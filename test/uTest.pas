@@ -59,7 +59,7 @@ begin
     seconds, so it will be this way by default but may vary a lot in other
     scenarios.
   }
-  for i := 1 to 100 do
+  for i := 1 to 500 do
     begin
       Sleep(1);
       Application.ProcessMessages();
