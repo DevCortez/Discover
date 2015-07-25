@@ -399,16 +399,35 @@ end ;
 (**************************)
 
 procedure TProjectDataBase.Clear;
+  var
+    i : integer;
+    C : TCoveragePoint;
+    R : TRoutine;
+    U : TUnit;
 begin
-  Units.Free();
-  Units := TUnits.Create();
-  
-  Routines.Free();
-  Routines := TRoutines.Create();
+  with Units do
+    for i := 0 to pred(Count) do begin
+      U := Units.At(i);
+      U.R0pc := 0;
+      U.R100Pc := 0;
+      U.ValidPointsQty := 0;
+      U.CoveredPointsQty := 0;
+    end {for};
 
-  CoveragePoints.Free();
-  CoveragePoints := TCoveragePoints.Create();
-  
+  with Routines do
+    for i := 0 to pred(Count) do begin
+      R := At(i);
+      R.CoveredPointsQty := 0;
+    end {for};
+
+  with CoveragePoints do begin
+    ValidCoveredPointsQty := 0;
+    ValidEnabledCoveredPointsQty := 0;
+    for i := 0 to pred(CoveragePoints.Count) do begin
+      C := CoveragePoints.At(i);
+      C.Counter := 0;
+    end {for};
+  end {with};
   InitStatistics;
 end ;
 
@@ -640,7 +659,7 @@ begin
   if n <> DataBaseMagicNumber then
     raise Exception.Create('State file cannot be read because the format is illegal or outdated');
 
-  ExecutableFileName := ReadStringFromStream(aStream);
+  //ExecutableFileName := ReadStringFromStream(aStream);
   aStream.Read(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
   aStream.Read(ImageBase, SizeOf(ImageBase));
   Units := TUnits.Load(aStream);
@@ -772,7 +791,7 @@ procedure TProjectDataBase.Save(aStream : TStream);
 begin
   n := DataBaseMagicNumber;
   aStream.Write(n, SizeOf(n));
-  WriteStringToStream(aStream, ExecutableFileName);
+  //WriteStringToStream(aStream, ExecutableFileName);
   aStream.Write(ExecutableFileCRC, SizeOf(ExecutableFileCRC));
   aStream.Write(ImageBase, SizeOf(ImageBase));
   Units.Save(aStream);

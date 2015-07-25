@@ -2311,6 +2311,7 @@ begin
     lConfigurations := TIniFile.Create(ChangeFileExt(StateFileName, '.cfg'));
     try
       ProjectDataBase_.RelativePath := lConfigurations.ReadString('Path', 'RelativePath', '');
+      ProjectDataBase_.ExecutableFileName := lConfigurations.ReadString('Path', 'Executable', '');
     finally                                          
       lConfigurations.Free();
     end;
@@ -3091,7 +3092,7 @@ procedure TFormMain.SaveDataBase(const FileName : string);
 var
   lFileBuffer : TMemoryStream;
   lDpsFile : TFileStream;
-  lProjectConfiguration : TIniFile;
+  lConfigurations : TIniFile;
 begin
   Screen.Cursor := crHourGlass;
   StatusBar.Panels[pFilePos].Text := 'Saving state';
@@ -3110,11 +3111,12 @@ begin
       lDpsFile.Free;
     end;
 
-    lProjectConfiguration := TIniFile.Create(ChangeFileExt(FileName, '.cfg'));
+    lConfigurations := TIniFile.Create(ChangeFileExt(FileName, '.cfg'));
     try
-      lProjectConfiguration.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
+      lConfigurations.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
+      lConfigurations.WriteString('Path', 'Executable', ProjectDataBase_.ExecutableFileName);
     finally
-      lProjectConfiguration.Free;
+      lConfigurations.Free;
     end;
   finally
     lFileBuffer.Free();

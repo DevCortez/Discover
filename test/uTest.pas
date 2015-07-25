@@ -38,9 +38,9 @@ begin
   for i := 1 to 25 do
     begin
       FormMain.MMProjectClearStateClick(nil);
-      CheckEquals(0, ProjectDataBase_.Units.Count, 'Unit count');
-      CheckEquals(0, ProjectDataBase_.Routines.Count, 'Routine count');
-      CheckEquals(0, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
+      CheckEquals(59, ProjectDataBase_.Units.Count, 'Unit count');
+      CheckEquals(2873, ProjectDataBase_.Routines.Count, 'Routine count');
+      CheckEquals(14, ProjectDataBase_.CoveragePoints.Count, 'Unit count');
       FormMain.LoadState(ExpandFileName('Teste.dps'));
     end;
 end;
@@ -63,6 +63,7 @@ end;
 
 procedure BasicTests.ModalTest;
 begin
+  FormMain.MMProjectClearStateClick(nil);
   while FormMain.Visible do Application.ProcessMessages();
 end;
 

@@ -396,20 +396,21 @@ procedure TProcess.SetInitialBreakPoints(aProcess : THandle);
 begin
   ErrorCode := 0;
   CIdx := 0;
-  while (CIdx < ProjectDataBase_.CoveragePoints.Count) do begin
-    C := ProjectDataBase_.CoveragePoints.At(CIdx);
-    R := ProjectDataBase_.Routines.At(C.RoutineIndex);
-    U := ProjectDataBase_.Units.At(R.UnitIndex);
-    if (not U.Disabled) and (not R.Disabled) and (not C.Disabled) and
-      (C.Counter = 0) then begin
-      ErrorCode := SetOneBreakPoint(aProcess, C);
+
+  while (CIdx < ProjectDataBase_.CoveragePoints.Count) do
+    begin
+      C := ProjectDataBase_.CoveragePoints.At(CIdx);
+      R := ProjectDataBase_.Routines.At(C.RoutineIndex);
+      U := ProjectDataBase_.Units.At(R.UnitIndex);
+
+      if (not U.Disabled) and (not R.Disabled) and (not C.Disabled) and (C.Counter = 0) then
+        ErrorCode := SetOneBreakPoint(aProcess, C);
+
+      if (ErrorCode > 0) and (LogInfos_.R.AccessMemFailures < MaxAccessMemFailures) then
+        SendMessage(Application.Handle, XM_ERRORCODE, ErrorCode, C.Address + ProjectDataBase_.ImageBase + ProgrammOffset_);
+        
+      inc(CIdx);
     end ;
-    if (ErrorCode > 0) and (LogInfos_.R.AccessMemFailures < MaxAccessMemFailures) then begin
-      SendMessage(Application.Handle, XM_ERRORCODE, ErrorCode, C.Address+
-        ProjectDataBase_.ImageBase+ProgrammOffset_);
-    end ;
-    inc(CIdx);
-  end ;
 end ;
 
 
