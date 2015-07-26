@@ -21,11 +21,11 @@
 ***************************************************************************)
 program Discover;
 
-{$R *.dres}
+
 
 uses
   Forms,
-  Main in 'Main.pas' ,
+  Main in 'Main.pas',
   CodeParser in 'CodeParser.pas',
   ObjectPascalTokenizer in 'ObjectPascalTokenizer.pas',
   DataBase in 'DataBase.pas',
@@ -35,14 +35,15 @@ uses
   Process in 'Process.pas',
   Version in 'Version.pas',
   PersistentForm in 'PersistentForm.pas',
-  F_Options in 'F_Options.pas' ,
-  F_Splash in 'F_Splash.pas' ,
+  F_Options in 'F_Options.pas',
+  F_Splash in 'F_Splash.pas',
   Globals in 'Globals.pas',
-  F_Edit in 'F_Edit.pas' ,
-  F_Export in 'F_Export.pas' ,
+  F_Edit in 'F_Edit.pas',
+  F_Export in 'F_Export.pas',
   ProjectInfo in 'ProjectInfo.pas',
-  F_ProjectInfo in 'F_ProjectInfo.pas' ,
-  CommandLineHandling in 'CommandLineHandling.pas';
+  F_ProjectInfo in 'F_ProjectInfo.pas',
+  CommandLineHandling in 'CommandLineHandling.pas',
+  F_NewProject in 'F_NewProject.pas' {FormNewProject};
 
 {$R *.RES}
 begin
@@ -53,6 +54,7 @@ begin
   Application.CreateForm(TFormOptions, FormOptions);
   Application.CreateForm(TFormExport, FormExport);
   Application.CreateForm(TFormProjectInfo, FormProjectInfo);
+  Application.CreateForm(TFormNewProject, FormNewProject);
   if CommandLineParams_.Action = caNoAction then begin
     // Splash and load previous state
     FormSplash_ := TFormSplash.Create(Application);
