@@ -1,6 +1,6 @@
 object FormMain: TFormMain
-  Left = 1325
-  Top = 276
+  Left = 543
+  Top = 172
   Width = 513
   Height = 452
   Caption = 'Discover'
@@ -401,6 +401,7 @@ object FormMain: TFormMain
     end
     object MMHelp: TMenuItem
       Caption = '&Help'
+      Visible = False
       OnClick = MMHelpClick
       object MMHelpHelp: TMenuItem
         Caption = '&Help'
