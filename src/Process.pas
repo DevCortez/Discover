@@ -416,8 +416,6 @@ end ;
 procedure TProcess.SetInitialBreakPoints(aProcess : THandle);
   var
     C : TCoveragePoint;
-    R : TRoutine;
-    U : TUnit;
     CIdx, ErrorCode : integer;
 begin
   ErrorCode := 0;
@@ -426,15 +424,13 @@ begin
   while (CIdx < ProjectDataBase_.CoveragePoints.Count) do
     begin
       C := ProjectDataBase_.CoveragePoints.At(CIdx);
-      R := ProjectDataBase_.Routines.At(C.RoutineIndex);
-      U := ProjectDataBase_.Units.At(R.UnitIndex);
 
-      if (not U.Disabled) and (not R.Disabled) and (not C.Disabled) and (C.Counter = 0) then
+      if (not C.Disabled) and (C.Counter = 0) then
         ErrorCode := SetOneBreakPoint(Handle, C);
 
-      if (ErrorCode > 0) and (LogInfos_.R.AccessMemFailures < MaxAccessMemFailures) then
+      if (ErrorCode > 0) then
         SendMessage(Application.Handle, XM_ERRORCODE, ErrorCode, C.Address + ProjectDataBase_.ImageBase + ProgrammOffset_);
-        
+
       inc(CIdx);
     end ;
 end ;
