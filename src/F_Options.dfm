@@ -3,7 +3,7 @@ object FormOptions: TFormOptions
   Top = 276
   BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 186
+  ClientHeight = 156
   ClientWidth = 400
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object FormOptions: TFormOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 153
+    Top = 123
     Width = 400
     Height = 33
     Align = alBottom
@@ -89,5 +89,6 @@ object FormOptions: TFormOptions
     Height = 14
     Caption = 'Stay on Top'
     TabOrder = 5
+    Visible = False
   end
 end
