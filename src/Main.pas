@@ -219,7 +219,7 @@ type
     procedure DisplayStatusFilename;
     procedure AdjustStatusbar;
     procedure DrawStringInColumn(Canvas : TCanvas; R : TRect; const s : string;
-      RightJustify : boolean);
+                                  RightJustify : boolean; AHighLight : string = '');
     function MainHook(var Message: TMessage): Boolean;
 
     procedure HandlePointCovered (Point : TCoveragePoint);
@@ -454,25 +454,65 @@ end ;
 (********************************)
 
 procedure TFormmain.DrawStringInColumn(Canvas : TCanvas; R : TRect; const s : string;
-  RightJustify : boolean);
+  RightJustify : boolean; AHighLight : string = '');
   var
     t : string;
+    lLeft, lCenter, lRight : string;
     StripCount : integer;
 begin
-  with Canvas do begin
-    t := s;
-    StripCount := 1;
-    if RightJustify then
-      dec(R.Right, 5);
-    while (StripCount < Length(s)) and (TextWidth(t) > (R.Right - R.Left)) do begin
-      t := Copy(s,1,Length(s)-StripCount)+'...';
-      inc(StripCount);
+  with Canvas do
+    begin
+      t := s;
+      StripCount := 1;
+      
+      if RightJustify then
+        dec(R.Right, 5);
+
+      while (StripCount < Length(s)) and (TextWidth(t) > (R.Right - R.Left)) do
+        begin
+          t := Copy(s,1,Length(s)-StripCount)+'...';
+          inc(StripCount);
+        end ;
+
+      if RightJustify then
+        begin
+          if (Length(AHighLight) > 0) and (AnsiPos(UpperCase(AHighLight), UpperCase(t)) > 0) then
+            begin
+              lLeft := Copy(t, 1, AnsiPos(UpperCase(AHighLight), UpperCase(t)));
+              lCenter := Copy(t, AnsiPos(UpperCase(AHighLight), UpperCase(t)), Length(AHighLight));
+              lRight := Copy(t, AnsiPos(UpperCase(AHighLight), UpperCase(t)) + Length(lCenter), Length(t) - (AnsiPos(UpperCase(AHighLight), UpperCase(t)) + Length(lCenter)));
+
+              TextOut(R.Right - TextWidth(t), R.Top, lLeft);
+
+              Canvas.Brush.Color := RGB(255, 221, 128);
+              Canvas.FillRect(Rect(R.Left + TextWidth(lLeft), R.Top, R.Left + TextWidth(lLeft) + TextWidth(lCenter), R.Bottom));
+              Brush.Style := bsClear;
+              TextOut(R.Right - TextWidth(t) + TextWidth(lLeft), R.Top, lCenter);
+
+              TextOut(R.Right - TextWidth(t) + TextWidth(lLeft) + TextWidth(lCenter), R.Top, lRight);
+            end
+          else
+            TextOut(R.Right-TextWidth(t), R.Top, t)
+        end
+      else
+        if (Length(AHighLight) > 0) and (AnsiPos(UpperCase(AHighLight), UpperCase(t)) > 0) then
+          begin
+            lLeft := Copy(t, 1, AnsiPos(UpperCase(AHighLight), UpperCase(t)) - 1);
+            lCenter := Copy(t, AnsiPos(UpperCase(AHighLight), UpperCase(t)), Length(AHighLight));
+            lRight := Copy(t, AnsiPos(UpperCase(AHighLight), UpperCase(t)) + Length(lCenter), Length(t) - (AnsiPos(UpperCase(AHighLight), UpperCase(t)) + Length(lCenter)) + 1);
+
+            TextOut(R.Left, R.Top, lLeft);
+
+            Canvas.Brush.Color := RGB(255, 221, 128);
+            Canvas.FillRect(Rect(R.Left + TextWidth(lLeft), R.Top, R.Left + TextWidth(lLeft) + TextWidth(lCenter), R.Bottom));
+            Brush.Style := bsClear;
+            TextOut(R.Left + TextWidth(lLeft), R.Top, lCenter);
+
+            TextOut(R.Left + TextWidth(lLeft) + TextWidth(lCenter), R.Top, lRight);
+          end
+        else
+          TextOut(R.Left, R.Top, t);
     end ;
-    if RightJustify then
-      TextOut(R.Right-TextWidth(t), R.Top, t)
-    else
-      TextOut(R.Left, R.Top, t);
-  end ;
 end ;
 
 
@@ -1634,7 +1674,7 @@ begin
             end;
         end ;
 
-      DrawStringInColumn(Canvas, R, s, false);
+      DrawStringInColumn(Canvas, R, s, false, edtRoutineSearch.Text);
 
       with R do
         begin
@@ -1876,7 +1916,7 @@ begin
     if U.Disabled then
       Pen.Color := clGrayText;
 
-    DrawStringInColumn(Canvas, R, U.Name, false);
+    DrawStringInColumn(Canvas, R, U.Name, false, edtUnitSearch.Text);
 
     with R do
       begin
