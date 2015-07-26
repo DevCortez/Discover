@@ -46,6 +46,8 @@ type
     stWaitForProcessRunning, stWaitForProcessReadyForPlaying);
 
   TFormMain = class(TForm)
+    edtUnitSearch: TEdit;
+    SearchPane: TPanel;
   published
     MainMenu: TMainMenu;
     MMProject: TMenuItem;
@@ -210,6 +212,7 @@ type
     procedure UpdateOnActivate;
     procedure FillSortedRoutineList;
     procedure FillSortedUnitList;
+    procedure FillSortedFilteredUnitList;
     procedure DisplayStatusFilename;
     procedure AdjustStatusbar;
     procedure DrawStringInColumn(Canvas : TCanvas; R : TRect; const s : string;
@@ -459,11 +462,14 @@ procedure TFormMain.FillLBRoutines;
 begin
   LBRoutines.Items.BeginUpdate;
   LBRoutines.Items.Clear;
+
   with SortedRoutines do
-    for i := 0 to pred(Count) do begin
-      R := At(i);
-      LBRoutines.Items.AddObject('',R);
-    end ;
+    for i := 0 to pred(Count) do
+      begin
+        R := At(i);
+        LBRoutines.Items.AddObject('',R);
+      end ;
+
   LBRoutines.Items.EndUpdate;
 end ;
 
@@ -502,15 +508,18 @@ procedure TFormMain.FillSortedRoutineList;
     U : TUnit;
 begin
   SortedRoutines.DeleteAll;
-  if ProjectDatabase_ <> nil then begin
-    ProjectDataBase_.UpDateStatistics;
-    for i := 0 to pred(ProjectDataBase_.Routines.Count) do begin
-      R := ProjectDataBase_.Routines.At(i);
-      U := ProjectDataBase_.Units.At(R.UnitIndex);
-      if (R.FirstPointIndex >= 0) and U.IsSourceAvailable then
-        SortedRoutines.Insert(R);
+  if ProjectDatabase_ <> nil then
+    begin
+      ProjectDataBase_.UpDateStatistics;
+      for i := 0 to pred(ProjectDataBase_.Routines.Count) do
+        begin
+          R := ProjectDataBase_.Routines.At(i);
+          U := ProjectDataBase_.Units.At(R.UnitIndex);
+
+          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable then
+            SortedRoutines.Insert(R);
+        end ;
     end ;
-  end ;
 end ;
 
 
@@ -519,24 +528,25 @@ end ;
 (********************************)
 
 procedure TFormMain.FillSortedUnitList;
-  var
-    i : integer;
+var
+  i : integer;
     U : TUnit;
 begin
   // Update Statistical info
-  if ProjectDatabase_ <> nil then begin
-    ProjectDataBase_.UpDateStatistics;
-    SortedUnits.DeleteAll;
+  if ProjectDatabase_ <> nil then
+    begin
+      ProjectDataBase_.UpDateStatistics;
+      SortedUnits.DeleteAll;
 
-    with ProjectDataBase_.Units do
-      for i := 0 to pred(Count) do
-        begin
-          U := At(i);
+      with ProjectDataBase_.Units do
+        for i := 0 to pred(Count) do
+          begin
+            U := At(i);
 
-          if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
-            SortedUnits.Insert(U);
-        end ;
-  end ;
+            if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
+              SortedUnits.Insert(U);
+          end ;
+    end ;
 end ;
 
 
@@ -1631,6 +1641,9 @@ procedure TFormMain.LBUnitsClick(Sender: TObject);
     R : TRoutine;
     C : TCoveragePoint;
 begin
+  if LBUnits.Items.Count = 0 then
+    exit;
+
   if LBUnits.ItemIndex >= 0 then
     CurrentUnit := LBUnits.Items.Objects[LBUnits.ItemIndex] as TUnit;
 
@@ -1782,47 +1795,54 @@ end ;
 (*****************************)
 
 procedure TFormMain.LBUnitsKeyPress(Sender: TObject; var Key: Char);
-  var
-    U : TUnit;
-    i : integer;
-    FormEdit : TFormEdit;
 begin
-  if not (Key in ['a'..'z', 'A'..'Z','_']) then begin
-    case Key of
-      #1: // Ctrl-A
-        PUUnitsSelectAllClick(Sender);
-      #2: // Ctrl-B
-        PUUnitsEnableDisableClick(PUUnitsDisable);
-      #6: // Ctrl-F
-        PUUnitsEnableDisableClick(PUUnitsEnable);
-      #4: // Ctrl-f
-        PUUnitsSelectGroupClick(LBUnits);
-    else
-    end ;
-  end else begin
-    FormEdit := TFormEdit.Create(Self);
-    try
-      // Position the list box to the required routines
-      if Key in ['a'..'z', 'A'..'Z','_'] then
-        FormEdit.Edit1.Text := Key
-      else
-        FormEdit.Edit1.Text := '';
-      if FormEdit.ShowModal = mrOk then begin
-        U := TUnit.Create;
-        try
-          U.Name := FormEdit.Edit1.Text;
-          SortedUNits.Search(U,i);
-          LBUnits.TopIndex := i;
-          if i >= 0 then
-            LBUnits.Selected[i] := true;
-        finally
-          U.Free;
-        end ;
+  if not (Key in ['a'..'z', 'A'..'Z', '0'..'9', '_', ' ', char(VK_RETURN), char(VK_BACK), char(VK_ESCAPE)]) then
+    begin
+      case Key of
+        #1: // Ctrl-A
+          PUUnitsSelectAllClick(Sender);
+        #2: // Ctrl-B
+          PUUnitsEnableDisableClick(PUUnitsDisable);
+        #6: // Ctrl-F
+          PUUnitsEnableDisableClick(PUUnitsEnable);
+        #4: // Ctrl-f
+          PUUnitsSelectGroupClick(LBUnits);
       end ;
-    finally
-      FormEdit.Free;
+    end
+  else
+    begin
+      if Key in ['a'..'z', 'A'..'Z', '0'..'9', '_', ' ', char(VK_BACK)] then
+        begin
+          if not SearchPane.Visible then
+            begin
+              edtUnitSearch.Clear;
+              SearchPane.Show;
+            end;
+            
+          if Key <> char(VK_BACK) then
+            edtUnitSearch.Text := edtUnitSearch.Text + Key
+          else
+            edtUnitSearch.Text := Copy(edtUnitSearch.Text, 0, Length(edtUnitSearch.Text) - 1);
+
+          if Length(edtUnitSearch.Text) > 0 then
+            FillSortedFilteredUnitList
+          else
+            FillSortedUnitList;
+            
+          FillLBUnits;
+
+          if LBUnits.Items.Count > 0 then
+            LBUnits.ItemIndex := 0
+          else
+            LBUnits.ItemIndex := -1;
+        end
+      else
+        begin
+          SearchPane.Hide;
+          FillSortedUnitList;            
+          FillLBUnits;
+        end;
     end ;
-  end ;
 end ;
 
 
@@ -3388,5 +3408,27 @@ end ;
 
 
 {~b}
+
+procedure TFormMain.FillSortedFilteredUnitList;
+var
+  i : integer;
+    U : TUnit;
+begin
+  // Update Statistical info
+  if ProjectDatabase_ <> nil then
+    begin
+      SortedUnits.DeleteAll;
+
+      with ProjectDataBase_.Units do
+        for i := 0 to pred(Count) do
+          begin
+            U := At(i);
+
+            if (U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked) and
+                AnsiContainsText(U.Name, edtUnitSearch.Text) then
+              SortedUnits.Insert(U);
+          end ;
+    end ;
+end ;
 
 end.

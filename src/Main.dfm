@@ -72,7 +72,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 222
         Height = 374
-        ActivePage = TSSummary
+        ActivePage = TSUnits
         Align = alClient
         TabOrder = 0
         OnChange = PCLeftChange
@@ -101,9 +101,11 @@ object FormMain: TFormMain
             Left = 0
             Top = 14
             Width = 214
-            Height = 332
+            Height = 310
             Style = lbOwnerDrawFixed
             Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
             Ctl3D = False
             ItemHeight = 16
             MultiSelect = True
@@ -153,6 +155,41 @@ object FormMain: TFormMain
             OnSectionClick = HCUnitsSectionClick
             OnSectionResize = HCUnitsSectionResize
             OnSectionTrack = HCSectionTrack
+          end
+          object SearchPane: TPanel
+            Left = 0
+            Top = 324
+            Width = 214
+            Height = 22
+            Align = alBottom
+            BevelOuter = bvNone
+            Caption = 'SearchPane'
+            Ctl3D = False
+            ParentCtl3D = False
+            TabOrder = 2
+            Visible = False
+            DesignSize = (
+              214
+              22)
+            object edtUnitSearch: TEdit
+              Left = 0
+              Top = -1
+              Width = 214
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              AutoSelect = False
+              AutoSize = False
+              Ctl3D = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              ParentCtl3D = False
+              ParentFont = False
+              TabOrder = 0
+              Text = 'edtUnitSearch'
+            end
           end
         end
         object TSRoutines: TTabSheet
