@@ -48,6 +48,8 @@ type
   TFormMain = class(TForm)
     edtUnitSearch: TEdit;
     SearchPane: TPanel;
+    RoutineSearchPane: TPanel;
+    edtRoutineSearch: TEdit;
   published
     MainMenu: TMainMenu;
     MMProject: TMenuItem;
@@ -211,6 +213,7 @@ type
     procedure UpdateCoverageOnStatusBar;
     procedure UpdateOnActivate;
     procedure FillSortedRoutineList;
+    procedure FillSortedFilteredRoutineList;
     procedure FillSortedUnitList;
     procedure FillSortedFilteredUnitList;
     procedure DisplayStatusFilename;
@@ -1679,36 +1682,50 @@ procedure TFormMain.LBRoutinesKeyPress(Sender: TObject; var Key: Char);
     i : integer;
     FormEdit : TFormEdit;
 begin
-  if not (Key in ['a'..'z', 'A'..'Z','_']) then begin
-    case Key of
-      #2: // Ctrl-B
-        PURoutinesEnableDisableClick(PURoutinesDisable);
-      #6: // Ctrl-F
-        PURoutinesEnableDisableClick(PURoutinesEnable);
-    else
-    end ;
-  end else begin
-    FormEdit := TFormEdit.Create(Self);
-    try
-      // Position the list box to the required routines
-      if Key in ['a'..'z', 'A'..'Z','_'] then
-        FormEdit.Edit1.Text := Key
-      else
-        FormEdit.Edit1.Text := '';
-      if FormEdit.ShowModal = mrOk then begin
-        R := TRoutine.Create;
-        try
-          R.Name := FormEdit.Edit1.Text;
-          SortedRoutines.Search(R,i);
-          LBRoutines.ItemIndex := i;
-        finally
-          R.Free;
-        end ;
+  if not (Key in ['a'..'z', 'A'..'Z', '0'..'9', '_', ' ', char(VK_RETURN), char(VK_BACK), char(VK_ESCAPE)]) then
+    begin             
+      case Key of
+        #2: // Ctrl-B
+          PURoutinesEnableDisableClick(PURoutinesDisable);
+        #6: // Ctrl-F
+          PURoutinesEnableDisableClick(PURoutinesEnable);
       end ;
-    finally
-      FormEdit.Free;
+    end
+  else
+    begin
+      if Key in ['a'..'z', 'A'..'Z', '0'..'9', '_', ' ', char(VK_BACK)] then
+        begin
+          if not RoutineSearchPane.Visible then
+            begin
+              edtRoutineSearch.Clear;
+              RoutineSearchPane.Show;
+            end;
+            
+          if Key <> char(VK_BACK) then
+            edtRoutineSearch.Text := edtRoutineSearch.Text + Key
+          else
+            edtRoutineSearch.Text := Copy(edtRoutineSearch.Text, 0, Length(edtRoutineSearch.Text) - 1);
+
+          if Length(edtRoutineSearch.Text) > 0 then
+            FillSortedFilteredRoutineList
+          else
+            FillSortedRoutineList;
+            
+          FillLBRoutines;
+
+          if LBRoutines.Items.Count > 0 then
+            LBRoutines.ItemIndex := 0
+          else
+            LBRoutines.ItemIndex := -1;
+        end
+      else
+        begin
+          RoutineSearchPane.Hide;
+          FillSortedRoutineList;            
+          FillLBRoutines;
+        end;
+
     end ;
-  end ;
 end ;
 
 
@@ -3560,5 +3577,28 @@ begin
           end ;
     end ;
 end ;
+
+procedure TFormMain.FillSortedFilteredRoutineList;
+var
+  i : integer;
+  R : TRoutine;
+  U : TUnit;
+begin
+  SortedRoutines.DeleteAll;
+  
+  if ProjectDatabase_ <> nil then
+    begin
+      ProjectDataBase_.UpDateStatistics;
+      for i := 0 to pred(ProjectDataBase_.Routines.Count) do
+        begin
+          R := ProjectDataBase_.Routines.At(i);
+          U := ProjectDataBase_.Units.At(R.UnitIndex);
+
+          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable and (not U.Disabled) and (R.ValidPointsQty > 0) and
+             AnsiContainsText(R.Name, edtRoutineSearch.Text) then
+            SortedRoutines.Insert(R);
+        end ;
+    end ;
+end;
 
 end.
