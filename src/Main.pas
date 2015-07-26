@@ -2903,11 +2903,11 @@ end ;
 procedure TFormMain.PBLegendPaint(Sender: TObject);
   const
     Offset = 5;
-    MaxColors = 7;
+    MaxColors = 3;
     Colors : array [1..MaxColors] of TColor =
-      (clBlack, clMaroon, clBlue, clAqua, clLime, clYellow, clWhite);
+      (clRed, clYellow, clGreen);
     Strings : array [1..MaxColors] of string =
-      ('0%', '<=20%', '<=40%', '<=60%', '<=80%', '<100%', '100%');
+      ('0%', '50%', '100%');
   var
     w, h, i, x, dx, y, dy : integer;
     P : TPaintBox;
@@ -3504,20 +3504,10 @@ begin
         x := 0
       else
         x := (100*Routine.CoveredPointsQty) div Routine.ValidPointsQty;
-      if x = 100 then
-        PBOverView.Canvas.Brush.Color := clWhite
-      else if x = 0 then
-        PBOverView.Canvas.Brush.Color := clBlack
-      else if x > 80 then
-        PBOverView.Canvas.Brush.Color := clYellow
-      else if x > 60 then
-        PBOverView.Canvas.Brush.Color := clLime
-      else if x > 40 then
-        PBOverView.Canvas.Brush.Color := clAqua
-      else if x > 20 then
-        PBOverView.Canvas.Brush.Color := clBlue
+      if x >= 50 then
+        PBOverView.Canvas.Brush.Color := MergeColor(clYellow, clGreen, x * 2 - 100)
       else
-        PBOverView.Canvas.Brush.Color := clMaroon;
+        PBOverView.Canvas.Brush.Color := MergeColor(clRed, clYellow, x * 2);
     end else
       PBOverView.Canvas.Brush.Color := clGray;
 
