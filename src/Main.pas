@@ -1382,36 +1382,47 @@ procedure TFormMain.LBFileDrawItem(Control: TWinControl; Index: Integer;
   end ;
 
 begin
-  with Control as TListBox, Canvas do begin
-    if odFocused in State then
-      DrawFocusRect(Rect);
-    if odSelected in State then
-      Brush.Color := clHighLight
-    else
-      Brush.Color := clWindow;
-    FillRect(Rect);
-    C :=  TCoveragePoint(Items.Objects[Index]);
-    if (C <> nil) and C.Valid then begin
-      with R1 do begin
-        Left := (HOffset - MarkSide) div 2;
-        Right := Left + MarkSide;
-        Top := Rect.Top + (ItemHeight - MarkSide) div 2;
-        Bottom := Top + MarkSide;
-      end ;
-      with R2 do begin
-        Top := 0;
-        Left := 0;
-        Right := MarkSide;
-        Bottom := MarkSide;
-      end ;
-      if C.Counter > 0 then
-        BrushCopy(R1, CoveredBitMap, R2, clWhite)
-      else
-        BrushCopy(R1, UncoveredBitMap, R2, clWhite);
+  with Control as TListBox, Canvas do
+    begin
+      if odFocused in State then
+        DrawFocusRect(Rect);
 
+      if odSelected in State then
+        Brush.Color := clHighLight
+      else
+        Brush.Color := clWindow;
+
+      FillRect(Rect);
+      C :=  TCoveragePoint(Items.Objects[Index]);
+
+      if (C <> nil) and C.Valid then
+        begin
+          with R1 do
+            begin
+              Left := (HOffset - MarkSide) div 2;
+              Right := Left + MarkSide;
+              Top := Rect.Top + (ItemHeight - MarkSide) div 2;
+              Bottom := Top + MarkSide;
+            end ;
+
+          with R2 do
+            begin
+              Top := 0;
+              Left := 0;
+              Right := MarkSide;
+              Bottom := MarkSide;
+            end ;
+
+          if C.Counter > 0 then
+            BrushCopy(R1, CoveredBitMap, R2, clWhite)
+          else
+            BrushCopy(R1, UncoveredBitMap, R2, clWhite);
+        end
+      else
+        Font.Color := MergeColor(Font.Color, clWhite, 50);
+
+      TextOut(Rect.Left+HOffset, Rect.Top, ExpandTabs(Items[Index]));
     end ;
-    TextOut(Rect.Left+HOffset, Rect.Top, ExpandTabs(Items[Index]));
-  end ;
 end ;
 
 
