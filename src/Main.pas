@@ -543,7 +543,8 @@ begin
           begin
             U := At(i);
 
-            if U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked then
+            if (U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked) and
+                (U.ValidPointsQty > 0) then
               SortedUnits.Insert(U);
           end ;
     end ;
@@ -1730,62 +1731,82 @@ procedure TFormMain.LBUnitsDrawItem(Control: TWinControl; Index: Integer;
 begin
   with (Control as TListBox), Canvas do begin
     Brush.Style := bsSolid;
+
     if odSelected in State then
       Brush.Color := clHighLight
     else
       Brush.Color := clWindow;
+
     FillRect(Rect);
     U := SortedUnits.At(Index);
-    with R do begin
-      Top := Rect.Top;
-      Bottom := Rect.Bottom;
-      Left := HCUnits.Sections[0].Left;
-      Right := HCUnits.Sections[0].Right;
-    end ;
+
+    with R do
+      begin
+        Top := Rect.Top;
+        Bottom := Rect.Bottom;
+        Left := HCUnits.Sections[0].Left;
+        Right := HCUnits.Sections[0].Right;
+      end ;
+      
     DrawCheckBox(R, Canvas);
     inc(R.Left, EnabledBitMap.Width+4);
+
     if U.Disabled then
       Pen.Color := clGrayText;
+
     DrawStringInColumn(Canvas, R, U.Name, false);
 
-    with R do begin
-      Left := HCUnits.Sections[1].Left;
-      Right := HCUnits.Sections[1].Right;
-    end ;
+    with R do
+      begin
+        Left := HCUnits.Sections[1].Left;
+        Right := HCUnits.Sections[1].Right;
+      end ;
+      
     DrawStringInColumn(Canvas, R, IntToStr(U.Size), true);
 
-    with R do begin
-      Left := HCUnits.Sections[2].Left;
-      Right := HCUnits.Sections[2].Right;
-    end ;
+    with R do
+      begin
+        Left := HCUnits.Sections[2].Left;
+        Right := HCUnits.Sections[2].Right;
+      end ;
+      
     DrawStringInColumn(Canvas, R, IntToStr(U.RoutinesQty), true);
 
-    if U.IsSourceAvailable then begin
-      with R do begin
-        Left := HCUnits.Sections[3].Left;
-        Right := HCUnits.Sections[3].Right;
-      end ;
-      DrawStringInColumn(Canvas, R, IntToStr(U.R0Pc), true);
+    if U.IsSourceAvailable then
+      begin
+        with R do
+          begin
+            Left := HCUnits.Sections[3].Left;
+            Right := HCUnits.Sections[3].Right;
+          end
+          ;
+        DrawStringInColumn(Canvas, R, IntToStr(U.R0Pc), true);
 
-      with R do begin
-        Left := HCUnits.Sections[4].Left;
-        Right := HCUnits.Sections[4].Right;
-      end ;
-      DrawStringInColumn(Canvas, R, IntToStr(U.R100Pc), true);
+        with R do
+          begin
+            Left := HCUnits.Sections[4].Left;
+            Right := HCUnits.Sections[4].Right;
+          end ;
+          
+        DrawStringInColumn(Canvas, R, IntToStr(U.R100Pc), true);
 
-      with R do begin
-        Left := HCUnits.Sections[5].Left;
-        Right := HCUnits.Sections[5].Right;
+        with R do
+          begin
+            Left := HCUnits.Sections[5].Left;
+            Right := HCUnits.Sections[5].Right;
+          end ;
+          
+        if U.ValidPointsQty = 0 then
+          s := ''
+        else
+          begin
+            x := U.CoveredPointsQty;
+            x := 100.0*(x / U.ValidPointsQty);
+            s := Format('%3.0f',[x])+'%';
+          end ;
+          
+        DrawStringInColumn(Canvas, R, s, true);
       end ;
-      if U.ValidPointsQty = 0 then
-        s := '?'
-      else begin
-        x := U.CoveredPointsQty;
-        x := 100.0*(x / U.ValidPointsQty);
-        s := Format('%3.0f',[x])+'%';
-      end ;
-      DrawStringInColumn(Canvas, R, s, true);
-    end ;
   end ;
 end ;
 
@@ -3425,7 +3446,7 @@ begin
             U := At(i);
 
             if (U.IsSourceAvailable or not FormOptions.CHKNoDisplaySourceLessUnits.Checked) and
-                AnsiContainsText(U.Name, edtUnitSearch.Text) then
+                AnsiContainsText(U.Name, edtUnitSearch.Text) and (U.ValidPointsQty > 0) then
               SortedUnits.Insert(U);
           end ;
     end ;
