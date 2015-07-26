@@ -45,6 +45,7 @@ uses
   CommandLineHandling in 'CommandLineHandling.pas',
   F_NewProject in 'F_NewProject.pas' {FormNewProject};
 
+{$R *.DRES}
 {$R *.RES}
 begin
   if not CheckCommandLineParams then
@@ -55,6 +56,7 @@ begin
   Application.CreateForm(TFormExport, FormExport);
   Application.CreateForm(TFormProjectInfo, FormProjectInfo);
   Application.CreateForm(TFormNewProject, FormNewProject);
+
   if CommandLineParams_.Action = caNoAction then begin
     // Splash and load previous state
     FormSplash_ := TFormSplash.Create(Application);
