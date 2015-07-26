@@ -263,7 +263,7 @@ implementation
   uses
     CodeParser, Config, Exceptions, Globals, IniFiles, MapFile,
     Util, F_Options, F_About,  F_Edit, CRC32, ShellAPI,
-    FileCtrl, F_Export, F_ProjectInfo;
+    FileCtrl, F_Export, F_ProjectInfo, Math;
 
 {$R *.DFM}
 const
@@ -283,6 +283,28 @@ const
   pProcessState = 2;
 var
   OverviewPointSquareSide : integer = 1;
+
+function MergeColor(ASource, ATarget, AThreshold : cardinal):TColor;
+var
+  lR, lG, lB : integer;
+begin
+  AThreshold := Min(100, AThreshold);
+
+  lB := ((ATarget shr 16 and $FF) - (ASource shr 16 and $FF));
+  lB := trunc(lB * (AThreshold / 100));
+
+  lG := ((ATarget shr 8 and $FF) - (ASource shr 8 and $FF));
+  lG := trunc(lG * (AThreshold / 100));
+
+  lR := ((ATarget and $FF) - (ASource and $FF));
+  lR := trunc(lR * (AThreshold / 100));
+
+  lB := (ASource shr 16 and $FF) + lB;
+  lG := (ASource shr 8 and $FF) + lG;
+  lR := (ASource and $FF) + lR;
+
+  result := RGB(lR, lG, lB);
+end;
 
 {~t}
 (*****************************)
@@ -1739,6 +1761,11 @@ begin
 
     FillRect(Rect);
     U := SortedUnits.At(Index);
+
+    Font.Color := MergeColor(clRed, clGreen, trunc(100.0*(U.CoveredPointsQty / U.ValidPointsQty)));
+
+    if odSelected in State then
+      Font.Color := MergeColor(Font.Color, clWhite, 80);
 
     with R do
       begin

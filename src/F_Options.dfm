@@ -3,7 +3,7 @@ object FormOptions: TFormOptions
   Top = 276
   BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 156
+  ClientHeight = 186
   ClientWidth = 400
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object FormOptions: TFormOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 123
+    Top = 153
     Width = 400
     Height = 33
     Align = alBottom
@@ -81,5 +81,13 @@ object FormOptions: TFormOptions
     Height = 14
     Caption = 'At shutdown, save then current state'
     TabOrder = 4
+  end
+  object chkColoredUnits: TCheckBox
+    Left = 7
+    Top = 115
+    Width = 163
+    Height = 14
+    Caption = 'Stay on Top'
+    TabOrder = 5
   end
 end

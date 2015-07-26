@@ -36,6 +36,7 @@ type
     CHKNoDisplaySourceLessUnits: TCheckBox;
     CHKLoadState: TCheckBox;
     CHKSaveState: TCheckBox;
+    chkColoredUnits: TCheckBox;
     procedure FormHide(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
