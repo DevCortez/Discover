@@ -1575,7 +1575,7 @@ begin
       
       if PreviousRoutine <> nil then
         begin
-          Pen.Color := clGray;
+          Pen.Color := MergeColor(Font.Color, clWhite, 60);
 
           p := Pos('.', PreviousRoutine.Name);
           q := Pos('.', Routine.Name);
@@ -1583,7 +1583,7 @@ begin
           if (p <> 0) and (q <> 0) and (p = q) and
             (Copy(PreviousRoutine.Name, 1,p)=Copy(Routine.Name,1,p)) then
             begin
-              R.Left := R.Left + 10;
+              R.Left := R.Left + 13;
 
               if Index < SortedRoutines.Count - 1 then
                 begin
@@ -1597,20 +1597,20 @@ begin
                       Canvas.MoveTo(7, R.Top);
                       Canvas.LineTo(7, R.Bottom);
                       Canvas.MoveTo(7, R.Top + ((R.Bottom - R.Top) div 2));
-                      Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                      Canvas.LineTo(17, R.Top + ((R.Bottom - R.Top) div 2));
                     end
                   else
                     begin
                       Canvas.MoveTo(7, R.Top);
                       Canvas.LineTo(7, R.Top + ((R.Bottom - R.Top) div 2));
-                      Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                      Canvas.LineTo(17, R.Top + ((R.Bottom - R.Top) div 2));
                     end;
                 end
               else
                 begin
                   Canvas.MoveTo(7, R.Top);
                   Canvas.LineTo(7, R.Top + ((R.Bottom - R.Top) div 2));
-                  Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                  Canvas.LineTo(17, R.Top + ((R.Bottom - R.Top) div 2));
                 end;
             end;
         end ;
