@@ -3,7 +3,7 @@ object FormProjectInfo: TFormProjectInfo
   Top = 318
   BorderStyle = bsDialog
   Caption = 'Project settings'
-  ClientHeight = 228
+  ClientHeight = 213
   ClientWidth = 372
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -27,7 +27,7 @@ object FormProjectInfo: TFormProjectInfo
       Left = 7
       Top = 26
       Width = 358
-      Height = 24
+      Height = 21
       TabOrder = 0
     end
   end
@@ -52,26 +52,26 @@ object FormProjectInfo: TFormProjectInfo
       Left = 7
       Top = 20
       Width = 293
-      Height = 24
+      Height = 21
       TabOrder = 1
     end
   end
   object CHKRunMaximized: TCheckBox
-    Left = 13
-    Top = 172
+    Left = 5
+    Top = 156
     Width = 170
     Height = 13
     Caption = 'Run application maximized'
-    TabOrder = 2
+    TabOrder = 3
   end
   object Panel1: TPanel
     Left = 0
-    Top = 194
+    Top = 179
     Width = 372
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 4
     object Button2: TButton
       Left = 72
       Top = 7
@@ -100,7 +100,7 @@ object FormProjectInfo: TFormProjectInfo
     Height = 46
     Align = alTop
     Caption = 'Host application'
-    TabOrder = 4
+    TabOrder = 2
     object btnHostApplication: TButton
       Left = 306
       Top = 20
