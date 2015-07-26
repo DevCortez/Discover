@@ -26,7 +26,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, Menus, DataBase, ComCtrls, Objects,
-  Process, Buttons, ImgList, ProjectInfo, StrUtils;
+  Process, Buttons, ImgList, ProjectInfo, StrUtils, Types;
 
 type
   THeaderTrackingInfo = record
@@ -1522,7 +1522,7 @@ end ;
 procedure TFormMain.LBRoutinesDrawItem(Control: TWinControl;
   Index: Integer; Rect: TRect; State: TOwnerDrawState);
   var
-    Routine, PreviousRoutine : TRoutine;
+    Routine, PreviousRoutine, NextRoutine : TRoutine;
     R : TRect;
     U : TUnit;
     x : single;
@@ -1565,22 +1565,55 @@ begin
         begin
           Top := Rect.Top;
           Bottom := Rect.Bottom;
-          Left := HCRoutines.Sections[0].Left;
+          Left := HCRoutines.Sections[0].Left + 5;
           Right := HCRoutines.Sections[0].Right;
         end ;
 
+      FillRect(R);
+
       s := Routine.Name;
-  //    if PreviousRoutine <> nil then
-  //      begin
-  //        // Do we have the same class name
-  //        p := Pos('.', PreviousRoutine.Name);
-  //        q := Pos('.', Routine.Name);
-  //
-  ////        if (p <> 0) and (q <> 0) and (p = q) and
-  ////          (Copy(PreviousRoutine.Name, 1,p)=Copy(Routine.Name,1,p)) then
-  ////            // same class name, strip it
-  ////            s := '     '+Copy(Routine.Name,q, Length(Routine.Name))
-  //      end ;
+      
+      if PreviousRoutine <> nil then
+        begin
+          Pen.Color := clGray;
+
+          p := Pos('.', PreviousRoutine.Name);
+          q := Pos('.', Routine.Name);
+
+          if (p <> 0) and (q <> 0) and (p = q) and
+            (Copy(PreviousRoutine.Name, 1,p)=Copy(Routine.Name,1,p)) then
+            begin
+              R.Left := R.Left + 10;
+
+              if Index < SortedRoutines.Count - 1 then
+                begin
+                  NextRoutine := SortedRoutines.At(Index + 1);
+                  p := Pos('.', Routine.Name);
+                  q := Pos('.', NextRoutine.Name);
+
+                  if (p <> 0) and (q <> 0) and (p = q) and
+                    (Copy(Routine.Name, 1,p)=Copy(NextRoutine.Name,1,p)) then
+                    begin
+                      Canvas.MoveTo(7, R.Top);
+                      Canvas.LineTo(7, R.Bottom);
+                      Canvas.MoveTo(7, R.Top + ((R.Bottom - R.Top) div 2));
+                      Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                    end
+                  else
+                    begin
+                      Canvas.MoveTo(7, R.Top);
+                      Canvas.LineTo(7, R.Top + ((R.Bottom - R.Top) div 2));
+                      Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                    end;
+                end
+              else
+                begin
+                  Canvas.MoveTo(7, R.Top);
+                  Canvas.LineTo(7, R.Top + ((R.Bottom - R.Top) div 2));
+                  Canvas.LineTo(R.Left, R.Top + ((R.Bottom - R.Top) div 2));
+                end;
+            end;
+        end ;
 
       DrawStringInColumn(Canvas, R, s, false);
 
