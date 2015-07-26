@@ -530,6 +530,7 @@ procedure TFormMain.FillSortedRoutineList;
     U : TUnit;
 begin
   SortedRoutines.DeleteAll;
+  
   if ProjectDatabase_ <> nil then
     begin
       ProjectDataBase_.UpDateStatistics;
@@ -538,7 +539,7 @@ begin
           R := ProjectDataBase_.Routines.At(i);
           U := ProjectDataBase_.Units.At(R.UnitIndex);
 
-          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable then
+          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable and (R.ValidPointsQty > 0) then
             SortedRoutines.Insert(R);
         end ;
     end ;
@@ -1528,66 +1529,94 @@ procedure TFormMain.LBRoutinesDrawItem(Control: TWinControl;
     s : string;
     p, q : integer;
 begin
-  with (Control as TListBox), Canvas do begin
-    Routine := SortedRoutines.At(Index);
-    if Index > 0 then
-      PreviousRoutine := SortedRoutines.At(pred(Index))
-    else
-      PreviousRoutine := nil;
-    U := ProjectDataBase_.Units.At(Routine.UnitIndex);
-    if odSelected in State then begin
-      Brush.Color := clHighLight;
-      Font.Color := clHighLightText;
-    end else begin
-      Brush.Color := clWindow;
-      Font.Color := clWindowText;
-    end ;
-    FillRect(Rect);
-    if Routine.Disabled then
-      Font.Color := clGrayText;
-    with R do begin
-      Top := Rect.Top;
-      Bottom := Rect.Bottom;
-      Left := HCRoutines.Sections[0].Left;
-      Right := HCRoutines.Sections[0].Right;
-    end ;
-    s := Routine.Name;
-    if PreviousRoutine <> nil then begin
-      // Do we have the same class name
-      p := Pos('.', PreviousRoutine.Name);
-      q := Pos('.', Routine.Name);
-      if (p <> 0) and (q <> 0) and (p = q) and
-        (Copy(PreviousRoutine.Name, 1,p)=Copy(Routine.Name,1,p)) then
-          // same class name, strip it
-          s := '     '+Copy(Routine.Name,q, Length(Routine.Name))
-    end ;
-    DrawStringInColumn(Canvas, R, s, false);
+  with (Control as TListBox), Canvas do
+    begin
+      Routine := SortedRoutines.At(Index);
+    
+      if Index > 0 then
+        PreviousRoutine := SortedRoutines.At(pred(Index))
+      else
+        PreviousRoutine := nil;
 
-    with R do begin
-      Left := HCRoutines.Sections[1].Left;
-      Right := HCRoutines.Sections[1].Right;
-    end ;
-    DrawStringInColumn(Canvas, R, U.Name, false);
+      U := ProjectDataBase_.Units.At(Routine.UnitIndex);
 
-    with R do begin
-      Left := HCRoutines.Sections[2].Left;
-      Right := HCRoutines.Sections[2].Right;
-    end ;
-    DrawStringInColumn(Canvas, R, IntToStr(Routine.ValidPointsQty), true);
+      if odSelected in State then
+        begin
+          Brush.Color := clHighLight;
+          Font.Color := clHighLightText;
+        end
+      else
+        begin
+          Brush.Color := clWindow;
+          Font.Color := clWindowText;
+        end ;
 
-    with R do begin
-      Left := HCRoutines.Sections[3].Left;
-      Right := HCRoutines.Sections[3].Right;
+      FillRect(Rect);
+
+      Font.Color := MergeColor(clRed, clGreen, trunc(100.0*(Routine.CoveredPointsQty / Routine.ValidPointsQty)));
+
+      if odSelected in State then
+        Font.Color := MergeColor(Font.Color, clWhite, 80);
+
+      if Routine.Disabled then
+        Font.Color := clGrayText;
+
+      with R do
+        begin
+          Top := Rect.Top;
+          Bottom := Rect.Bottom;
+          Left := HCRoutines.Sections[0].Left;
+          Right := HCRoutines.Sections[0].Right;
+        end ;
+
+      s := Routine.Name;
+  //    if PreviousRoutine <> nil then
+  //      begin
+  //        // Do we have the same class name
+  //        p := Pos('.', PreviousRoutine.Name);
+  //        q := Pos('.', Routine.Name);
+  //
+  ////        if (p <> 0) and (q <> 0) and (p = q) and
+  ////          (Copy(PreviousRoutine.Name, 1,p)=Copy(Routine.Name,1,p)) then
+  ////            // same class name, strip it
+  ////            s := '     '+Copy(Routine.Name,q, Length(Routine.Name))
+  //      end ;
+
+      DrawStringInColumn(Canvas, R, s, false);
+
+      with R do
+        begin
+          Left := HCRoutines.Sections[1].Left;
+          Right := HCRoutines.Sections[1].Right;
+        end ;
+
+      DrawStringInColumn(Canvas, R, U.Name, false);
+
+      with R do
+        begin
+          Left := HCRoutines.Sections[2].Left;
+          Right := HCRoutines.Sections[2].Right;
+        end ;
+
+      DrawStringInColumn(Canvas, R, IntToStr(Routine.ValidPointsQty), true);
+
+      with R do
+        begin
+          Left := HCRoutines.Sections[3].Left;
+          Right := HCRoutines.Sections[3].Right;
+        end ;
+
+      if Routine.ValidPointsQty = 0 then
+        s := '?'
+      else
+        begin
+          x := Routine.CoveredPointsQty;
+          x := 100.0*(x / Routine.ValidPointsQty);
+          s := Format('%3.0f',[x])+'%';
+        end ;
+      
+      DrawStringInColumn(Canvas, R, s, true);
     end ;
-    if Routine.ValidPointsQty = 0 then
-      s := '?'
-    else begin
-      x := Routine.CoveredPointsQty;
-      x := 100.0*(x / Routine.ValidPointsQty);
-      s := Format('%3.0f',[x])+'%';
-    end ;
-    DrawStringInColumn(Canvas, R, s, true);
-  end ;
 end ;
 
 
