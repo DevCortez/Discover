@@ -539,7 +539,7 @@ begin
           R := ProjectDataBase_.Routines.At(i);
           U := ProjectDataBase_.Units.At(R.UnitIndex);
 
-          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable and (R.ValidPointsQty > 0) then
+          if (R.FirstPointIndex >= 0) and U.IsSourceAvailable and (not U.Disabled) and (R.ValidPointsQty > 0) then
             SortedRoutines.Insert(R);
         end ;
     end ;
