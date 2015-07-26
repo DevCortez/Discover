@@ -699,23 +699,28 @@ begin
   PCRight.ActivePage := TSCode;
 
   Config.GetIntegerArray(Appearence_Key, AppearanceArray);
+  {This is driving me NUTS
   if AppearanceArray[0] <> -MaxInt then
     SetBounds(AppearanceArray[0], AppearanceArray[1], AppearanceArray[2], AppearanceArray[3]);
   if AppearanceArray[4] <> -MaxInt then
-    PNLLeft.Width := AppearanceArray[4];
+    PNLLeft.Width := AppearanceArray[4]; }
+
   j := 5;
+  
   with HCRoutines.Sections do
     for i := 0 to pred(Count) do begin
       if AppearanceArray[j] <> -MaxInt then
         Items[i].Width := AppearanceArray[j];
       inc(j);
     end ;
+
   with HCUnits.Sections do
     for i := 0 to pred(Count) do begin
       if AppearanceArray[j] <> -MaxInt then
         Items[i].Width := AppearanceArray[j];
       inc(j);
     end ;
+
   CaptureBitmapStream := TMemoryStream.Create;
   OpenLibDialog.Filter := '*'+LibraryExtension+'|*'+LibraryExtension;
   SaveLibDialog.Filter := '*'+LibraryExtension+'|*'+LibraryExtension;
