@@ -14,6 +14,7 @@ object FormNewProject: TFormNewProject
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
+  OnShow = FormShow
   DesignSize = (
     457
     393)
@@ -29,6 +30,7 @@ object FormNewProject: TFormNewProject
     Enabled = False
     ModalResult = 1
     TabOrder = 2
+    OnClick = btnCreateNewClick
   end
   object btnCancel: TButton
     Left = 376

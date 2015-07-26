@@ -42,6 +42,8 @@ type
     procedure btnBrowseMapFileClick(Sender: TObject);
     procedure btnBrowseBinaryFileClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnCreateNewClick(Sender: TObject);
   private
     procedure ValidateInformation;
   public
@@ -182,6 +184,43 @@ end;
 procedure TFormNewProject.ValidateInformation;
 begin
   btnCreateNew.Enabled := FileExists(cbbProjectFile.Text) and FileExists(edtMapFile.Text) and FileExists(edtBinaryFile.Text)
+end;
+
+procedure TFormNewProject.FormShow(Sender: TObject);
+begin
+  edtMapFile.Clear();
+  edtBinaryFile.Clear();
+  edtStartDir.Clear();
+  cbbProjectFile.Clear();
+  cbbHost.Clear();
+  cbbParams.Clear();
+
+  if FileExists('ProjectCache.cfg') then
+    cbbProjectFile.Items.LoadFromFile('ProjectCache.cfg');
+
+  if FileExists('ParamCache.cfg') then
+    cbbParams.Items.LoadFromFile('ParamCache.cfg');
+
+  if FileExists('HostCache.cfg') then
+    cbbHost.Items.LoadFromFile('HostCache.cfg');
+
+  btnBrowseProjectFile.SetFocus();
+end;
+
+procedure TFormNewProject.btnCreateNewClick(Sender: TObject);
+begin
+  if cbbProjectFile.Items.IndexOf(cbbProjectFile.Text) = -1 then
+    cbbProjectFile.Items.Add(cbbProjectFile.Text);
+
+  if cbbParams.Items.IndexOf(cbbParams.Text) = -1 then
+    cbbParams.Items.Add(cbbParams.Text);
+
+  if cbbHost.Items.IndexOf(cbbHost.Text) = -1 then
+    cbbHost.Items.Add(cbbHost.Text);
+
+  cbbProjectFile.Items.SaveToFile('ProjectCache.cfg');
+  cbbParams.Items.SaveToFile('ParamCache.cfg');
+  cbbHost.Items.SaveToFile('HostCache.cfg');
 end;
 
 end.

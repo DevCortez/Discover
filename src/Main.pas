@@ -247,7 +247,7 @@ type
       write SetStatemachineState;
   public
     
-    procedure LoadProject(const DelphiProjectFileName : string);
+    procedure LoadProject(const DelphiProjectFileName: string; ALoadFromHelper : boolean = false);
     procedure LoadState(const StateFileName : string);
     procedure SaveStateFile(const FileName : string);
     procedure MergeWithStateFile(const FileName : string);    
@@ -263,7 +263,7 @@ implementation
   uses
     CodeParser, Config, Exceptions, Globals, IniFiles, MapFile,
     Util, F_Options, F_About,  F_Edit, CRC32, ShellAPI,
-    FileCtrl, F_Export, F_ProjectInfo, Math;
+    FileCtrl, F_Export, F_ProjectInfo, Math, F_NewProject;
 
 {$R *.DFM}
 const
@@ -2029,7 +2029,7 @@ end ;
 (* TFormMain.LoadProject *)
 (*************************)
 
-procedure TFormMain.LoadProject(const DelphiProjectFileName: string);
+procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHelper : boolean = false);
   var
     ProjectPath : string;
     MapFileName: string;
@@ -2385,19 +2385,25 @@ begin
     ProjectDataBase_ := TProjectDataBase.Create;
     InitAfterLoadingDatabase;
 
-    if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')) then
-      ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')
+    if ALoadFromHelper then
+      ProjectDataBase_.ModuleFileName := FormNewProject.edtBinaryFile.Text
     else
-      if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')) then
-        ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')
+      if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')) then
+        ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.exe')
       else
-        if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl')) then
-          ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl');
+        if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')) then
+          ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.dll')
+        else
+          if FileExists(ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl')) then
+            ProjectDataBase_.ModuleFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.bpl');
 
     ProjectDataBase_.ModuleFileCRC := CRC32.FileCRC32(ProjectDataBase_.ModuleFileName);
     ProjectDataBase_.RelativePath := ProjectPath;
 
-    MapFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map');
+    if ALoadFromHelper then
+      MapFileName := FormNewProject.edtMapFile.Text
+    else
+      MapFileName := ProjectPath + ChangeFileExt(ExtractFileName(DelphiProjectFileName), '.map');
 
     if LogFileEnabled_ then
       Writeln(LogFile_, Format('Map file: %s', [MapFileName]));
@@ -2823,34 +2829,42 @@ end ;
 
 procedure TFormMain.MMProjectNewClick(Sender: TObject);
 begin
-  if AllowsNewState and Config.ExecDialog(OpenDelphiProjectDialog, DelphiProject_Key) then begin
-    Refresh;
-    Screen.Cursor := crHourGlass;
-    try
-      LoadedStatesStr := '';
-      LoadProject(OpenDelphiProjectDialog.FileName);
+  if AllowsNewState and (FormNewProject.Showmodal = mrOk) then
+    begin
+      Refresh;
+      Screen.Cursor := crHourGlass;
+      try
+        LoadedStatesStr := '';
+        LoadProject(FormNewProject.cbbProjectFile.Text, True);
 
-      StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
-      InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
+        StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
+        InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
-      if FileExists(StateFileName) then begin
-        if MessageDlg('Do you want to include (merge) the existing saved state?',
-          mtConfirmation, [mbYes, mbNo], 0) = mrYes then begin
-          Refresh;
-          Screen.Cursor := crHourGlass;
-          try
-            MergeWithStateFile(StateFileName);
-          finally
-            Screen.Cursor := crDefault;
+        ProjectDataBase_.RunParameters := FormNewProject.cbbParams.Text;
+        ProjectDataBase_.HostApplication := FormNewProject.cbbHost.Text;
+        ProjectDataBase_.StartupDirectory := FormNewProject.edtStartDir.Text;
+
+        if FileExists(StateFileName) then
+          begin
+            if MessageDlg('Do you want to include (merge) the existing saved state?',
+              mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+              begin
+                Refresh;
+                Screen.Cursor := crHourGlass;
+                try
+                  MergeWithStateFile(StateFileName);
+                finally
+                  Screen.Cursor := crDefault;
+                end ;
+              end ;
           end ;
-        end ;
+          
+        LoadInformationFile;
+      finally
+        Screen.Cursor := crDefault;
+        HandleProgress(-1, '');
       end ;
-      LoadInformationFile;
-    finally
-      Screen.Cursor := crDefault;
-      HandleProgress(-1, '');
     end ;
-  end ;
 end ;
 
 
