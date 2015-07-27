@@ -12,6 +12,7 @@ object FormMain: TFormMain
   Font.Style = []
   Menu = MainMenu
   OldCreateOrder = True
+  Position = poDesktopCenter
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -21,7 +22,7 @@ object FormMain: TFormMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 374
+    Top = 375
     Width = 497
     Height = 19
     Panels = <
@@ -47,7 +48,7 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 497
-    Height = 374
+    Height = 375
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -55,7 +56,7 @@ object FormMain: TFormMain
       Left = 222
       Top = 0
       Width = 2
-      Height = 374
+      Height = 375
       Color = clBtnFace
       ParentColor = False
     end
@@ -63,7 +64,7 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 222
-      Height = 374
+      Height = 375
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -71,8 +72,8 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 222
-        Height = 374
-        ActivePage = TSUnits
+        Height = 375
+        ActivePage = TSOverView
         Align = alClient
         TabOrder = 0
         OnChange = PCLeftChange
@@ -101,7 +102,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 14
             Width = 214
-            Height = 310
+            Height = 311
             Style = lbOwnerDrawFixed
             Align = alClient
             BevelInner = bvNone
@@ -158,7 +159,7 @@ object FormMain: TFormMain
           end
           object SearchPane: TPanel
             Left = 0
-            Top = 324
+            Top = 325
             Width = 214
             Height = 22
             Align = alBottom
@@ -228,7 +229,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 14
             Width = 214
-            Height = 310
+            Height = 311
             Style = lbOwnerDrawFixed
             Align = alClient
             Ctl3D = False
@@ -244,7 +245,7 @@ object FormMain: TFormMain
           end
           object RoutineSearchPane: TPanel
             Left = 0
-            Top = 324
+            Top = 325
             Width = 214
             Height = 22
             Align = alBottom
@@ -284,7 +285,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 0
             Width = 214
-            Height = 322
+            Height = 323
             Align = alClient
             ParentShowHint = False
             ShowHint = True
@@ -293,7 +294,7 @@ object FormMain: TFormMain
           end
           object PBLegend: TPaintBox
             Left = 0
-            Top = 322
+            Top = 323
             Width = 214
             Height = 24
             Align = alBottom
@@ -312,7 +313,7 @@ object FormMain: TFormMain
       Left = 224
       Top = 0
       Width = 273
-      Height = 374
+      Height = 375
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -320,7 +321,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 273
-        Height = 374
+        Height = 375
         Align = alClient
         BevelOuter = bvNone
         Caption = 'Panel6'
@@ -329,7 +330,7 @@ object FormMain: TFormMain
           Left = 0
           Top = 0
           Width = 273
-          Height = 374
+          Height = 375
           ActivePage = TSCode
           Align = alClient
           TabOrder = 0
@@ -340,7 +341,7 @@ object FormMain: TFormMain
               Left = 0
               Top = 0
               Width = 265
-              Height = 346
+              Height = 347
               Style = lbOwnerDrawFixed
               Align = alClient
               Ctl3D = True

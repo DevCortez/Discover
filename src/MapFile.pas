@@ -23,25 +23,36 @@ unit MapFile;
 
 interface
   uses
-    Classes, Globals, StrUtils;
+    Classes, Globals, StrUtils, ProjectInfo;
+
+type
+  ProjectInfos = record
+      OutputDir : string;
+      Conditionals : string;
+      SearchPath : string;
+      ImageBase : integer;
+    end;
 
   procedure HandleMapFile(const FileName : string;
                           ProgressEvent : TProgressEvent; NotFoundFiles : TStringList;
                           IsBDS : boolean;
-                          AProjectPath : string);
+                          AProjectPath : string;
+                          AProjectInfo : ProjectInfos);
 
 implementation
   uses
     ObjectPascalTokenizer, DataBase, SysUtils, Util;
+
 {~t}
 (*****************)
 (* HandleMapFile *)
 (*****************)
 
-procedure HandleMapFile (const FileName : string;
+procedure HandleMapFile(const FileName : string;
                           ProgressEvent : TProgressEvent; NotFoundFiles : TStringList;
                           IsBDS : boolean;
-                          AProjectPath : string);
+                          AProjectPath : string;
+                          AProjectInfo : ProjectInfos);
 const
   ActionString = 'Processing map file';
 var
@@ -205,9 +216,62 @@ var
           CurrentRoutine := nil;
       end ;
 
+    function CreateListFrom(pCommaSeparatedItems:string;pSeparator:String = ';'):TStringList;
+    var
+      s,currentItem:string;
+      lpos:Integer;
+    begin
+      Result := TStringList.Create();
+      s:= pCommaSeparatedItems + pSeparator;
+      while s <> '' do
+        begin
+          lpos := pos(pSeparator,s);
+          currentItem := Copy(s,1,lpos-1);
+          Delete(s,1,lpos);
+          Result.Append(currentItem);
+        end;
+    end;
+
+    function FindSourceFile(ASourceName : string):string;
+    var
+      i : integer;
+      lSearchpath : TStrings;
+      lInitialPath : string;
+      lBufferPath : string;
+    begin
+      GetDir(0, lInitialPath);
+      chDir(AProjectPath);
+      try
+        if FileExists(ASourceName) then
+          begin
+            result := ExtractRelativePath(AProjectPath, ExpandFileName(ASourceName));
+            exit;
+          end;
+
+        lSearchpath := CreateListFrom(AProjectInfo.SearchPath);
+        for i := 0 to lSearchpath.Count - 1 do
+          if DirectoryExists(ExpandFileName(lSearchpath[i])) then
+            begin
+              chDir(ExpandFileName(lSearchpath[i]));
+
+              if FileExists(ASourceName) then
+                begin
+                  result := ExtractRelativePath(AProjectPath, ExpandFileName(ASourceName));
+                  exit;
+                end;
+
+              chDir(AProjectPath);
+            end;
+
+        result := '';
+      finally
+        chDir(lInitialPath);
+      end;
+    end;
+
     procedure EnterPoint(LineNumber, Address : integer);
       var
-        FileRelativePath : string;
+        FileRelativePath, lTempFileName : string;
         C : TCoveragePoint;
     begin
       if (CurrentRoutine <> nil) and (Address >= CurrentRoutine.Address) then begin
@@ -232,16 +296,30 @@ var
 
             CurrentFileIndex := U.FileNames.IndexOf(FileRelativePath);
             if CurrentFileIndex < 0 then
-              if not FileExists(AProjectPath + FileRelativePath) then
-                NotFoundFiles.Add(FileName)
-              else
-                begin
-                  U.FileNames.Add(FileRelativePath);
-                  CurrentFileIndex := pred(U.FileNames.Count);
-                  if LogFileEnabled_ then
-                    Writeln(LogFile_, '  File found:'+ FileRelativePath);
-                end ;
-                
+              begin
+                lTempFileName := FindSourceFile(FileRelativePath);
+
+                if Length(lTempFileName) > 0 then
+                  begin
+                    U.FileNames.Add(lTempFileName);
+                    CurrentFileIndex := pred(U.FileNames.Count);
+                    
+                    if LogFileEnabled_ then
+                      Writeln(LogFile_, '  File found:'+ FileRelativePath);
+                  end
+                else
+                  NotFoundFiles.Add(FileName);
+              end;
+//              if not FileExists(AProjectPath + FileRelativePath) then
+//                NotFoundFiles.Add(FileName)
+//              else
+//                begin
+//                  U.FileNames.Add(FileRelativePath);
+//                  CurrentFileIndex := pred(U.FileNames.Count);
+//                  if LogFileEnabled_ then
+//                    Writeln(LogFile_, '  File found:'+ FileRelativePath);
+//                end ;
+
             FileDone := true;
           end ;
           // Create the new point

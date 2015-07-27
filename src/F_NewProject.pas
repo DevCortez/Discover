@@ -34,7 +34,6 @@ type
     lblHostMessage: TLabel;
     dlgFindFile: TOpenDialog;
     procedure cbbProjectFileChange(Sender: TObject);
-    procedure cbbProjectFileExit(Sender: TObject);
     procedure cbbHostChange(Sender: TObject);
     procedure edtMapFileChange(Sender: TObject);
     procedure edtBinaryFileChange(Sender: TObject);
@@ -68,15 +67,9 @@ begin
       lblProjectFileMessage.Visible := true;
     end
   else
-    lblProjectFileMessage.Visible := false;
-
-  ValidateInformation();
-end;
-
-procedure TFormNewProject.cbbProjectFileExit(Sender: TObject);
-begin
-  if FileExists(cbbProjectFile.Text) then
     begin
+      lblProjectFileMessage.Visible := false;
+      
       if FileExists(ChangeFileExt(cbbProjectFile.Text, '.map')) and (Length(edtMapFile.Text) = 0) then
         edtMapFile.Text := ChangeFileExt(cbbProjectFile.Text, '.map');
 
@@ -91,6 +84,8 @@ begin
             if FileExists(ChangeFileExt(cbbProjectFile.Text, '.dll')) then
               edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.dll');
     end;
+
+  ValidateInformation();
 end;
 
 procedure TFormNewProject.cbbHostChange(Sender: TObject);
@@ -114,7 +109,19 @@ begin
       lblMapFileMessage.Visible := True;
     end
   else
-    lblMapFileMessage.Visible := False;
+    begin
+      lblMapFileMessage.Visible := False;
+      
+      if Length(edtBinaryFile.Text) = 0 then
+        if FileExists(ChangeFileExt(edtMapFile.Text, '.exe')) then
+          edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.exe')
+        else
+          if FileExists(ChangeFileExt(edtMapFile.Text, '.dll')) then
+            edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.dll')
+          else
+            if FileExists(ChangeFileExt(edtMapFile.Text, '.bpl')) then
+              edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.bpl');
+    end;
 
   ValidateInformation();
 end;

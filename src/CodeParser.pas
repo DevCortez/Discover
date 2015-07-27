@@ -328,45 +328,62 @@ procedure TCodeParser.Parse;
       Done, SyncLost : boolean;
       RoutineFileName : string;
       C : TCoveragePoint;
+      lOldDIr : string;
   begin
-    Result := false;
-    Done := false;
-    SyncLost := false;
-    repeat
-      inc(CurrentRoutineIndex);
-      if CurrentRoutineIndex < ProjectDataBase_.Routines.Count then begin
-        CurrentRoutine := ProjectDataBase_.Routines.At(CurrentRoutineIndex);
-        if CurrentRoutine.FileIndex >= 0 then begin
-          CurrentUnit := ProjectDataBase_.Units.At(CurrentRoutine.UnitIndex);
-          RoutineFileName := CurrentUnit.FileNames[CurrentRoutine.FileIndex];
-          if RoutineFileName <> T.FileName then begin
-            T.FileName := ProjectDataBase_.RelativePath + RoutineFileName;
-            SyncLost := false;
-            if LogFileEnabled_ then
-              Writeln(LogFile_, Format('Opening src-file: %s', [RoutineFileName]));
-          end ;
-          // skip to the routine line
-          C := ProjectDataBase_.CoveragePoints.At(CurrentRoutine.FirstPointIndex);
-          // WARNING: In certain files (ex:windows.pas in Delphi 5) several line
-          // are terminated by CR alone instead of CR/LF. In these cases
-          // SkipToLine get lost and an returns false.
-          if not SyncLost then begin
-            if not T.SkipToLine(C.LineNumber) then begin
-              // We just lose the sync
-             if LogFileEnabled_ then
-                Writeln(LogFile_, Format('*** ERROR *** Sync lost at line %d.',
-                  [C.LineNumber]));
-             SyncLost := true;
-            end ;
-          end ;
-          if not SyncLost then begin
-            Result := true;
-            Done := true;
-          end ;
-        end ;
-      end else
-        Done := true;
-    until Done;
+    GetDir(0, lOldDir);
+    chDir(ProjectDataBase_.RelativePath);
+    try
+      Result := false;
+      Done := false;
+      SyncLost := false;
+      repeat
+        inc(CurrentRoutineIndex);
+        if CurrentRoutineIndex < ProjectDataBase_.Routines.Count then
+          begin
+            CurrentRoutine := ProjectDataBase_.Routines.At(CurrentRoutineIndex);
+            if CurrentRoutine.FileIndex >= 0 then
+              begin
+                CurrentUnit := ProjectDataBase_.Units.At(CurrentRoutine.UnitIndex);
+                RoutineFileName := CurrentUnit.FileNames[CurrentRoutine.FileIndex];
+              
+                if RoutineFileName <> T.FileName then
+                  begin
+                    T.FileName := ProjectDataBase_.RelativePath + RoutineFileName;
+                    SyncLost := false;
+                    if LogFileEnabled_ then
+                      Writeln(LogFile_, Format('Opening src-file: %s', [RoutineFileName]));
+                  end ;
+                // skip to the routine line
+                C := ProjectDataBase_.CoveragePoints.At(CurrentRoutine.FirstPointIndex);
+
+                // WARNING: In certain files (ex:windows.pas in Delphi 5) several line
+                // are terminated by CR alone instead of CR/LF. In these cases
+                // SkipToLine get lost and an returns false.
+                if not SyncLost then
+                  begin
+                    if not T.SkipToLine(C.LineNumber) then
+                      begin
+                        // We just lose the sync
+                       if LogFileEnabled_ then
+                          Writeln(LogFile_, Format('*** ERROR *** Sync lost at line %d.',
+                            [C.LineNumber]));
+                       SyncLost := true;
+                      end ;
+                  end ;
+              
+                if not SyncLost then
+                  begin
+                    Result := true;
+                    Done := true;
+                  end ;
+              end ;
+          end
+        else
+          Done := true;
+      until Done;
+    finally
+      chDir(lOldDir);
+    end;
   end ;
 
   procedure ParseRoutine;

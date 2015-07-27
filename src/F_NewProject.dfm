@@ -1,6 +1,6 @@
 object FormNewProject: TFormNewProject
-  Left = 594
-  Top = 404
+  Left = 478
+  Top = 216
   Width = 473
   Height = 432
   Caption = 'Create a new project'
@@ -14,10 +14,11 @@ object FormNewProject: TFormNewProject
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnShow = FormShow
   DesignSize = (
     457
-    393)
+    394)
   PixelsPerInch = 96
   TextHeight = 13
   object btnCreateNew: TButton
@@ -122,7 +123,6 @@ object FormNewProject: TFormNewProject
       ItemHeight = 13
       TabOrder = 1
       OnChange = cbbProjectFileChange
-      OnExit = cbbProjectFileExit
     end
     object btnBrowseProjectFile: TButton
       Left = 366
@@ -216,6 +216,7 @@ object FormNewProject: TFormNewProject
       BiDiMode = bdLeftToRight
       Caption = 'lblProjectFileMessage'
       ParentBiDiMode = False
+      Visible = False
     end
     object cbbParams: TComboBox
       Left = 16

@@ -1369,12 +1369,7 @@ begin
     FillSummary;
     DeltaCovered := 0;
     UpdateCoverageOnStatusBar;
-    
-    if ProjectDataBase_.Routines.Count < 1000 then
-      OverviewPointSquareSide := 8
-    else
-      OverviewPointSquareSide := 5;
-  finally
+      finally
     StatusBar.Panels[pFilePos].Text := '';
   end ;
 end ;
@@ -2093,15 +2088,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
     IsBDS : boolean;
     s1, s2, s3 : string;
     NotFoundFiles : TStringList;
-
+    lProjectInfos : ProjectInfos;
     // Information taken either in the 'dof' or the 'bdsproj' or the dproj file
-    ProjectInfos : record
-      OutputDir : string;
-      Conditionals : string;
-      SearchPath : string;
-      ImageBase : integer;
-    end;
-
   procedure BuildSearchPath(s : string);
     var
       p : integer;
@@ -2208,12 +2196,12 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
       Writeln(LogFile_, Format('Option file: %s', [FileName]));
     ProjectOptions := TIniFile.Create(FileName);
     try
-      ProjectInfos.OutputDir := ProjectOptions.ReadString('Directories', 'OutputDir', '');
-      if ProjectInfos.OutputDir <> '' then
-        ProjectInfos.OutputDir := ProjectInfos.OutputDir + '/';
-      ProjectInfos.SearchPath := ProjectOptions.ReadString('Directories', 'SearchPath', '');
-      ProjectInfos.Conditionals := ProjectOptions.ReadString('Directories', 'Conditionals', '');
-      ProjectInfos.ImageBase := ProjectOptions.ReadInteger('Linker', 'ImageBase',0);
+      lProjectInfos.OutputDir := ProjectOptions.ReadString('Directories', 'OutputDir', '');
+      if lProjectInfos.OutputDir <> '' then
+        lProjectInfos.OutputDir := lProjectInfos.OutputDir + '/';
+      lProjectInfos.SearchPath := ProjectOptions.ReadString('Directories', 'SearchPath', '');
+      lProjectInfos.Conditionals := ProjectOptions.ReadString('Directories', 'Conditionals', '');
+      lProjectInfos.ImageBase := ProjectOptions.ReadInteger('Linker', 'ImageBase',0);
     finally
       ProjectOptions.Free;
     end ;
@@ -2291,13 +2279,13 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
       p := Pos('</Linker>', s);
       if p = 0 then
         LogError('ImageBase');
-      ProjectInfos.ImageBase := StrToInt(Copy(s, 1, p-1));
+      lProjectInfos.ImageBase := StrToInt(Copy(s, 1, p-1));
 
-      SetDirElem('OutputDir', ProjectInfos.OutputDir);
-      if ProjectInfos.OutputDir <> '' then
-        ProjectInfos.OutputDir := ProjectInfos.OutputDir + '/';
-      SetDirElem('SearchPath', ProjectInfos.SearchPath);
-      SetDirElem('Conditionals', ProjectInfos.Conditionals);
+      SetDirElem('OutputDir', lProjectInfos.OutputDir);
+      if lProjectInfos.OutputDir <> '' then
+        lProjectInfos.OutputDir := lProjectInfos.OutputDir + '/';
+      SetDirElem('SearchPath', lProjectInfos.SearchPath);
+      SetDirElem('Conditionals', lProjectInfos.Conditionals);
 
     finally
       F.Free;
@@ -2314,8 +2302,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
   begin
     if LogFileEnabled_ then
       Writeln(LogFile_, Format('Option file: %s', [FileName]));
-    FillChar(ProjectInfos, SizeOf(ProjectInfos), 0);
-    ProjectInfos.ImageBase := $400000; // Assume it
+    FillChar(lProjectInfos, SizeOf(lProjectInfos), 0);
+    lProjectInfos.ImageBase := $400000; // Assume it
     AssignFile(F, FileName);
     Reset(F);
     try
@@ -2339,7 +2327,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
           if p > 0 then begin
             s := Copy(s, p + length(t), length(s));
             p := Pos('<', s);
-            ProjectInfos.OutputDir := Copy(s, 1, pred(p));
+            lProjectInfos.OutputDir := Copy(s, 1, pred(p));
             break;
           end ;
 
@@ -2349,7 +2337,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
           if p > 0 then begin
             s := Copy(s, p + length(t), length(s));
             p := Pos('<', s);
-            ProjectInfos.SearchPath := Copy(s, 1, pred(p));
+            lProjectInfos.SearchPath := Copy(s, 1, pred(p));
             break;
           end ;
 
@@ -2359,7 +2347,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
           if p > 0 then begin
             s := Copy(s, p + length(t), length(s));
             p := Pos('<', s);
-            ProjectInfos.Conditionals := Copy(s, 1, pred(p));
+            lProjectInfos.Conditionals := Copy(s, 1, pred(p));
             break;
           end ;
 
@@ -2369,7 +2357,7 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
           if p > 0 then begin
             s := Copy(s, p + length(t), length(s));
             p := Pos('<', s);
-            ProjectInfos.ImageBase := StrToInt('$' + Copy(s, 1, pred(p)));
+            lProjectInfos.ImageBase := StrToInt('$' + Copy(s, 1, pred(p)));
             break;
           end ;
 
@@ -2382,8 +2370,8 @@ procedure TFormMain.LoadProject(const DelphiProjectFileName: string; ALoadFromHe
 
       end ;
 
-      if ProjectInfos.OutputDir <> '' then
-        ProjectInfos.OutputDir := ProjectInfos.OutputDir + '/';
+      if lProjectInfos.OutputDir <> '' then
+        lProjectInfos.OutputDir := lProjectInfos.OutputDir + '/';
 
     finally
       CloseFile(F);
@@ -2430,10 +2418,10 @@ begin
     raise Exception.Create(Format('File "%s" or "%s" or "%s" not found.', [s3, s1, s2]));
 
   if LogFileEnabled_ then begin
-    Writeln(LogFile_, Format('  OutputDir=%s', [ProjectInfos.OutputDir]));
-    Writeln(LogFile_, Format('  Conditionals=%s', [ProjectInfos.Conditionals]));
-    Writeln(LogFile_, Format('  SearchPath=%s', [ProjectInfos.SearchPath]));
-    Writeln(LogFile_, Format('  ImageBase=$%s', [IntToHex(ProjectInfos.ImageBase, 8)]));
+    Writeln(LogFile_, Format('  OutputDir=%s', [lProjectInfos.OutputDir]));
+    Writeln(LogFile_, Format('  Conditionals=%s', [lProjectInfos.Conditionals]));
+    Writeln(LogFile_, Format('  SearchPath=%s', [lProjectInfos.SearchPath]));
+    Writeln(LogFile_, Format('  ImageBase=$%s', [IntToHex(lProjectInfos.ImageBase, 8)]));
   end ;
 
   try
@@ -2467,14 +2455,14 @@ begin
 
     GlobalDefinedConditionnals_.Clear;
 
-    BuildSearchPath(ProjectInfos.SearchPath);
+    BuildSearchPath(lProjectInfos.SearchPath);
 
     if  FileExists(MapFileName) then
       begin
         StatusBar.Panels[pFilePos].Text := 'Processing map-file';
         NotFoundFiles := TStringList.Create;
         try
-          HandleMapFile( MapFileName, HandleProgress, NotFoundFiles, IsBDS, ProjectPath);
+          HandleMapFile( MapFileName, HandleProgress, NotFoundFiles, IsBDS, ProjectPath, lProjectInfos);
           // Don't show these files anymore!
           //ShowNotFoundSrcFiles;
         finally
@@ -2488,11 +2476,11 @@ begin
       end ;
 
     // Extract the predefined conditionnals
-    if ProjectInfos.Conditionals <> '' then
-      BuildConditionnals(ProjectInfos.Conditionals);
+    if lProjectInfos.Conditionals <> '' then
+      BuildConditionnals(lProjectInfos.Conditionals);
 
     // Get image base
-    ProjectDataBase_.ImageBase := ProjectInfos.ImageBase;
+    ProjectDataBase_.ImageBase := lProjectInfos.ImageBase;
 
     LogDataBase;
 
@@ -3040,18 +3028,27 @@ procedure TFormMain.PBOverViewPaint(Sender: TObject);
   var
     i : integer;
 begin
-  with Sender as TPaintBox do begin
-    SquaresPerLine := PBOverView.Width div OverviewPointSquareSide;
-    if not Resizing then begin
-      if ProjectDataBase_ <> nil then begin
-        with SortedRoutines do
-          for i := 0 to pred(Count) do
-            UpdateOverView(At(i))
-      end else begin
-        Canvas.FillRect(ClientRect);
+  if Assigned(ProjectDataBase_) and (ProjectDataBase_.CoveragePoints.ValidEnabledPointsQty > 0) then
+    with Sender as TPaintBox do
+      begin
+
+        OverviewPointSquareSide := trunc( sqrt((PBOverView.Width * PBOverView.Height) / ProjectDatabase_.EnabledRoutinesQty) );
+
+        SquaresPerLine := PBOverView.Width div OverviewPointSquareSide;
+        if not Resizing then
+          begin
+            if ProjectDataBase_ <> nil then
+              begin
+                with SortedRoutines do
+                  for i := 0 to pred(Count) do
+                    UpdateOverView(At(i))
+              end
+            else
+              begin
+                Canvas.FillRect(ClientRect);
+              end ;
+          end ;
       end ;
-    end ;
-  end ;
 end ;
 
 
@@ -3566,31 +3563,38 @@ procedure TFormMain.UpdateOverView(Routine : TRoutine);
     R : TRect;
 begin
   RoutineIndex := SortedRoutines.IndexOf(Routine);
-  if RoutineIndex >= 0 then begin
-    LineNr := RoutineIndex div SquaresPerLine;
-    RowNr := RoutineIndex mod SquaresPerLine;
-    with R do begin
-      Left := RowNr*OverviewPointSquareSide;
-      Top := LineNr*OverviewPointSquareSide;
-      Bottom := Top + OverviewPointSquareSide;
-      Right := Left + OverviewPointSquareSide;
-    end ;
-    if not Routine.Disabled then begin
-      if Routine.ValidPointsQty = 0 then
-        x := 0
+  if RoutineIndex >= 0 then
+    begin
+      LineNr := RoutineIndex div SquaresPerLine;
+      RowNr := RoutineIndex mod SquaresPerLine;
+      with R do
+        begin
+          Left := RowNr*OverviewPointSquareSide;
+          Top := LineNr*OverviewPointSquareSide;
+          Bottom := Top + OverviewPointSquareSide;
+          Right := Left + OverviewPointSquareSide;
+        end ;
+    
+      if not Routine.Disabled then
+        begin
+          if Routine.ValidPointsQty = 0 then
+            x := 0
+          else
+            x := (100*Routine.CoveredPointsQty) div Routine.ValidPointsQty;
+          
+          if x >= 50 then
+            PBOverView.Canvas.Brush.Color := MergeColor(clYellow, clGreen, x * 2 - 100)
+          else
+            PBOverView.Canvas.Brush.Color := MergeColor(clRed, clYellow, x * 2);
+        end
       else
-        x := (100*Routine.CoveredPointsQty) div Routine.ValidPointsQty;
-      if x >= 50 then
-        PBOverView.Canvas.Brush.Color := MergeColor(clYellow, clGreen, x * 2 - 100)
-      else
-        PBOverView.Canvas.Brush.Color := MergeColor(clRed, clYellow, x * 2);
-    end else
-      PBOverView.Canvas.Brush.Color := clGray;
+        PBOverView.Canvas.Brush.Color := clGray;
 
-    PBOverView.Canvas.Pen.Color := clGray;
-    with R do
-      PBOverView.Canvas.Rectangle(pred(R.Left), pred(R.Top), R.Right, R.Bottom);
-  end ;
+      PBOverView.Canvas.Pen.Color := clGray;
+      
+      with R do
+        PBOverView.Canvas.Rectangle(pred(R.Left), pred(R.Top), R.Right, R.Bottom);
+    end ;
 end ;
 
 
