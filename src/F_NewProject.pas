@@ -216,14 +216,29 @@ end;
 
 procedure TFormNewProject.btnCreateNewClick(Sender: TObject);
 begin
-  if cbbProjectFile.Items.IndexOf(cbbProjectFile.Text) = -1 then
-    cbbProjectFile.Items.Add(cbbProjectFile.Text);
+  if (cbbProjectFile.Items.IndexOf(cbbProjectFile.Text) = -1) and (Length(cbbProjectFile.Text) > 0) then
+    begin
+      cbbProjectFile.Items.Add(cbbProjectFile.Text);
 
-  if cbbParams.Items.IndexOf(cbbParams.Text) = -1 then
-    cbbParams.Items.Add(cbbParams.Text);
+      if cbbProjectFile.Items.Count > 20 then
+        cbbProjectFile.Items.Delete(0);
+    end;
 
-  if cbbHost.Items.IndexOf(cbbHost.Text) = -1 then
-    cbbHost.Items.Add(cbbHost.Text);
+  if (cbbParams.Items.IndexOf(cbbParams.Text) = -1) and (Length(cbbParams.Text) > 0) then
+    begin
+      cbbParams.Items.Add(cbbParams.Text);
+
+      if cbbParams.Items.Count > 20 then
+        cbbParams.Items.Delete(0);
+    end;
+
+  if (cbbHost.Items.IndexOf(cbbHost.Text) = -1) and (Length(cbbHost.Text) > 0) then
+    begin
+      cbbHost.Items.Add(cbbHost.Text);
+
+      if cbbHost.Items.Count > 20 then
+        cbbHost.Items.Delete(0);
+    end;
 
   cbbProjectFile.Items.SaveToFile('ProjectCache.cfg');
   cbbParams.Items.SaveToFile('ParamCache.cfg');
