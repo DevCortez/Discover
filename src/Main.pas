@@ -50,6 +50,8 @@ type
     SearchPane: TPanel;
     RoutineSearchPane: TPanel;
     edtRoutineSearch: TEdit;
+    procedure edtRoutineSearchChange(Sender: TObject);
+    procedure edtUnitSearchChange(Sender: TObject);
   published
     MainMenu: TMainMenu;
     MMProject: TMenuItem;
@@ -484,7 +486,7 @@ begin
 
               TextOut(R.Right - TextWidth(t), R.Top, lLeft);
 
-              Canvas.Brush.Color := RGB(255, 221, 128);
+              Canvas.Brush.Color := RGB(217, 236, 255);
               Canvas.FillRect(Rect(R.Left + TextWidth(lLeft), R.Top, R.Left + TextWidth(lLeft) + TextWidth(lCenter), R.Bottom));
               Brush.Style := bsClear;
               TextOut(R.Right - TextWidth(t) + TextWidth(lLeft), R.Top, lCenter);
@@ -503,7 +505,7 @@ begin
 
             TextOut(R.Left, R.Top, lLeft);
 
-            Canvas.Brush.Color := RGB(255, 221, 128);
+            Canvas.Brush.Color := RGB(217, 236, 255);
             Canvas.FillRect(Rect(R.Left + TextWidth(lLeft), R.Top, R.Left + TextWidth(lLeft) + TextWidth(lCenter), R.Bottom));
             Brush.Style := bsClear;
             TextOut(R.Left + TextWidth(lLeft), R.Top, lCenter);
@@ -1511,7 +1513,7 @@ procedure TFormMain.LBRoutinesClick(Sender: TObject);
     R : TRoutine;
     i, LineNr, PointIndex, RoutineIndex : integer;
 begin
-  if LBRoutines.ItemIndex >= 0 then
+  if (LBRoutines.Items.Count > 0) and (LBRoutines.ItemIndex >= 0) then
     CurrentRoutine := SortedRoutines.At(LBRoutines.ItemIndex);
     CurrentUnit := ProjectDataBase_.Units.At(CurrentRoutine.UnitIndex);
     // Update LBFile
@@ -1745,7 +1747,7 @@ begin
             FillSortedFilteredRoutineList
           else
             FillSortedRoutineList;
-            
+
           FillLBRoutines;
 
           if LBRoutines.Items.Count > 0 then
@@ -3647,6 +3649,36 @@ begin
             SortedRoutines.Insert(R);
         end ;
     end ;
+end;
+
+procedure TFormMain.edtRoutineSearchChange(Sender: TObject);
+begin
+  if Length(edtRoutineSearch.Text) > 0 then
+    FillSortedFilteredRoutineList
+  else
+    FillSortedRoutineList;
+
+  FillLBRoutines;
+
+  if LBRoutines.Items.Count > 0 then
+    LBRoutines.ItemIndex := 0
+  else
+    LBRoutines.ItemIndex := -1;
+end;
+
+procedure TFormMain.edtUnitSearchChange(Sender: TObject);
+begin
+  if Length(edtUnitSearch.Text) > 0 then
+    FillSortedFilteredUnitList
+  else
+    FillSortedUnitList;
+
+  FillLBUnits;
+
+  if LBUnits.Items.Count > 0 then
+    LBUnits.ItemIndex := 0
+  else
+    LBUnits.ItemIndex := -1;
 end;
 
 end.

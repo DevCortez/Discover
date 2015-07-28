@@ -22,7 +22,7 @@ object FormMain: TFormMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 375
+    Top = 374
     Width = 497
     Height = 19
     Panels = <
@@ -48,7 +48,7 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 497
-    Height = 375
+    Height = 374
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -56,7 +56,7 @@ object FormMain: TFormMain
       Left = 222
       Top = 0
       Width = 2
-      Height = 375
+      Height = 374
       Color = clBtnFace
       ParentColor = False
     end
@@ -64,7 +64,7 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 222
-      Height = 375
+      Height = 374
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -72,8 +72,8 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 222
-        Height = 375
-        ActivePage = TSOverView
+        Height = 374
+        ActivePage = TSUnits
         Align = alClient
         TabOrder = 0
         OnChange = PCLeftChange
@@ -102,7 +102,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 14
             Width = 214
-            Height = 311
+            Height = 310
             Style = lbOwnerDrawFixed
             Align = alClient
             BevelInner = bvNone
@@ -159,7 +159,7 @@ object FormMain: TFormMain
           end
           object SearchPane: TPanel
             Left = 0
-            Top = 325
+            Top = 324
             Width = 214
             Height = 22
             Align = alBottom
@@ -190,6 +190,7 @@ object FormMain: TFormMain
               ParentFont = False
               TabOrder = 0
               Text = 'edtUnitSearch'
+              OnChange = edtUnitSearchChange
             end
           end
         end
@@ -229,7 +230,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 14
             Width = 214
-            Height = 311
+            Height = 310
             Style = lbOwnerDrawFixed
             Align = alClient
             Ctl3D = False
@@ -245,7 +246,7 @@ object FormMain: TFormMain
           end
           object RoutineSearchPane: TPanel
             Left = 0
-            Top = 325
+            Top = 324
             Width = 214
             Height = 22
             Align = alBottom
@@ -276,6 +277,7 @@ object FormMain: TFormMain
               ParentFont = False
               TabOrder = 0
               Text = 'edtUnitSearch'
+              OnChange = edtRoutineSearchChange
             end
           end
         end
@@ -285,7 +287,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 0
             Width = 214
-            Height = 323
+            Height = 322
             Align = alClient
             ParentShowHint = False
             ShowHint = True
@@ -294,7 +296,7 @@ object FormMain: TFormMain
           end
           object PBLegend: TPaintBox
             Left = 0
-            Top = 323
+            Top = 322
             Width = 214
             Height = 24
             Align = alBottom
@@ -313,7 +315,7 @@ object FormMain: TFormMain
       Left = 224
       Top = 0
       Width = 273
-      Height = 375
+      Height = 374
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -321,7 +323,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 273
-        Height = 375
+        Height = 374
         Align = alClient
         BevelOuter = bvNone
         Caption = 'Panel6'
@@ -330,7 +332,7 @@ object FormMain: TFormMain
           Left = 0
           Top = 0
           Width = 273
-          Height = 375
+          Height = 374
           ActivePage = TSCode
           Align = alClient
           TabOrder = 0
@@ -341,7 +343,7 @@ object FormMain: TFormMain
               Left = 0
               Top = 0
               Width = 265
-              Height = 347
+              Height = 346
               Style = lbOwnerDrawFixed
               Align = alClient
               Ctl3D = True
