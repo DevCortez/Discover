@@ -399,7 +399,10 @@ end ;
 procedure TFormMain.DoCommandLineFinalActions;
 begin
   if CommandLineParams_.SaveStateOnAppTerminate then
-    SaveStateFile(StateFileName);
+    if CommandLineParams_.Action = caZombie then
+      SaveDataBase(StateFileName)
+    else
+      SaveStateFile(StateFileName);
 
   if CommandLineParams_.ReportWhenAppTerminated then
     MakeReport;
@@ -3713,7 +3716,7 @@ begin
 
     LoadProject(lZombieConfig.ReadString('project', 'file', ''), True);
 
-    StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
+    StateFileName := ChangeFileExt(AZombieFile, ProjectStateExtension);
     InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
     ProjectDataBase_.RunParameters := lZombieConfig.ReadString('run', 'param', '');
