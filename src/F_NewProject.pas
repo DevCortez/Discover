@@ -33,6 +33,8 @@ type
     Button2: TButton;
     lblHostMessage: TLabel;
     dlgFindFile: TOpenDialog;
+    btnExportZombie: TButton;
+    dlgExportZombie: TSaveDialog;
     procedure cbbProjectFileChange(Sender: TObject);
     procedure cbbHostChange(Sender: TObject);
     procedure edtMapFileChange(Sender: TObject);
@@ -43,6 +45,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCreateNewClick(Sender: TObject);
+    procedure btnExportZombieClick(Sender: TObject);
   private
     procedure ValidateInformation;
   public
@@ -54,7 +57,7 @@ var
 implementation
 
 uses
-  StrUtils;
+  StrUtils, IniFiles;
 
 {$R *.dfm}
 
@@ -255,6 +258,29 @@ begin
   cbbProjectFile.Items.SaveToFile('ProjectCache.cfg');
   cbbParams.Items.SaveToFile('ParamCache.cfg');
   cbbHost.Items.SaveToFile('HostCache.cfg');
+end;
+
+procedure TFormNewProject.btnExportZombieClick(Sender: TObject);
+var
+  lZombieFile : TIniFile;
+begin
+  dlgExportZombie.FileName := ChangeFileExt(ExtractFileName(cbbProjectFile.Text), '.zp');
+
+  if dlgExportZombie.Execute then
+    begin
+    lZombieFile := TIniFile.Create(dlgExportZombie.FileName);
+    try
+      lZombieFile.WriteString('project', 'map', edtMapFile.Text);
+      lZombieFile.WriteString('project', 'binary', edtBinaryFile.Text);
+      lZombieFile.WriteString('project', 'file', cbbProjectFile.Text);
+
+      lZombieFile.WriteString('run', 'param', cbbParams.Text);
+      lZombieFile.WriteString('run', 'startup_dir', edtStartDir.Text);
+      lZombieFile.WriteString('run', 'host', cbbHost.Text);
+    finally
+      lZombieFile.Free();
+    end;
+  end;
 end;
 
 end.

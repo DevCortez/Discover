@@ -27,7 +27,7 @@ function CheckCommandLineParams : boolean;
 
 implementation
   uses
-    Windows, SysUtils, Globals;
+    Windows, SysUtils, Globals, strUtils;
 
 function CheckCommandLineParams : boolean;
 
@@ -68,38 +68,49 @@ begin
   i := 1;
   while (i <= ParamCount) and Result do begin
     Param := ParamStr(i);
-    
 
-    if Param[1] = '-' then begin
-      // This is a flag
-      case Param[2] of
-        'c', 'C' :
-          CommandLineParams_.CloseWhenAppTerminated := true;
-        's', 'S':
-          CommandLineParams_.SaveStateOnAppTerminate := true;
-        'm', 'M' :
-          CommandLineParams_.RunMinimized := true;
-        'x', 'X':
-          CommandLineParams_.Merge := true;
-        'r', 'R':
-          CommandLineParams_.ReportWhenAppTerminated := true;
+    if Param[1] = '-' then
+      begin
+        // This is a flag
+        case Param[2] of
+          'c', 'C' :
+            CommandLineParams_.CloseWhenAppTerminated := true;
+          's', 'S':
+            CommandLineParams_.SaveStateOnAppTerminate := true;
+          'm', 'M' :
+            CommandLineParams_.RunMinimized := true;
+          'x', 'X':
+            CommandLineParams_.Merge := true;
+          'r', 'R':
+            CommandLineParams_.ReportWhenAppTerminated := true;
 
-      else 
-        Error(Format('Illegal command line switch %s', [Param]));
-      end ;
-    end else begin
-      // Assme this is a file name
-      Param := StripQuotes(Param);
-      if not FileExists(Param) then begin
-        Error(Format('File "%s" not found.', [Param]));
-      end else begin
-        CommandLineParams_.FileName := Param;
-        if ExtractFileExt(Param) = ProjectStateExtension then
-          CommandLineParams_.Action := caDPS
+        else 
+          Error(Format('Illegal command line switch %s', [Param]));
+        end ;
+      end
+    else
+      begin
+        // Assme this is a file name
+        Param := StripQuotes(Param);
+        
+        if not FileExists(Param) then
+          begin
+            Error(Format('File "%s" not found.', [Param]));
+          end
         else
-          CommandLineParams_.Action := caDPR;
+          begin
+            CommandLineParams_.FileName := Param;
+            
+            if ExtractFileExt(Param) = ProjectStateExtension then
+              CommandLineParams_.Action := caDPS
+            else
+              if AnsiContainsText(Param, '.dpr') then
+                CommandLineParams_.Action := caDPR
+              else
+                if AnsiContainsText(Param, '.zp') then
+                  CommandLineParams_.Action := caZombie;
+          end ;
       end ;
-    end ;
     inc(i);
   end ;
 end ;

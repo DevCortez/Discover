@@ -256,10 +256,25 @@ object FormNewProject: TFormNewProject
       OnClick = Button2Click
     end
   end
+  object btnExportZombie: TButton
+    Left = 8
+    Top = 360
+    Width = 121
+    Height = 25
+    Caption = '&Export zombie project'
+    TabOrder = 4
+    OnClick = btnExportZombieClick
+  end
   object dlgFindFile: TOpenDialog
     Filter = 'exe|*.exe|potato|*.potato'
     Options = [ofFileMustExist, ofEnableSizing]
     Left = 184
     Top = 176
+  end
+  object dlgExportZombie: TSaveDialog
+    DefaultExt = '.zp'
+    Filter = 'Zombie coverage project|*.zp'
+    Left = 160
+    Top = 360
   end
 end

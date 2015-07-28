@@ -253,6 +253,7 @@ type
       write SetStatemachineState;
   public
     
+    procedure ExportZombieProject(AFileName : string);
     procedure LoadProject(const DelphiProjectFileName: string; ALoadFromHelper : boolean = false);
     procedure LoadState(const StateFileName : string);
     procedure SaveStateFile(const FileName : string);
@@ -418,37 +419,48 @@ end ;
 
 procedure TFormMain.DoCommandLineInitialActions;
 begin
-  if CommandLineParams_.Action = caDPR then begin
-    // DPR started
-    // Load the project
-    LoadProject(CommandLineParams_.FileName);
+  if CommandLineParams_.Action = caDPR then
+    begin
+      // DPR started
+      // Load the project
+      LoadProject(CommandLineParams_.FileName);
 
-    StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
-    InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
+      StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
+      InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
-    // Check if an information file exists and if yes take its infos
-    LoadInformationFile;
+      // Check if an information file exists and if yes take its infos
+      LoadInformationFile;
 
-    if CommandLineParams_.Merge then begin
-      if FileExists(StateFileName) then
-        MergeWithStateFile(StateFileName);
-    end ;
+      if CommandLineParams_.Merge then begin
+        if FileExists(StateFileName) then
+          MergeWithStateFile(StateFileName);
+      end ;
 
-    // Run the application
-    RunApplication;
+      // Run the application
+      RunApplication;
 
-  end else begin
-    // DPS started
-    LoadState(CommandLineParams_.FileName);
+    end
+  else
+    if CommandLineParams_.Action = caDPS then
+      begin
+        // DPS started
+        LoadState(CommandLineParams_.FileName);
 
-    StateFileName := CommandLineParams_.FileName;
-    InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
+        StateFileName := CommandLineParams_.FileName;
+        InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
 
-    // Check if an information file exists and if yes take its infos
-    LoadInformationFile;
+        // Check if an information file exists and if yes take its infos
+        LoadInformationFile;
 
-    RunApplication;
-  end ;
+        RunApplication;
+      end
+    else
+      if CommandLineParams_.Action = caZombie then
+        begin
+          StartZombieCoverage(CommandLineParams_.FileName);
+
+          RunApplication;
+        end;
 end ;
 
 
@@ -3693,7 +3705,7 @@ begin
     are man enough. Also get your shit together and clear all globals too if you do so.
   }
   Screen.Cursor := crHourGlass;
-  lZombieConfig := TIniFile.Create(AZombieFile);
+  lZombieConfig := TIniFile.Create(ExpandFileName(AZombieFile));
   try
     LoadedStatesStr := '';
     FormNewProject.edtMapFile.Text := lZombieConfig.ReadString('project', 'map', '');
@@ -3711,7 +3723,6 @@ begin
     // This should override normal params and is intentional
     CommandLineParams_.CloseWhenAppTerminated := true;
     CommandLineParams_.SaveStateOnAppTerminate := true;
-    CommandLineParams_.RunMinimized := true;
 
     LoadInformationFile;
   finally
@@ -3720,5 +3731,18 @@ begin
     lZombieConfig.Free();
   end ;
 end;
+
+procedure TFormMain.ExportZombieProject(AFileName: string);
+var
+  lZombieFile : TIniFile;
+begin
+  lZombieFile := TIniFile.Create(AFileName);
+  try
+//    lZombieFile.WriteString('project', 'map', ProjectDataBase_.);
+  finally
+    lZombieFile.Free();
+  end;
+end;
+
 
 end.

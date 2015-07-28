@@ -1,6 +1,6 @@
 object FormMain: TFormMain
-  Left = 478
-  Top = 183
+  Left = 464
+  Top = 467
   Width = 513
   Height = 452
   Caption = 'Discover'

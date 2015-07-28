@@ -57,7 +57,7 @@ interface
         );
     end;
 
-    TCommandLineAction = (caNoAction, caDPS, caDPR);
+    TCommandLineAction = (caNoAction, caDPS, caDPR, caZombie);
     TProgressEvent = procedure(PerCent : integer; const ActionString : string) of object;
 
   var
