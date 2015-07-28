@@ -149,6 +149,7 @@ begin
     begin
       cbbProjectFile.Text := dlgFindFile.FileName;
       cbbProjectFile.SetFocus();
+      cbbProjectFile.OnChange(nil);
     end;
 end;
 
@@ -161,6 +162,7 @@ begin
     begin
       edtMapFile.Text := dlgFindFile.FileName;
       edtMapFile.SetFocus();
+      edtMapFile.OnChange(nil);
     end;
 end;
 
