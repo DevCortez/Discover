@@ -373,7 +373,7 @@ object FormMain: TFormMain
       Caption = '&Project'
       OnClick = MMProjectClick
       object MMProjectNew: TMenuItem
-        Caption = '&Load...'
+        Caption = '&Create new project...'
         OnClick = MMProjectNewClick
       end
       object MMProjectSettings: TMenuItem
