@@ -205,7 +205,7 @@ begin
   else
     lblHostMessage.Hide();
 
-  btnCreateNew.Enabled := FileExists(cbbProjectFile.Text) and FileExists(edtMapFile.Text) and FileExists(edtBinaryFile.Text) and (not ((AnsiContainsText(cbbProjectFile.Text, '.dpk') or AnsiContainsText(edtBinaryFile.Text, '.dll'))) xor (not (Length(cbbHost.Text) = 0)) );
+  btnCreateNew.Enabled := FileExists(cbbProjectFile.Text) and FileExists(edtMapFile.Text) and FileExists(edtBinaryFile.Text);
 end;
 
 procedure TFormNewProject.FormShow(Sender: TObject);
@@ -217,14 +217,15 @@ begin
   cbbHost.Clear();
   cbbParams.Clear();
 
-  if FileExists('ProjectCache.cfg') then
-    cbbProjectFile.Items.LoadFromFile('ProjectCache.cfg');
 
-  if FileExists('ParamCache.cfg') then
-    cbbParams.Items.LoadFromFile('ParamCache.cfg');
+  if FileExists(ExtractFilePath(ParamStr(0)) + '\' + 'ProjectCache.cfg') then
+    cbbProjectFile.Items.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\' + 'ProjectCache.cfg');
 
-  if FileExists('HostCache.cfg') then
-    cbbHost.Items.LoadFromFile('HostCache.cfg');
+  if FileExists(ExtractFilePath(ParamStr(0)) + '\' + 'ParamCache.cfg') then
+    cbbParams.Items.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\' + 'ParamCache.cfg');
+
+  if FileExists(ExtractFilePath(ParamStr(0)) + '\' + 'HostCache.cfg') then
+    cbbHost.Items.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\' + 'HostCache.cfg');
 
   btnBrowseProjectFile.SetFocus();
 end;
@@ -255,9 +256,9 @@ begin
         cbbHost.Items.Delete(0);
     end;
 
-  cbbProjectFile.Items.SaveToFile('ProjectCache.cfg');
-  cbbParams.Items.SaveToFile('ParamCache.cfg');
-  cbbHost.Items.SaveToFile('HostCache.cfg');
+  cbbProjectFile.Items.SaveToFile(ExtractFilePath(ParamStr(0)) + '\' + 'ProjectCache.cfg');
+  cbbParams.Items.SaveToFile(ExtractFilePath(ParamStr(0)) + '\' + 'ParamCache.cfg');
+  cbbHost.Items.SaveToFile(ExtractFilePath(ParamStr(0)) + '\' + 'HostCache.cfg');
 end;
 
 procedure TFormNewProject.btnExportZombieClick(Sender: TObject);
