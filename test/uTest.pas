@@ -114,6 +114,7 @@ begin
     end;
 
   FormMain.MMApplicationTerminateClick(nil);
+  Application.ProcessMessages;
   CheckEquals(trunc(66.6666641235352), Trunc(ProjectDataBase_.TotalCoverage), 'Coverage percentage');
 end;
 

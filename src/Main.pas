@@ -781,14 +781,14 @@ procedure TFormMain.FormDestroy(Sender: TObject);
     i, j : integer;
 begin
   SortedRoutines.DeleteAll;
-  SortedRoutines.Free;
+  FreeAndNil(SortedRoutines);
   SortedUnits.DeleteAll;
-  SortedUnits.Free;
-  CoveredBitMap.Free;
-  UnCoveredBitMap.Free;
-  EnabledBitMap.Free;
-  DisabledBitMap.Free;
-  LockShutBitMap.Free;
+  FreeAndNil(SortedUnits);
+  FreeAndNil(CoveredBitMap);
+  FreeAndNil(UnCoveredBitMap);
+  FreeAndNil(EnabledBitMap);
+  FreeAndNil(DisabledBitMap);
+  FreeAndNil(LockShutBitMap);
   AppearanceArray[0] := Left;
   AppearanceArray[1] := Top;
   AppearanceArray[2] := Width;
@@ -3562,8 +3562,12 @@ procedure TFormMain.UpdateOverView(Routine : TRoutine);
     RoutineIndex, LineNr, RowNr, x : integer;
     R : TRect;
 begin
+  if not Assigned(SortedRoutines) then
+    exit;
+
   RoutineIndex := SortedRoutines.IndexOf(Routine);
-  if RoutineIndex >= 0 then
+
+  if (RoutineIndex >= 0) and (SquaresPerLine > 0) then
     begin
       LineNr := RoutineIndex div SquaresPerLine;
       RowNr := RoutineIndex mod SquaresPerLine;
