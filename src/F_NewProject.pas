@@ -70,19 +70,18 @@ begin
     begin
       lblProjectFileMessage.Visible := false;
       
-      if FileExists(ChangeFileExt(cbbProjectFile.Text, '.map')) and (Length(edtMapFile.Text) = 0) then
+      if FileExists(ChangeFileExt(cbbProjectFile.Text, '.map')) then
         edtMapFile.Text := ChangeFileExt(cbbProjectFile.Text, '.map');
 
-      if Length(edtBinaryFile.Text) = 0 then
-        if AnsiContainsText(cbbProjectFile.Text, '.dpk') and
-           FileExists(ChangeFileExt(cbbProjectFile.Text, '.bpl')) then
-          edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.bpl')
+      if AnsiContainsText(cbbProjectFile.Text, '.dpk') and
+         FileExists(ChangeFileExt(cbbProjectFile.Text, '.bpl')) then
+        edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.bpl')
+      else
+        if FileExists(ChangeFileExt(cbbProjectFile.Text, '.exe')) then
+          edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.exe')
         else
-          if FileExists(ChangeFileExt(cbbProjectFile.Text, '.exe')) then
-            edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.exe')
-          else
-            if FileExists(ChangeFileExt(cbbProjectFile.Text, '.dll')) then
-              edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.dll');
+          if FileExists(ChangeFileExt(cbbProjectFile.Text, '.dll')) then
+            edtBinaryFile.Text := ChangeFileExt(cbbProjectFile.Text, '.dll');
     end;
 
   ValidateInformation();
@@ -90,14 +89,17 @@ end;
 
 procedure TFormNewProject.cbbHostChange(Sender: TObject);
 begin
-  if not FileExists(cbbHost.Text) then
-    begin
-      lblHostMessage.Font.Color := clRed;
-      lblHostMessage.Caption := 'File not found';
-      lblHostMessage.Visible := True;
-    end
-  else
-    lblHostMessage.Visible := False;
+  ValidateInformation();
+
+  if Length(cbbHost.Text) > 0 then
+    if not FileExists(cbbHost.Text) then
+      begin
+        lblHostMessage.Font.Color := clRed;
+        lblHostMessage.Caption := 'File not found';
+        lblHostMessage.Visible := True;
+      end
+    else
+      lblHostMessage.Visible := False;
 end;
 
 procedure TFormNewProject.edtMapFileChange(Sender: TObject);
@@ -111,16 +113,15 @@ begin
   else
     begin
       lblMapFileMessage.Visible := False;
-      
-      if Length(edtBinaryFile.Text) = 0 then
-        if FileExists(ChangeFileExt(edtMapFile.Text, '.exe')) then
-          edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.exe')
+
+      if FileExists(ChangeFileExt(edtMapFile.Text, '.exe')) then
+        edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.exe')
+      else
+        if FileExists(ChangeFileExt(edtMapFile.Text, '.dll')) then
+          edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.dll')
         else
-          if FileExists(ChangeFileExt(edtMapFile.Text, '.dll')) then
-            edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.dll')
-          else
-            if FileExists(ChangeFileExt(edtMapFile.Text, '.bpl')) then
-              edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.bpl');
+          if FileExists(ChangeFileExt(edtMapFile.Text, '.bpl')) then
+            edtBinaryFile.Text := ChangeFileExt(edtMapFile.Text, '.bpl');
     end;
 
   ValidateInformation();
@@ -192,7 +193,16 @@ end;
 
 procedure TFormNewProject.ValidateInformation;
 begin
-  btnCreateNew.Enabled := FileExists(cbbProjectFile.Text) and FileExists(edtMapFile.Text) and FileExists(edtBinaryFile.Text)
+  if (AnsiContainsText(cbbProjectFile.Text, '.dpk') or AnsiContainsText(edtBinaryFile.Text, '.dll')) and (Length(cbbHost.Text) = 0) then
+    begin
+      lblHostMessage.Caption := 'This is necessary for BPL/DLL';
+      lblHostMessage.Font.Color := clBlue;
+      lblHostMessage.Show();
+    end
+  else
+    lblHostMessage.Hide();
+
+  btnCreateNew.Enabled := FileExists(cbbProjectFile.Text) and FileExists(edtMapFile.Text) and FileExists(edtBinaryFile.Text) and (not ((AnsiContainsText(cbbProjectFile.Text, '.dpk') or AnsiContainsText(edtBinaryFile.Text, '.dll'))) xor (not (Length(cbbHost.Text) = 0)) );
 end;
 
 procedure TFormNewProject.FormShow(Sender: TObject);

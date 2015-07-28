@@ -18,7 +18,7 @@ object FormNewProject: TFormNewProject
   OnShow = FormShow
   DesignSize = (
     457
-    394)
+    393)
   PixelsPerInch = 96
   TextHeight = 13
   object btnCreateNew: TButton
@@ -206,9 +206,9 @@ object FormNewProject: TFormNewProject
       Caption = 'Starting directory'
     end
     object lblHostMessage: TLabel
-      Left = 200
+      Left = 136
       Top = 120
-      Width = 145
+      Width = 209
       Height = 13
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
