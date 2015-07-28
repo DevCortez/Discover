@@ -117,6 +117,7 @@ type
     TIMERResize: TTimer;
 
 
+    procedure StartZombieCoverage(AZombieFile : string);
     procedure MMProjectNewClick(Sender: TObject);
     procedure PBOverViewPaint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -3679,6 +3680,45 @@ begin
     LBUnits.ItemIndex := 0
   else
     LBUnits.ItemIndex := -1;
+end;
+
+procedure TFormMain.StartZombieCoverage(AZombieFile: string);
+var
+  lZombieConfig : TIniFile;
+begin
+  {
+    Yeah, this is awful. But it was not me who wrote the crap loading sequence and
+    changing it would be fearsome and break not only the automated tests but also
+    make the whole thing unstable. Lets keep it simple. Feel free to re-do if you
+    are man enough. Also get your shit together and clear all globals too if you do so.
+  }
+  Screen.Cursor := crHourGlass;
+  lZombieConfig := TIniFile.Create(AZombieFile);
+  try
+    LoadedStatesStr := '';
+    FormNewProject.edtMapFile.Text := lZombieConfig.ReadString('project', 'map', '');
+    FormNewProject.edtBinaryFile.Text := lZombieConfig.ReadString('project', 'binary', '');
+
+    LoadProject(lZombieConfig.ReadString('project', 'file', ''), True);
+
+    StateFileName := ChangeFileExt(ProjectDataBase_.ModuleFileName,ProjectStateExtension);
+    InfoFileName := ChangeFileExt(StateFileName, ProjectInformationExtension);
+
+    ProjectDataBase_.RunParameters := lZombieConfig.ReadString('run', 'param', '');
+    ProjectDataBase_.HostApplication := lZombieConfig.ReadString('run', 'host', '');
+    ProjectDataBase_.StartupDirectory := lZombieConfig.ReadString('run', 'startup_dir', '');
+
+    // This should override normal params and is intentional
+    CommandLineParams_.CloseWhenAppTerminated := true;
+    CommandLineParams_.SaveStateOnAppTerminate := true;
+    CommandLineParams_.RunMinimized := true;
+
+    LoadInformationFile;
+  finally
+    Screen.Cursor := crDefault;
+    HandleProgress(-1, '');
+    lZombieConfig.Free();
+  end ;
 end;
 
 end.
