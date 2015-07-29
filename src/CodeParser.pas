@@ -348,7 +348,7 @@ procedure TCodeParser.Parse;
               
                 if RoutineFileName <> T.FileName then
                   begin
-                    T.FileName := ProjectDataBase_.RelativePath + RoutineFileName;
+                    T.FileName :=  ExpandFileName(RoutineFileName);
                     SyncLost := false;
                     if LogFileEnabled_ then
                       Writeln(LogFile_, Format('Opening src-file: %s', [RoutineFileName]));
