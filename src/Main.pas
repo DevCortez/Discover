@@ -3369,7 +3369,7 @@ begin
       lDpsFile.Free;
     end;
 
-    lConfigurations := TIniFile.Create(ChangeFileExt(FileName, '.cfg'));
+    lConfigurations := TIniFile.Create(ExpandFileName(ChangeFileExt(FileName, '.cfg')));
     try
       lConfigurations.WriteString('Path', 'RelativePath', ProjectDataBase_.RelativePath);
       lConfigurations.WriteString('Path', 'Executable', ProjectDataBase_.ModuleFileName);
